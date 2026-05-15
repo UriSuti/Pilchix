@@ -1,17 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import ViewLocal from './viewLocal/viewLocal'
 import './App.css'
+import { useState, useEffect } from 'react'
+import { supabase } from './utils/supabase'
 
 function App() {
-  
+  const [productos, setProductos] = useState([])
 
+
+  supabase.from("Producto").select("nombre").then(res =>{
+    console.log(res.data);
+     
+  })
+
+
+  useEffect(() => {
+    async function getProductos() {
+      const { data, error } = await supabase
+        .from('Producto')
+        .select('*')
+        
+      if (data) {
+        setProductos(data)
+      }
+
+      if (error) {
+        console.log(error)
+      }
+    }
+
+    getProductos()
+  }, [])
+
+  
   return (
-    <>
-    <ViewLocal/>
-    </>
+    <ul>
+      {productos.map((producto) => (
+        <li key={producto.id_producto}>
+          {producto.nombre} - ${producto.precio}
+        </li>
+      ))}
+    </ul>
   )
 }
 
