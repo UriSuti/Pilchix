@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ 
+.view-local {
+  max-width: 430px;
+  margin: 0 auto;
+  background: #f5f5f5;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+ 
+.view-content {
+  padding: 0 12px;
+}
+ 
+.spacer-footer {
+  height: 80px;
+}
