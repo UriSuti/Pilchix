@@ -5,13 +5,6 @@ import { supabase } from './utils/supabase'
 function App() {
   const [productos, setProductos] = useState([])
 
-
-  supabase.from("Producto").select("nombre").then(res =>{
-    console.log(res.data);
-     
-  })
-
-
   useEffect(() => {
     async function getProductos() {
       const { data, error } = await supabase
