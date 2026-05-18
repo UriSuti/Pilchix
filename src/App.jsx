@@ -4,9 +4,9 @@ import { supabase } from './utils/supabase'
 import ViewLanding from './viewLanding/ViewLanding'
 
 function App() {
-  return (
+  return <>
     <ViewLanding/>
-  )
+  </>
 }
 
 export default App
