@@ -1,4 +1,7 @@
-function FiltroLocal() {
+import './filtroLocal.css'
+
+function filtroLocal(){
+
   return (
     <section className="filtro-local">
       <div className="contenedor-filtros">
@@ -27,6 +30,9 @@ function FiltroLocal() {
       </div>
     </section>
   );
-}
 
-export default FiltroLocal;
+
+
+
+}
+export default filtroLocal

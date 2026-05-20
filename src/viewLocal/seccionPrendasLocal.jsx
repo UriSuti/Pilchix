@@ -1,4 +1,6 @@
-function SeccionPrendasLocal() {
+import './seccionPrendasLocal.css'
+
+function seccionPrendasLocal(){
   return (
     <section className="seccion-prendas-local">
       <div className="grid-productos">
@@ -94,4 +96,4 @@ function SeccionPrendasLocal() {
   );
 }
 
-export default SeccionPrendasLocal;
+export default seccionPrendasLocal
