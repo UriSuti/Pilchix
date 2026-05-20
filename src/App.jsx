@@ -5,8 +5,16 @@ import ViewLocal from './viewLocal/viewLocal'
 
 function App() {
 
+
+  
   return (
-    <ViewLocal/>
+    <ul>
+      {productos.map((producto) => (
+        <li key={producto.id_producto}>
+          {producto.nombre} - ${producto.precio}
+        </li>
+      ))}
+    </ul>
   )
 }
 
