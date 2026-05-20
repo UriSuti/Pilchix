@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import supabase from "../utils/supabase";
+import supabase from "../../utils/supabase";
+import './Header.css';
 
 function Header({ id_usuario }) {
   const [cantidadProductos, setCantidadProductos] = useState(0);
@@ -63,7 +64,8 @@ function Header({ id_usuario }) {
   }, [id_usuario]);
 
   return (
-    
+    <>
+    </>
   );
 }
 
