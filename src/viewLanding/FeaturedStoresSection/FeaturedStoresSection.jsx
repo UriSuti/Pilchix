@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
+import './FeaturedStoresSection.css';
 
 function FeaturedStoresSection() {
   const [marcas, setMarcas] = useState([]);
@@ -78,7 +79,8 @@ function FeaturedStoresSection() {
   }, []);
 
   return (
-
+    <>
+    </>
   );
 }
 
