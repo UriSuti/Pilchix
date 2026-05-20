@@ -105,7 +105,8 @@ function SearchBar({ id_usuario }) {
   }
 
   return (
-    
+    <>
+    </>
   );
 }
 
