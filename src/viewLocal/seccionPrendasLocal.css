@@ -1,0 +1,102 @@
+/* Contenedor principal de la sección */
+.seccion-prendas-local {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 20px 0 40px;
+  box-sizing: border-box;
+}
+
+/* Grid de productos */
+.grid-productos {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 34px;
+  row-gap: 28px;
+  box-sizing: border-box;
+}
+
+/* Card individual */
+.card-producto {
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Imagen del producto */
+.card-producto img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  background-color: #f5f5f5;
+}
+
+/* Nombre del producto */
+.card-producto h3 {
+  margin: 8px 0 2px;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: #111111;
+  line-height: 1.2;
+}
+
+/* Precio */
+.card-producto p {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: #111111;
+  line-height: 1.2;
+}
+
+/* Texto opcional "nuevo" */
+.card-producto span {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 0.62rem;
+  color: #9a9a9a;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .grid-productos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 0 16px;
+  }
+
+  .card-producto h3 {
+    font-size: 0.8rem;
+  }
+
+  .card-producto p {
+    font-size: 0.75rem;
+  }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+  .seccion-prendas-local {
+    padding: 16px 0 30px;
+  }
+
+  .grid-productos {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 12px;
+  }
+
+  .card-producto h3 {
+    font-size: 0.9rem;
+  }
+
+  .card-producto p {
+    font-size: 0.85rem;
+  }
+}

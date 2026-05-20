@@ -1,0 +1,149 @@
+/* =========================
+   FOOTER
+========================= */
+.footer {
+  width: 100%;
+  background-color: #0b3d5c; /* azul oscuro del diseño */
+  color: #ffffff;
+  padding: 28px 0 36px;
+  box-sizing: border-box;
+}
+
+/* Contenedor interno centrado */
+.footer > * {
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =========================
+   LOGO
+========================= */
+.footer-logo {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.footer-logo h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* =========================
+   REDES SOCIALES
+========================= */
+.footer-redes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.footer-redes a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* =========================
+   COLUMNAS
+========================= */
+.footer-columnas {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.footer-columna {
+  min-width: 140px;
+}
+
+.footer-columna h4 {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.footer-columna ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-columna li {
+  margin-bottom: 6px;
+}
+
+.footer-columna a {
+  color: #d6e3ec;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.footer-columna a:hover,
+.footer-redes a:hover {
+  opacity: 0.85;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .footer {
+    padding: 24px 0 30px;
+  }
+
+  .footer-logo h2 {
+    font-size: 1.6rem;
+  }
+
+  .footer-redes {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 0 16px;
+  }
+
+  .footer-columnas {
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 22px 0 26px;
+  }
+
+  .footer-logo h2 {
+    font-size: 1.4rem;
+  }
+
+  .footer-columnas {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 24px;
+  }
+
+  .footer-columna {
+    min-width: auto;
+  }
+
+  .footer-columna h4 {
+    margin-bottom: 8px;
+  }
+}

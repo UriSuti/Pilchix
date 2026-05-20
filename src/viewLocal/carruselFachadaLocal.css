@@ -1,0 +1,142 @@
+/* Contenedor principal del componente */
+.carrusel-fachada-local {
+  width: 100%;
+  background-color: #ffffff;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header-local {
+  height: 52px;
+  background-color: #0b3d5c; /* azul oscuro similar al figma */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+/* Logo */
+.logo {
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* Barra de búsqueda */
+.barra-busqueda {
+  flex: 1;
+  max-width: 620px;
+  margin: 0 18px;
+}
+
+.barra-busqueda input {
+  width: 100%;
+  height: 30px;
+  border: none;
+  outline: none;
+  border-radius: 3px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* Iconos del header */
+.iconos-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.iconos-header span {
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* =========================
+   IMAGEN PRINCIPAL
+========================= */
+.imagen-fachada {
+  width: 100%;
+  overflow: hidden;
+}
+
+.imagen-fachada img {
+  display: block;
+  width: 100%;
+  height: 340px; /* altura aproximada según el diseño */
+  object-fit: cover;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .header-local {
+    padding: 0 10px;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .barra-busqueda {
+    margin: 0 8px;
+  }
+
+  .barra-busqueda input {
+    height: 28px;
+    font-size: 0.8rem;
+    padding: 0 10px;
+  }
+
+  .iconos-header {
+    gap: 8px;
+  }
+
+  .iconos-header span {
+    font-size: 1rem;
+  }
+
+  .imagen-fachada img {
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-local {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px;
+  }
+
+  .logo {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .barra-busqueda {
+    order: 3;
+    width: 100%;
+    max-width: none;
+    margin: 8px 0 0 0;
+  }
+
+  .iconos-header {
+    margin-left: auto;
+  }
+
+  .imagen-fachada img {
+    height: 180px;
+  }
+}
