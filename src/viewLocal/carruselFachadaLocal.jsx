@@ -1,7 +1,8 @@
 import './carruselFachadaLocal.css'
 
 
-function CarruselFachadaLocal() {
+function CarruselFachadaLocal({marca}) {
+  
   return (
     <section className="carrusel-fachada-local">
       {/* Header */}
@@ -13,16 +14,16 @@ function CarruselFachadaLocal() {
         </div>
 
         <div className="iconos-header">
-          <span class="material-symbols-outlined"></span>
-          <span class="material-symbols-outlined"></span>
-          <span class="material-symbols-outlined"></span>
+          <span className="material-symbols-outlined"></span>
+          <span className="material-symbols-outlined"></span>
+          <span className="material-symbols-outlined"></span>
         </div>
       </header>
 
       {/* Imagen principal */}
       <div className="imagen-fachada">
         <img
-          src="/src/assets/nike.webp"
+          src={marca}
           alt="Fachada del local"
         />
       </div>

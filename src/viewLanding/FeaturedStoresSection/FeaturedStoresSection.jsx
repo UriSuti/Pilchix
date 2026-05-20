@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import supabase from "../../utils/supabase";
+import {supabase} from "../../utils/supabase";
 
 function FeaturedStoresSection() {
   const [marcas, setMarcas] = useState([]);
@@ -83,4 +83,4 @@ function FeaturedStoresSection() {
   );
 }
 
-export default Marcas;
+export default FeaturedStoresSection;

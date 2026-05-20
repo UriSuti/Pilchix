@@ -1,22 +1,23 @@
+import { useEffect } from 'react';
 import './filtroLocal.css'
 
-function filtroLocal(){
+function FiltroLocal({ search, setSearch, orden, setOrden }){
 
   return (
     <section className="filtro-local">
       <div className="contenedor-filtros">
         {/* Buscador */}
         <div className="busqueda-productos">
-          <input type="text" placeholder="Buscar productos" />
+          <input type="text" placeholder="Buscar productos" value={search} onChange={(e) => setSearch(e.target.value)}/>
         </div>
 
         {/* Select de orden */}
         <div className="ordenar-productos">
-          <select>
-            <option>Ordenar</option>
-            <option>Menor precio</option>
-            <option>Mayor precio</option>
-            <option>Más vendidos</option>
+          <select value={orden} onChange={(e) => setOrden(e.target.value)}>
+            <option value="">Ordenar</option>
+            <option value="lowPrice">Menor precio</option>
+            <option value="highPrice">Mayor precio</option>
+            <option value="bestSeller">Más vendidos</option>
           </select>
         </div>
 
@@ -35,4 +36,4 @@ function filtroLocal(){
 
 
 }
-export default filtroLocal
+export default FiltroLocal

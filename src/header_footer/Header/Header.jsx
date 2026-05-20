@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import supabase from "../../utils/supabase";
+import {supabase} from "../../utils/supabase";
 import './Header.css';
 
 function Header({ id_usuario }) {
@@ -69,4 +69,4 @@ function Header({ id_usuario }) {
   );
 }
 
-export default UsuarioResumen;
+export default Header;

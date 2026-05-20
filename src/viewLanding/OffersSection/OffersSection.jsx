@@ -1,6 +1,6 @@
 import './OffersSection.css';
 import { useEffect, useState } from "react";
-import supabase from "../../utils/supabase";
+import {supabase} from "../../utils/supabase";
 function OffersSection() {
   const [descuentos, setDescuentos] = useState([]);
 

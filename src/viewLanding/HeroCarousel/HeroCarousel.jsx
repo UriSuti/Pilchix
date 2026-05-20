@@ -1,6 +1,6 @@
 import './HeroCarousel.css';
 import { useEffect, useState } from "react";
-import supabase from "../../utils/supabase";
+import {supabase} from "../../utils/supabase";
 
 function HeroCarousel() {
   const [productos, setProductos] = useState([]);
