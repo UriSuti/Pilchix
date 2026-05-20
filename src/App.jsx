@@ -1,7 +1,7 @@
 import './App.css'
 import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase'
-import ViewLanding from './viewLanding/ViewLanding'
+import ViewLocal from './viewLocal/viewLocal'
 
 function App() {
   const [productos, setProductos] = useState([])
