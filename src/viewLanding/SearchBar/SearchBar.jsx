@@ -1,5 +1,6 @@
 import { useState } from "react";
-import supabase from "../utils/supabase";
+import supabase from "../../utils/supabase";
+import './SearchBar.css';
 
 function SearchBar({ id_usuario }) {
   const [textoBusqueda, setTextoBusqueda] = useState("");
