@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "./supabaseClient";
+import supabase from "../utils/supabase";
 
 function FeaturedStoresSection() {
   const [marcas, setMarcas] = useState([]);

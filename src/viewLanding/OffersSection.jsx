@@ -1,20 +1,69 @@
-// SELECT 
-//     d.id_descuento,
-//     d.porcentaje,
-//     d.precio_anterior,
-//     d.precio_final,
-//     d.fecha_inicio,
-//     d.fecha_fin,
-//     p.id_producto,
-//     p.nombre AS producto,
-//     p.descripcion,
-//     p.precio,
-//     i.imagen,
-//     m.nombre AS marca
-// FROM Descuento d
-// INNER JOIN Producto p ON d.id_producto = p.id_producto
-// INNER JOIN Marca m ON p.id_marca = m.id_marca
-// LEFT JOIN Imagen i ON p.id_producto = i.id_producto
-// WHERE 
-//     GETDATE() BETWEEN d.fecha_inicio AND d.fecha_fin
-//     AND p.estado = 1;
+import { useEffect, useState } from "react";
+import supabase from "../utils/supabase";
+
+function OffersSection() {
+  const [descuentos, setDescuentos] = useState([]);
+
+  useEffect(() => {
+    async function obtenerDescuentosActivos() {
+      const fechaActual = new Date().toISOString();
+
+      const { data, error } = await supabase
+        .from("Descuento")
+        .select(`
+          id_descuento,
+          porcentaje,
+          precio_anterior,
+          precio_final,
+          fecha_inicio,
+          fecha_fin,
+          Producto (
+            id_producto,
+            nombre,
+            descripcion,
+            precio,
+            estado,
+            Marca (
+              nombre
+            ),
+            Imagen (
+              imagen
+            )
+          )
+        `)
+        .lte("fecha_inicio", fechaActual)
+        .gte("fecha_fin", fechaActual)
+        .eq("Producto.estado", 1);
+
+      if (error) {
+        console.error("Error al traer descuentos activos:", error);
+        return;
+      }
+
+      const descuentosFormateados = data.map((descuento) => ({
+        id_descuento: descuento.id_descuento,
+        porcentaje: descuento.porcentaje,
+        precio_anterior: descuento.precio_anterior,
+        precio_final: descuento.precio_final,
+        fecha_inicio: descuento.fecha_inicio,
+        fecha_fin: descuento.fecha_fin,
+        id_producto: descuento.Producto?.id_producto,
+        producto: descuento.Producto?.nombre,
+        descripcion: descuento.Producto?.descripcion,
+        precio: descuento.Producto?.precio,
+        imagen: descuento.Producto?.Imagen?.[0]?.imagen || null,
+        marca: descuento.Producto?.Marca?.nombre,
+      }));
+
+      setDescuentos(descuentosFormateados);
+    }
+
+    obtenerDescuentosActivos();
+  }, []);
+
+  return (
+
+  );
+}
+
+export default OffersSection;
