@@ -1,0 +1,55 @@
+.product-rail {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.product-rail__card {
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.product-rail__card img,
+.product-rail__placeholder {
+  width: 100%;
+  aspect-ratio: 0.88 / 1;
+  display: block;
+  object-fit: cover;
+  background: #f4f4f4;
+}
+
+.product-rail__placeholder {
+  display: grid;
+  place-items: center;
+  color: #123d59;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.product-rail__body {
+  padding-top: 8px;
+}
+
+.product-rail__body p,
+.product-rail__body span,
+.product-rail__body strong {
+  display: block;
+}
+
+.product-rail__body p,
+.product-rail__body span {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.2;
+}
+
+.product-rail__body strong {
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+  .product-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

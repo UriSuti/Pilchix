@@ -6,10 +6,12 @@ import ViewLanding from './viewLanding/ViewLanding'
 
 function App() {
 
-  const [local, setLocal] = useState(8);
+  const [local, setLocal] = useState(null);
+
 
   return (
-    <ViewLocal local={local} />
+    local !== null? <ViewLocal local={local} /> : <ViewLanding local={local} setLocal={setLocal} />
+    
   )
 }
 

@@ -1,112 +1,51 @@
-import { useState } from "react";
-import supabase from "../../utils/supabase";
-import './SearchBar.css';
+import "./SearchBar.css";
 
-function SearchBar({ id_usuario }) {
-  const [textoBusqueda, setTextoBusqueda] = useState("");
-  const [productos, setProductos] = useState([]);
-  const [productosPorCategoria, setProductosPorCategoria] = useState([]);
+const formatPrice = (value) =>
+  new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    maximumFractionDigits: 0,
+  }).format(Number(value || 0));
 
-  async function buscarProductos(e) {
-    e.preventDefault();
-
-    const texto_busqueda = textoBusqueda.trim();
-
-    if (texto_busqueda === "") {
-      return;
-    }
-
-    const { error: errorBusqueda } = await supabase
-      .from("Busqueda")
-      .insert([
-        {
-          id_usuario: id_usuario,
-          texto_busqueda: texto_busqueda,
-          fecha: new Date().toISOString(),
-        },
-      ]);
-
-    if (errorBusqueda) {
-      console.error("Error al guardar búsqueda:", errorBusqueda);
-    }
-
-    const { data: productosData, error: errorProductos } = await supabase
-      .from("Producto")
-      .select(`
-        id_producto,
-        nombre,
-        descripcion,
-        precio,
-        stock,
-        estado,
-        fecha_alta,
-        Marca (
-          nombre
-        )
-      `)
-      .or(
-        `nombre.ilike.%${texto_busqueda}%,descripcion.ilike.%${texto_busqueda}%,Marca.nombre.ilike.%${texto_busqueda}%`
-      );
-
-    if (errorProductos) {
-      console.error("Error al buscar productos:", errorProductos);
-      return;
-    }
-
-    const productosFormateados = productosData.map((producto) => ({
-      id_producto: producto.id_producto,
-      nombre: producto.nombre,
-      descripcion: producto.descripcion,
-      precio: producto.precio,
-      stock: producto.stock,
-      estado: producto.estado,
-      fecha_alta: producto.fecha_alta,
-      marca: producto.Marca?.nombre,
-    }));
-
-    setProductos(productosFormateados);
-
-    const { data: productosCategoriaData, error: errorProductosCategoria } =
-      await supabase
-        .from("Producto_Categoria")
-        .select(`
-          Producto (
-            id_producto,
-            nombre,
-            descripcion,
-            precio,
-            stock,
-            Marca (
-              nombre
-            )
-          ),
-          Categoria (
-            nombre
-          )
-        `)
-        .ilike("Categoria.nombre", `%${texto_busqueda}%`);
-
-    if (errorProductosCategoria) {
-      console.error("Error al buscar productos por categoría:", errorProductosCategoria);
-      return;
-    }
-
-    const productosCategoriaFormateados = productosCategoriaData.map((item) => ({
-      id_producto: item.Producto?.id_producto,
-      nombre: item.Producto?.nombre,
-      descripcion: item.Producto?.descripcion,
-      precio: item.Producto?.precio,
-      stock: item.Producto?.stock,
-      marca: item.Producto?.Marca?.nombre,
-      categoria: item.Categoria?.nombre,
-    }));
-
-    setProductosPorCategoria(productosCategoriaFormateados);
+function SearchBar({ resultados = [], textoBusqueda = "" }) {
+  if (!textoBusqueda.trim()) {
+    return null;
   }
 
   return (
-    <>
-    </>
+    <section className="search-results">
+      <div className="search-results__header">
+        <div>
+          <p className="search-results__eyebrow">Busqueda</p>
+          <h2>Resultados para "{textoBusqueda}"</h2>
+        </div>
+        <span>{resultados.length} items</span>
+      </div>
+
+      {resultados.length === 0 ? (
+        <p className="search-results__empty">No encontramos coincidencias exactas.</p>
+      ) : (
+        <div className="search-results__grid">
+          {resultados.slice(0, 6).map((producto) => (
+            <article key={producto.id_producto} className="search-results__card">
+              {producto.imagen ? (
+                <img src={producto.imagen} alt={producto.nombre} />
+              ) : (
+                <div className="search-results__placeholder">{producto.nombre.slice(0, 1)}</div>
+              )}
+              <div className="search-results__body">
+                <h3>{producto.nombre}</h3>
+                <p>{producto.marca}</p>
+                <div className="search-results__meta">
+                  <span>{producto.categoria || "Producto"}</span>
+                  <strong>{formatPrice(producto.precio)}</strong>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 

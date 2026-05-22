@@ -1,69 +1,100 @@
-import './OffersSection.css';
-import { useEffect, useState } from "react";
-import {supabase} from "../../utils/supabase";
-function OffersSection() {
-  const [descuentos, setDescuentos] = useState([]);
+import { useState } from "react";
+import "./OffersSection.css";
 
-  useEffect(() => {
-    async function obtenerDescuentosActivos() {
-      const fechaActual = new Date().toISOString();
+const formatPrice = (value) =>
+  new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    maximumFractionDigits: 0,
+  }).format(Number(value || 0));
 
-      const { data, error } = await supabase
-        .from("Descuento")
-        .select(`
-          id_descuento,
-          porcentaje,
-          precio_anterior,
-          precio_final,
-          fecha_inicio,
-          fecha_fin,
-          Producto (
-            id_producto,
-            nombre,
-            descripcion,
-            precio,
-            estado,
-            Marca (
-              nombre
-            ),
-            Imagen (
-              imagen
-            )
-          )
-        `)
-        .lte("fecha_inicio", fechaActual)
-        .gte("fecha_fin", fechaActual)
-        .eq("Producto.estado", 1);
+function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS" }) {
+  const [paginaActual, setPaginaActual] = useState(0);
+  const [cantidadVisible, setCantidadVisible] = useState(6);
 
-      if (error) {
-        console.error("Error al traer descuentos activos:", error);
-        return;
-      }
+  const descuentosMostrados = descuentos.slice(0, cantidadVisible);
+  const cantidadPorPagina = 6;
+  const totalPaginas = Math.max(1, Math.ceil(descuentosMostrados.length / cantidadPorPagina));
+  const inicio = paginaActual * cantidadPorPagina;
+  const descuentosVisibles = descuentosMostrados.slice(inicio, inicio + cantidadPorPagina);
+  const puedeIrAtras = paginaActual > 0;
+  const puedeIrAdelante = paginaActual < totalPaginas - 1;
+  const hayMasDescuentos = cantidadVisible < descuentos.length;
 
-      const descuentosFormateados = data.map((descuento) => ({
-        id_descuento: descuento.id_descuento,
-        porcentaje: descuento.porcentaje,
-        precio_anterior: descuento.precio_anterior,
-        precio_final: descuento.precio_final,
-        fecha_inicio: descuento.fecha_inicio,
-        fecha_fin: descuento.fecha_fin,
-        id_producto: descuento.Producto?.id_producto,
-        producto: descuento.Producto?.nombre,
-        descripcion: descuento.Producto?.descripcion,
-        precio: descuento.Producto?.precio,
-        imagen: descuento.Producto?.Imagen?.[0]?.imagen || null,
-        marca: descuento.Producto?.Marca?.nombre,
-      }));
-
-      setDescuentos(descuentosFormateados);
+  function irAtras() {
+    if (puedeIrAtras) {
+      setPaginaActual(paginaActual - 1);
     }
+  }
 
-    obtenerDescuentosActivos();
-  }, []);
+  function irAdelante() {
+    if (puedeIrAdelante) {
+      setPaginaActual(paginaActual + 1);
+    }
+  }
+
+  function mostrarMas() {
+    setCantidadVisible(cantidadVisible + 6);
+  }
 
   return (
-    <>
-    </>
+    <section className="rail-section">
+      <div className="rail-section__header">
+        <h2>{titulo}</h2>
+        {hayMasDescuentos ? (
+          <button className="rail-section__link" type="button" onClick={mostrarMas}>
+            Ver mas
+          </button>
+        ) : null}
+      </div>
+
+      {cargando ? (
+        <p className="rail-section__empty">Cargando ofertas...</p>
+      ) : descuentos.length === 0 ? (
+        <p className="rail-section__empty">No hay descuentos activos.</p>
+      ) : (
+        <div className="rail-section__frame">
+          <button
+            className="rail-section__arrow"
+            type="button"
+            aria-label="Anterior"
+            onClick={irAtras}
+            disabled={!puedeIrAtras}
+          >
+            ‹
+          </button>
+
+          <div className="product-rail">
+            {descuentosVisibles.map((descuento) => (
+              <article key={descuento.id_descuento} className="product-rail__card">
+                {descuento.imagen ? (
+                  <img src={descuento.imagen} alt={descuento.producto} />
+                ) : (
+                  <div className="product-rail__placeholder">
+                    {descuento.producto?.slice(0, 1) || "O"}
+                  </div>
+                )}
+                <div className="product-rail__body">
+                  <p>{descuento.marca || "Oferta"}</p>
+                  <span>{descuento.porcentaje}% OFF</span>
+                  <strong>{formatPrice(descuento.precio_final)}</strong>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <button
+            className="rail-section__arrow"
+            type="button"
+            aria-label="Siguiente"
+            onClick={irAdelante}
+            disabled={!puedeIrAdelante}
+          >
+            ›
+          </button>
+        </div>
+      )}
+    </section>
   );
 }
 

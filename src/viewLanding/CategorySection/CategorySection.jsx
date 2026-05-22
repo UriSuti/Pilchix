@@ -1,64 +1,45 @@
-import { useEffect, useState } from "react";
-import {supabase} from "../../utils/supabase";
-import './CategorySection.css';
+import { useState } from "react";
+import "./CategorySection.css";
 
-function CategorySection() {
-  const [categorias, setCategorias] = useState([]);
+function CategorySection({ categorias = [], cargando }) {
+  const [cantidadVisible, setCantidadVisible] = useState(5);
 
-  useEffect(() => {
-    async function obtenerCategorias() {
-      const { data: categoriasData, error: errorCategorias } = await supabase
-        .from("Categoria")
-        .select("id_categoria, nombre")
-        .order("nombre", { ascending: true });
+  const categoriasVisibles = categorias.slice(0, cantidadVisible);
+  const hayMasCategorias = cantidadVisible < categorias.length;
 
-      if (errorCategorias) {
-        console.error("Error al traer categorías:", errorCategorias);
-        return;
-      }
-
-      const { data: productosCategoriasData, error: errorProductosCategorias } = await supabase
-        .from("Producto_Categoria")
-        .select(`
-          id_categoria,
-          Producto (
-            id_producto,
-            estado,
-            Imagen (
-              imagen
-            )
-          )
-        `)
-        .eq("Producto.estado", 1);
-
-      if (errorProductosCategorias) {
-        console.error("Error al traer productos por categoría:", errorProductosCategorias);
-        return;
-      }
-
-      const categoriasConImagen = categoriasData.map((categoria) => {
-        const relacion = productosCategoriasData.find(
-          (item) =>
-            item.id_categoria === categoria.id_categoria &&
-            item.Producto !== null &&
-            item.Producto.Imagen?.length > 0
-        );
-
-        return {
-          ...categoria,
-          imagen_categoria: relacion?.Producto?.Imagen?.[0]?.imagen || null,
-        };
-      });
-
-      setCategorias(categoriasConImagen);
-    }
-
-    obtenerCategorias();
-  }, []);
+  function mostrarMas() {
+    setCantidadVisible(cantidadVisible + 5);
+  }
 
   return (
-    <>
-    </>
+    <section className="category-strip">
+      <div className="category-strip__scroller">
+        {cargando ? (
+          <p className="category-strip__empty">Cargando categorias...</p>
+        ) : categorias.length === 0 ? (
+          <p className="category-strip__empty">No hay categorias para mostrar.</p>
+        ) : (
+          categoriasVisibles.map((categoria) => (
+            <article key={categoria.id_categoria} className="category-strip__card">
+              {categoria.imagen_categoria ? (
+                <img src={categoria.imagen_categoria} alt={categoria.nombre} />
+              ) : (
+                <div className="category-strip__placeholder">
+                  {categoria.nombre.slice(0, 1)}
+                </div>
+              )}
+              <div className="category-strip__overlay">{categoria.nombre}</div>
+            </article>
+          ))
+        )}
+      </div>
+
+      {hayMasCategorias ? (
+        <button className="category-strip__button" type="button" onClick={mostrarMas}>
+          Ver mas
+        </button>
+      ) : null}
+    </section>
   );
 }
 
