@@ -47,7 +47,11 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
         onBuscar={buscarProductos}
       />
 
-      <HeaderLanding resumen={resumen} />
+      <HeaderLanding
+        subtitle="Nueva temporada"
+        title="LAS MEJORES OFERTAS PARA EL OTOÑO"
+        description="Descubri prendas, locales y descuentos elegidos para una experiencia de compra mucho mas visual"
+      />
 
       <main className="landing-content">
         <CategorySection categorias={landingData.categorias} cargando={loading} />
