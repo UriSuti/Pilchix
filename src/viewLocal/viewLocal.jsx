@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import Header from '../header_footer/Header/Header.jsx'
+import Footer from '../header_footer/Footer/Footer.jsx'
 import CarruselFachadaLocal from './components/CarruselFachadaLocal/carruselFachadaLocal.jsx'
 import FiltroLocal from './components/FiltroLocal/filtroLocal.jsx'
 import SeccionPrendasLocal from './components/SeccionPrendasLocal/seccionPrendasLocal.jsx'
@@ -31,11 +33,15 @@ function ViewLocal({ local }) {
     
     return (
     <div className="view-local">
+      <Header/>
       <CarruselFachadaLocal marca={imagenFachada}/>
       <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
       <main className="view-content">
         <SeccionPrendasLocal productos={productosOrdenados} />
         <div className="spacer-footer" />
+        <footer>
+          <Footer />
+        </footer>
       </main>
     </div>
     )
