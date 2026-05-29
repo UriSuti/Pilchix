@@ -25,6 +25,17 @@ export function getLandingCategoriasConProductos() {
     .eq("Producto.estado", 1);
 }
 
+  export function getImagenMarca(id_marca) {
+    return supabase
+      .from("Marca")
+      .select(
+        `
+          imagen_fachada
+      `
+      )
+      .eq("id_marca", id_marca);
+  }
+
 export function getLandingMarcas() {
   return supabase
     .from("Marca")
