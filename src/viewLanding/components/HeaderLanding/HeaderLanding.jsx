@@ -1,5 +1,5 @@
 import "./HeaderLanding.css";
-import Image from "../../assets/LandingImage.jpg";
+import Image from "../../../assets/LandingImage.jpg";
 
 function HeaderLanding({subtitle, title, description}) {
   return (
