@@ -2,7 +2,6 @@ import "./ViewLanding.css";
 import Header from "../header_footer/Header/Header";
 import Footer from "../header_footer/Footer/Footer";
 import HeaderLanding from "./HeaderLanding/HeaderLanding";
-import SearchBar from "./SearchBar/SearchBar";
 import CategorySection from "./CategorySection/CategorySection";
 import FeaturedStoresSection from "./FeaturedStoresSection/FeaturedStoresSection";
 import HeroCarousel from "./HeroCarousel/HeroCarousel";
@@ -40,11 +39,11 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
   return (
     <div className="landing-page">
       <Header
-        cantidadProductos={landingData.cantidadProductos}
-        suscripciones={landingData.suscripciones}
         textoBusqueda={textoBusqueda}
         onBusquedaChange={setTextoBusqueda}
         onBuscar={buscarProductos}
+        setLocal={setLocal}
+        resultados={resultadosBusqueda}
       />
 
       <HeaderLanding
@@ -55,7 +54,6 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
 
       <main className="landing-content">
         <CategorySection categorias={landingData.categorias} cargando={loading} />
-        <SearchBar resultados={resultadosBusqueda} textoBusqueda={textoBusqueda} />
 
         {errorGeneral ? <div className="landing-alert">{errorGeneral}</div> : null}
 

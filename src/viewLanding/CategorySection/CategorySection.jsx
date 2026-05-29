@@ -5,7 +5,6 @@ function CategorySection({ categorias = [], cargando }) {
   const [cantidadVisible, setCantidadVisible] = useState(5);
 
   const categoriasVisibles = categorias.slice(0, cantidadVisible);
-  const hayMasCategorias = cantidadVisible < categorias.length;
 
   function mostrarMas() {
     setCantidadVisible(cantidadVisible + 5);
@@ -32,13 +31,8 @@ function CategorySection({ categorias = [], cargando }) {
             </article>
           ))
         )}
-      </div>
-
-      {hayMasCategorias ? (
-        <button className="category-strip__button" type="button" onClick={mostrarMas}>
-          Ver mas
-        </button>
-      ) : null}
+      </div>  
+        <button className="category-strip__button" type="button">Ver mas</button>
     </section>
   );
 }

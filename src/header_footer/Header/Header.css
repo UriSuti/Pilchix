@@ -75,6 +75,25 @@
   border: 2px solid rgba(255, 255, 255, 0.65);
 }
 
+.site-header__search-wrapper {
+  position: relative;
+  flex: 1; /* ocupa el mismo espacio que antes tenía el form */
+}
+
+.site-header__search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  padding: 0 8px;
+  line-height: 1;
+}
+
+.site-header__search-clear:hover {
+  color: #1e293b;
+}
+
 @media (max-width: 760px) {
   .site-header {
     grid-template-columns: auto 1fr auto;  /* 👈 corregido, no 1fr */

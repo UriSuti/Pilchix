@@ -3,6 +3,8 @@ import { supabase } from '../utils/supabase.js'
 import CarruselFachadaLocal from './CarruselFachadaLocal.jsx'
 import FiltroLocal from './FiltroLocal.jsx'
 import SeccionPrendasLocal from './SeccionPrendasLocal.jsx'
+import Header from "../header_footer/Header/Header";
+import Footer from "../header_footer/Footer/Footer";
 
 function ViewLocal({ local }) {  
 
@@ -63,6 +65,9 @@ function ViewLocal({ local }) {
   
     return (
     <div className="view-local">
+     
+
+
       <CarruselFachadaLocal marca={imgMarca}/>
       <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
       <main className="view-content">
