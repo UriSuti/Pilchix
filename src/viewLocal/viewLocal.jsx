@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../utils/supabase.js'
-import CarruselFachadaLocal from './CarruselFachadaLocal.jsx'
-import FiltroLocal from './FiltroLocal.jsx'
-import SeccionPrendasLocal from './SeccionPrendasLocal.jsx'
+import { useState } from 'react'
+import CarruselFachadaLocal from './components/CarruselFachadaLocal/carruselFachadaLocal.jsx'
+import FiltroLocal from './components/FiltroLocal/filtroLocal.jsx'
+import SeccionPrendasLocal from './components/SeccionPrendasLocal/seccionPrendasLocal.jsx'
+import { useLocalData } from './hooks/useLocalData.js'
 
 function ViewLocal({ local }) {  
 
   const [search, setSearch] = useState('');
   const [orden, setOrden] = useState('');
-  const [productosDestacados, setproductosDestacados] = useState([]);
-  const [imgMarca, setImgMarca] = useState(null);
+  const { productos, imagenFachada, loading, error } = useLocalData(local);
 
-  const productosFiltrados = productosDestacados.filter((producto) =>
+  const productosFiltrados = productos.filter((producto) =>
     producto.nombre.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -22,48 +21,17 @@ function ViewLocal({ local }) {
     return 0;
   });
 
-  useEffect(() => {
-    async function getProductos() {
-      const { data, error } = await supabase
-        .from('Producto')
-        .select('*, Imagen(*)')
-        .eq('id_marca', local)
-              
-        
-      if (data) {
-        setproductosDestacados(data)
-      }
+  if (loading) {
+    return <div className="view-local">Cargando...</div>;
+  }
 
-      if (error) {
-        console.log(error)
-      }
-    }
-
-    getProductos()
-  }, [])    
-  
-  useEffect(() => {
-    async function getMarca() {
-      const { data, error } = await supabase
-        .from('Marca')
-        .select('imagen_fachada')
-        .eq('id_marca', local)
-        
-        
-      if (data) {
-        setImgMarca(data[0].imagen_fachada)
-      }
-
-      if (error) {
-        console.log(error)
-      }
-    }
-    getMarca()
-  }, [])  
-  
+  if (error) {
+    return <div className="view-local">Error: {error}</div>;
+  }
+    
     return (
     <div className="view-local">
-      <CarruselFachadaLocal marca={imgMarca}/>
+      <CarruselFachadaLocal marca={imagenFachada}/>
       <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
       <main className="view-content">
         <SeccionPrendasLocal productos={productosOrdenados} />
