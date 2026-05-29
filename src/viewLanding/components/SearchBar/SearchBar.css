@@ -1,5 +1,10 @@
 .search-results {
-  margin-top: 28px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 8px;
   padding: 22px;
   border: 1px solid var(--landing-line);
   border-radius: 28px;

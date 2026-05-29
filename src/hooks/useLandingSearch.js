@@ -4,7 +4,7 @@ import {
   formatSearchProducts,
   isValidUserId,
   mergeResultadosBusqueda,
-} from "../helpers/formatters";
+} from "../helpers/formatters.js";
 import {
   saveBusquedaUsuario,
   searchLandingCategorias,

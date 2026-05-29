@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../utils/supabase.js'
-import useLocalData from './hooks/useLocalData.js'
+import { useState } from 'react'
 import Header from '../header_footer/Header/Header.jsx'
 import Footer from '../header_footer/Footer/Footer.jsx'
 import CarruselFachadaLocal from './components/CarruselFachadaLocal/carruselFachadaLocal.jsx'
-import FiltroLocal from './components/FiltroLocal/FiltroLocal.jsx'
-import SeccionPrendasLocal from './components/SeccionPrendasLocal/SeccionPrendasLocal.jsx'
+import FiltroLocal from './components/FiltroLocal/filtroLocal.jsx'
+import SeccionPrendasLocal from './components/SeccionPrendasLocal/seccionPrendasLocal.jsx'
+import { useLocalData } from './hooks/useLocalData.js'
+import { useLandingData } from "../hooks/useLandingData";
+import { useLandingSearch } from "../hooks/useLandingSearch";
 
 function ViewLocal({ local }) {  
 
@@ -34,8 +35,14 @@ function ViewLocal({ local }) {
     
     return (
     <div className="view-local">
-      <Header/>
-      <CarruselFachadaLocal marca={imgMarca}/>
+      <Header 
+        textoBusqueda={textoBusqueda}
+        onBusquedaChange={setTextoBusqueda}
+        onBuscar={buscarProductos}
+        setLocal={setLocal}
+        resultados={resultadosBusqueda}
+      />
+      <CarruselFachadaLocal marca={imagenFachada}/>
       <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
       <main className="view-content">
         <SeccionPrendasLocal productos={productosOrdenados} />

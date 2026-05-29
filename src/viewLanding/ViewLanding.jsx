@@ -2,15 +2,14 @@ import "./ViewLanding.css";
 import Header from "../header_footer/Header/Header";
 import Footer from "../header_footer/Footer/Footer";
 import HeaderLanding from "./components/HeaderLanding/HeaderLanding";
-import SearchBar from "./components/SearchBar/SearchBar";
 import CategorySection from "./components/CategorySection/CategorySection";
 import FeaturedStoresSection from "./components/FeaturedStoresSection/FeaturedStoresSection";
 import HeroCarousel from "./components/HeroCarousel/HeroCarousel";
 import OffersSection from "./components/OffersSection/OffersSection";
 import { LANDING_SECTION_TITLES } from "./constants";
 import { buildLandingResumen } from "./helpers/formatters";
-import { useLandingData } from "./hooks/useLandingData";
-import { useLandingSearch } from "./hooks/useLandingSearch";
+import { useLandingData } from "../hooks/useLandingData";
+import { useLandingSearch } from "../hooks/useLandingSearch";
 
 function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) {
   const idUsuario = idUsuarioProp ?? id_usuario;

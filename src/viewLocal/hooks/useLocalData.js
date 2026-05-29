@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getLocalProductos, getLocalMarca } from "../services/local";
 
-export default function useLocalData(idMarca) {
+export function useLocalData(idMarca) {
   const [localData, setLocalData] = useState({
     productos: [],
     imagenFachada: null,
