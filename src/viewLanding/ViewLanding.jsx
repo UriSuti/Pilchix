@@ -26,7 +26,7 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
     .sort((a, b) => b.visualizaciones - a.visualizaciones)
     .slice(0, 6);
 
-  const errorGeneral = dataError || searchError;
+  const errorGeneral = dataError;
 
   return (
     <div className="landing-page">
@@ -36,7 +36,7 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
       />
 
       <HeaderLanding
-        subtitle="Nueva temporada"
+              subtitle="Nueva temporada"
         title="LAS MEJORES OFERTAS PARA EL OTOÑO"
         description="Descubri prendas, locales y descuentos elegidos para una experiencia de compra mucho mas visual"
       />
