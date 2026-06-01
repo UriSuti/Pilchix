@@ -36,12 +36,9 @@ function ViewLocal({ local }) {
     return (
     <div className="view-local">
       <Header 
-        textoBusqueda={textoBusqueda}
-        onBusquedaChange={setTextoBusqueda}
-        onBuscar={buscarProductos}
+        idUsuario={idUsuario}
         setLocal={setLocal}
-        resultados={resultadosBusqueda}
-      />
+      /> 
       <CarruselFachadaLocal marca={imagenFachada}/>
       <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
       <main className="view-content">

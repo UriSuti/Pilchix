@@ -1,14 +1,20 @@
 import { useRef, useEffect } from "react";
-import SearchBar from "./SearchBar/SearchBar.jsx"; 
+import { useNavigate } from "react-router-dom"; 
+import SearchBar from "./SearchBar/SearchBar.jsx";
+import { useLandingSearch } from "../../hooks/useLandingSearch";
 import "./Header.css";
 
 function Header({
-  textoBusqueda = "",
-  onBusquedaChange,
-  onBuscar,
-  setLocal,
-  resultados = [],
+  idUsuario = null, 
 }) {
+  const navigate = useNavigate(); 
+
+  const {
+    textoBusqueda,
+    setTextoBusqueda,
+    resultadosBusqueda,
+    buscarProductos,
+  } = useLandingSearch(idUsuario);
 
   const searchWrapperRef = useRef(null);
 
@@ -18,28 +24,27 @@ function Header({
         searchWrapperRef.current &&
         !searchWrapperRef.current.contains(event.target)
       ) {
-        onBusquedaChange(""); 
+        setTextoBusqueda("");
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onBusquedaChange]);
+  }, [setTextoBusqueda]);
 
   return (
     <header className="site-header">
-      <a className="site-header__brand" onClick={() => setLocal(null)}>
+      {/* ✅ navigate("/") lleva a la landing, reemplaza setLocal?.(null) */}
+      <a className="site-header__brand" onClick={() => navigate("/")}>
         PILCHIX
       </a>
 
-
       <div className="site-header__search-wrapper" ref={searchWrapperRef}>
-        <form className="site-header__search" onSubmit={onBuscar}>
+        <form className="site-header__search" onSubmit={buscarProductos}>
           <span className="site-header__search-icon" aria-hidden="true">⌕</span>
           <input
             type="search"
             value={textoBusqueda}
-            onChange={(event) => onBusquedaChange(event.target.value)}
+            onChange={(event) => setTextoBusqueda(event.target.value)}
             placeholder="Buscar prendas, marcas y categorias"
             aria-label="Buscar productos"
           />
@@ -48,7 +53,7 @@ function Header({
               className="site-header__search-clear"
               type="button"
               aria-label="Limpiar búsqueda"
-              onClick={() => onBusquedaChange("")}
+              onClick={() => setTextoBusqueda("")}
             >
               ✕
             </button>
@@ -56,7 +61,7 @@ function Header({
         </form>
 
         {textoBusqueda.trim() && (
-          <SearchBar resultados={resultados} textoBusqueda={textoBusqueda} />
+          <SearchBar resultados={resultadosBusqueda} textoBusqueda={textoBusqueda} />
         )}
       </div>
 
