@@ -4,12 +4,12 @@ import {
   formatSearchProducts,
   isValidUserId,
   mergeResultadosBusqueda,
-} from "../helpers/formatters.js";
+} from "../viewLanding/helpers/formatters";
 import {
   saveBusquedaUsuario,
   searchLandingCategorias,
   searchLandingProductos,
-} from "../services/landing";
+} from "../viewLanding/services/landing";
 
 export function useLandingSearch(idUsuario) {
   const [textoBusqueda, setTextoBusqueda] = useState("");

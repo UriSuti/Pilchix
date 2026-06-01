@@ -6,7 +6,7 @@ import {
   formatProductosPopulares,
   formatSuscripciones,
   isValidUserId,
-} from "../helpers/formatters";
+} from "../viewLanding/helpers/formatters";
 import {
   getLandingCarrito,
   getLandingCategorias,
@@ -16,7 +16,7 @@ import {
   getLandingMarcasPopulares,
   getLandingProductosPopulares,
   getLandingSuscripciones,
-} from "../services/landing";
+} from "../viewLanding/services/landing";
 
 export function useLandingData(idUsuario) {
   const [landingData, setLandingData] = useState({
