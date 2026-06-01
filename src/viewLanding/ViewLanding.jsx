@@ -9,19 +9,11 @@ import OffersSection from "./components/OffersSection/OffersSection";
 import { LANDING_SECTION_TITLES } from "./constants";
 import { buildLandingResumen } from "./helpers/formatters";
 import { useLandingData } from "../hooks/useLandingData";
-import { useLandingSearch } from "../hooks/useLandingSearch";
 
 function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) {
   const idUsuario = idUsuarioProp ?? id_usuario;
 
   const { landingData, loading, error: dataError } = useLandingData(idUsuario);
-  const {
-    textoBusqueda,
-    setTextoBusqueda,
-    resultadosBusqueda,
-    buscarProductos,
-    error: searchError,
-  } = useLandingSearch(idUsuario);
 
   const resumen = buildLandingResumen({
     categorias: landingData.categorias,
@@ -39,11 +31,8 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
   return (
     <div className="landing-page">
       <Header
-        textoBusqueda={textoBusqueda}
-        onBusquedaChange={setTextoBusqueda}
-        onBuscar={buscarProductos}
+        idUsuario={idUsuario}
         setLocal={setLocal}
-        resultados={resultadosBusqueda}
       />
 
       <HeaderLanding
