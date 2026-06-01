@@ -1,18 +1,14 @@
 import './App.css'
-import { useState, useEffect } from 'react'
-import ViewLocal from './viewLocal/ViewLocal'
-import ViewLanding from './viewLanding/ViewLanding'
-import { getLandingCategoriasConProductos } from './viewLanding/services/landing'
+import { Routes, Route } from 'react-router-dom'
+import ViewLanding from './viewLanding/ViewLanding.jsx'
+import ViewLocal from './viewLocal/viewLocal.jsx'
 
 function App() {
-
-  const [local, setLocal] = useState(null);
-
-  console.log(getLandingCategoriasConProductos())
-
-
   return (
-    local !== null? <ViewLocal local={local} /> : <ViewLanding local={local} setLocal={setLocal} />
+    <Routes>
+      <Route path="/" element={<ViewLanding />} />
+      <Route path="/:storeSlug" element={<ViewLocal />} />
+    </Routes>
   )
 }
 
