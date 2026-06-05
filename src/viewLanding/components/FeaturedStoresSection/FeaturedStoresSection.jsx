@@ -5,7 +5,7 @@ import { slugify } from "../../../utils/slugify";
 
 function FeaturedStoresSection({ marcas = [], marcasPopulares = [], cargando, local, setLocal }) {
   const [paginaActual, setPaginaActual] = useState(0);
-  const [cantidadVisible, setCantidadVisible] = useState(4);
+  const [cantidadVisible, setCantidadVisible] = useState(10);
 
   const locales = marcasPopulares.length > 0 ? marcasPopulares : marcas;
   const localesMostrados = locales.slice(0, cantidadVisible);
