@@ -14,7 +14,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 34px;
-  row-gap: 28px;
+  row-gap: 42px;
   box-sizing: border-box;
 }
 
@@ -31,11 +31,19 @@
   object-fit: cover;
   display: block;
   background-color: #f5f5f5;
+  border-radius: 2px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card-producto:hover img {
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+  transform: translateY(-2px);
 }
 
 /* Nombre del producto */
 .card-producto h3 {
-  margin: 8px 0 2px;
+  margin: 14px 0 2px;
   font-size: 0.72rem;
   font-weight: 400;
   color: #111111;

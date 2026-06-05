@@ -73,7 +73,8 @@
 .imagen-fachada img {
   display: block;
   width: 100%;
-  height: 340px; /* altura aproximada según el diseño */
+  aspect-ratio: 2.55 / 1; /* proporción similar al diseño */
+  max-height: 360px;
   object-fit: cover;
 }
 
