@@ -7,15 +7,22 @@ const formatPrice = (value) =>
     maximumFractionDigits: 0,
   }).format(Number(value || 0));
 
-function SearchBar({ resultados = [], textoBusqueda = "" }) {
+function SearchBar({ resultados = [], textoBusqueda = "", cargando = false }) {
   return (
     <div className="search-dropdown">
       <div className="search-dropdown__header">
         <span>Resultados para "{textoBusqueda}"</span>
-        <span className="search-dropdown__count">{resultados.length} items</span>
+        {!cargando && (
+          <span className="search-dropdown__count">{resultados.length} items</span>
+        )}
       </div>
 
-      {resultados.length === 0 ? (
+      {cargando ? (
+        <div className="search-dropdown__loading">
+          <span className="search-dropdown__spinner" aria-hidden="true" />
+          Buscando…
+        </div>
+      ) : resultados.length === 0 ? (
         <p className="search-dropdown__empty">No encontramos coincidencias exactas.</p>
       ) : (
         <ul className="search-dropdown__list">

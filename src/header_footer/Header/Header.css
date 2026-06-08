@@ -111,3 +111,8 @@
     justify-content: flex-end;
   }
 }
+
+.site-header__search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
