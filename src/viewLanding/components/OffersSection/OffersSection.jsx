@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./OffersSection.css";
 
 const formatPrice = (value) =>
@@ -10,10 +10,10 @@ const formatPrice = (value) =>
 
 function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS" }) {
   const [paginaActual, setPaginaActual] = useState(0);
-  const [cantidadVisible, setCantidadVisible] = useState(6);
+  const [cantidadVisible, setCantidadVisible] = useState(3);
 
   const descuentosMostrados = descuentos.slice(0, cantidadVisible);
-  const cantidadPorPagina = 6;
+  const cantidadPorPagina = 3;
   const totalPaginas = Math.max(1, Math.ceil(descuentosMostrados.length / cantidadPorPagina));
   const inicio = paginaActual * cantidadPorPagina;
   const descuentosVisibles = descuentosMostrados.slice(inicio, inicio + cantidadPorPagina);
@@ -34,8 +34,17 @@ function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS
   }
 
   function mostrarMas() {
-    setCantidadVisible(cantidadVisible + 6);
+    setCantidadVisible(cantidadVisible + 3);
   }
+
+  // Ensure current page is within range when visible count or descuentos change
+  useEffect(() => {
+    const nuevosMostrados = descuentos.slice(0, cantidadVisible);
+    const nuevasPaginas = Math.max(1, Math.ceil(nuevosMostrados.length / cantidadPorPagina));
+    if (paginaActual > nuevasPaginas - 1) {
+      setPaginaActual(nuevasPaginas - 1);
+    }
+  }, [cantidadVisible, descuentos, paginaActual, cantidadPorPagina]);
 
   return (
     <section className="rail-section">

@@ -2,3 +2,18 @@
   color: var(--landing-blue);
   font-weight: 600;
 }
+
+
+.product-rail__card{
+  transition: transform 0.18s, box-shadow 0.18s;
+  border-radius:10px ;
+
+}
+
+.product-rail__card:hover{
+
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(18, 61, 89, 0.12);
+  border-color: rgba(18, 61, 89, 0.25);
+
+}
