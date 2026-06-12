@@ -10,6 +10,7 @@ import { useLocalData } from './hooks/useLocalData.js'
 import { useLandingData } from '../hooks/useLandingData'
 import { useLandingSearch } from '../hooks/useLandingSearch'
 import { slugify } from '../utils/slugify.js'
+import ViewLocalSkeleton from "./components/ViewLocalSkeleton/ViewLocalSkeleton.jsx";
 
 function ViewLocal() {
   const { storeSlug } = useParams()
@@ -37,21 +38,8 @@ function ViewLocal() {
     return 0
   })
 
-  if (cargandoMarcas) {
-    return <div className="view-local">Cargando marcas...</div>
-  }
-
-  if (!marca) {
-    return <div className="view-local">Local no encontrado</div>
-  }
-
-  if (loading) {
-    return <div className="view-local">Cargando local...</div>
-  }
-
-  if (error) {
-    return <div className="view-local">Error: {error}</div>
-  }
+  const cargando = cargandoMarcas || loading
+  const noEncontrado = !cargandoMarcas && !marca
 
   return (
     <div className="view-local">
@@ -61,17 +49,30 @@ function ViewLocal() {
         onBuscar={buscarProductos}
         resultados={resultadosBusqueda}
       />
-      <CarruselFachadaLocal marca={imagenFachada} />
-      <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
-      <main className="view-content">
-        <SeccionPrendasLocal productos={productosOrdenados} />
-        <div className="spacer-footer" />
-        <footer>
-          <Footer />
-        </footer>
-      </main>
+
+      {cargando && <ViewLocalSkeleton />}
+
+      {!cargando && noEncontrado && (
+        <div className="view-estado">No encontramos ese local 😕</div>
+      )}
+
+      {!cargando && error && (
+        <div className="view-estado">Ups, algo salió mal. Probá recargar.</div>
+      )}
+
+      {!cargando && marca && !error && (
+        <div className="contenido-local">
+          <CarruselFachadaLocal marca={imagenFachada} />
+          <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
+          <main className="view-content">
+            <SeccionPrendasLocal productos={productosOrdenados} />
+            <div className="spacer-footer" />
+            <footer><Footer /></footer>
+          </main>
+        </div>
+      )}
     </div>
-  )
+)
 }
 
 export default ViewLocal

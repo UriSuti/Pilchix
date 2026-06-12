@@ -9,6 +9,7 @@ import OffersSection from "./components/OffersSection/OffersSection";
 import { LANDING_SECTION_TITLES } from "./constants";
 import { buildLandingResumen } from "./helpers/formatters";
 import { useLandingData } from "../hooks/useLandingData";
+import ViewLandingSkeleton from "./components/ViewLandingSkeleton/ViewLandingSkeleton";
 
 function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) {
   const idUsuario = idUsuarioProp ?? id_usuario;
@@ -27,6 +28,11 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
     .slice(0, 6);
 
   const errorGeneral = dataError;
+
+  if (loading) {
+    return <ViewLandingSkeleton />
+  }
+
 
   return (
     <div className="landing-page">
