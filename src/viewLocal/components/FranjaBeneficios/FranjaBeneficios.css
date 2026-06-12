@@ -1,0 +1,76 @@
+/* Franja de beneficios (debajo del hero) */
+.franja-beneficios {
+  width: 100%;
+  background-color: #fafafa;
+  border-bottom: 1px solid #ededed;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 22px 24px;
+  box-sizing: border-box;
+}
+
+/* Cada beneficio */
+.franja-beneficios__item {
+  flex: 1 1 220px;
+  max-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+}
+
+/* separadores entre ítems */
+.franja-beneficios__item:not(:last-child) {
+  border-right: 1px solid #e6e6e6;
+}
+
+/* Ícono */
+.franja-beneficios__icono {
+  color: #0b3d5c;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+/* Texto */
+.franja-beneficios__titulo {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.2;
+}
+
+.franja-beneficios__detalle {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: #8a8a8a;
+  line-height: 1.2;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  .franja-beneficios__item {
+    flex-basis: 45%;
+  }
+
+  /* sin bordes verticales cuando se acomodan en 2 columnas */
+  .franja-beneficios__item:not(:last-child) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .franja-beneficios {
+    padding: 18px 16px;
+  }
+
+  .franja-beneficios__item {
+    flex-basis: 100%;
+    padding: 8px 4px;
+  }
+}

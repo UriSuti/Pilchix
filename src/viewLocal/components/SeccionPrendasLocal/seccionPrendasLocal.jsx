@@ -1,5 +1,5 @@
 import './seccionPrendasLocal.css'
-import Producto from '../Producto/producto.jsx'
+import Producto from '../Producto/Producto.jsx'
 
 
 function SeccionPrendasLocal({productos}){

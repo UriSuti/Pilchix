@@ -1,0 +1,24 @@
+.view-producto {
+  margin: 0 auto;
+  background: #ffffff;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.contenido-producto {
+  display: flex;
+  gap: 40px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px 16px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .contenido-producto {
+    flex-direction: column;
+    gap: 28px;
+    padding: 24px 16px;
+  }
+}

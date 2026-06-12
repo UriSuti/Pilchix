@@ -3,8 +3,9 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Header from '../header_footer/Header/Header.jsx'
 import Footer from '../header_footer/Footer/Footer.jsx'
-import CarruselFachadaLocal from './components/CarruselFachadaLocal/carruselFachadaLocal.jsx'
-import FiltroLocal from './components/FiltroLocal/filtroLocal.jsx'
+import HeroLocal from './components/HeroLocal/HeroLocal.jsx'
+import FranjaBeneficios from './components/FranjaBeneficios/FranjaBeneficios.jsx'
+import BarraHerramientas from './components/BarraHerramientas/BarraHerramientas.jsx'
 import SeccionPrendasLocal from './components/SeccionPrendasLocal/seccionPrendasLocal.jsx'
 import { useLocalData } from './hooks/useLocalData.js'
 import { useLandingData } from '../hooks/useLandingData'
@@ -14,7 +15,6 @@ import ViewLocalSkeleton from "./components/ViewLocalSkeleton/ViewLocalSkeleton.
 
 function ViewLocal() {
   const { storeSlug } = useParams()
-  const [search, setSearch] = useState('')
   const [orden, setOrden] = useState('')
 
   // 1) traigo todas las marcas y encuentro la que pide la URL
@@ -27,11 +27,7 @@ function ViewLocal() {
   // 3) búsqueda del header
   const { textoBusqueda, setTextoBusqueda, buscarProductos, resultadosBusqueda } = useLandingSearch()
 
-  const productosFiltrados = productos.filter((producto) =>
-    producto.nombre.toLowerCase().includes(search.toLowerCase())
-  )
-
-  const productosOrdenados = [...productosFiltrados].sort((a, b) => {
+  const productosOrdenados = [...productos].sort((a, b) => {
     if (orden === 'lowPrice') return a.precio - b.precio
     if (orden === 'highPrice') return b.precio - a.precio
     if (orden === 'bestSeller') return (b.ventas || 0) - (a.ventas || 0)
@@ -62,13 +58,18 @@ function ViewLocal() {
 
       {!cargando && marca && !error && (
         <div className="contenido-local">
-          <CarruselFachadaLocal marca={imagenFachada} />
-          <FiltroLocal search={search} setSearch={setSearch} orden={orden} setOrden={setOrden} />
+          <HeroLocal marca={marca} imagenFachada={imagenFachada} />
+          <FranjaBeneficios />
+          <BarraHerramientas
+            orden={orden}
+            setOrden={setOrden}
+            cantidad={productosOrdenados.length}
+          />
           <main className="view-content">
             <SeccionPrendasLocal productos={productosOrdenados} />
-            <div className="spacer-footer" />
-            <footer><Footer /></footer>
           </main>
+          <div className="spacer-footer" />
+          <footer><Footer /></footer>
         </div>
       )}
     </div>

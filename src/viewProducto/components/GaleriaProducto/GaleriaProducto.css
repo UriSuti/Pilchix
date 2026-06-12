@@ -1,0 +1,120 @@
+.galeria-producto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.galeria-producto__principal {
+  display: flex;
+  gap: 12px;
+}
+
+/* =========================
+   MINIATURAS
+========================= */
+.galeria-producto__miniaturas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.galeria-producto__miniatura {
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #f1f1f1;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.galeria-producto__miniatura img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.galeria-producto__miniatura:hover {
+  opacity: 1;
+}
+
+.galeria-producto__miniatura.is-active {
+  opacity: 1;
+  box-shadow: 0 0 0 2px #111111;
+}
+
+/* =========================
+   IMAGEN PRINCIPAL
+========================= */
+.galeria-producto__imagen {
+  position: relative;
+  flex: 1;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.galeria-producto__imagen img {
+  width: 100%;
+  aspect-ratio: 1.15 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.galeria-producto__flechas {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.galeria-producto__flechas button {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: #0b3d5c;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.galeria-producto__flechas button:hover {
+  background-color: #0e4d73;
+}
+
+/* =========================
+   BANNER DE HORARIO
+========================= */
+.galeria-producto__horario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #0b3d5c;
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .galeria-producto__miniatura {
+    width: 44px;
+    height: 44px;
+  }
+}

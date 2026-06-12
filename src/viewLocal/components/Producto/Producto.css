@@ -1,27 +1,101 @@
-.producto {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fff;
-    margin: 10px;
-    width: 200px;
-}
-.producto-imagen {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+/* Card de producto */
+.card-producto {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-
-.producto-descripcion {
-    font-weight: bold;
-    font-size: 18px;
+.card-producto:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.10);
+  transform: translateY(-3px);
 }
 
+/* =========================
+   IMAGEN + FAVORITO
+========================= */
+.card-producto__media {
+  position: relative;
+  background-color: #ffffff;
+}
 
-.producto-precio {
-    font-weight: bold;
-    font-size: 20px;
+.card-producto__media img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.card-producto__fav {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.2s ease;
+}
+
+.card-producto__fav:hover {
+  background-color: #ffffff;
+}
+
+/* =========================
+   INFO
+========================= */
+.card-producto__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px 18px;
+}
+
+.card-producto__nombre {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111111;
+  line-height: 1.25;
+}
+
+.card-producto__subtitulo {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #9a9a9a;
+  line-height: 1.2;
+}
+
+.card-producto__precio {
+  margin: 8px 0 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #111111;
+}
+
+/* =========================
+   SWATCHES DE COLOR
+========================= */
+.card-producto__colores {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.card-producto__swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid #dcdcdc;
+  display: inline-block;
 }

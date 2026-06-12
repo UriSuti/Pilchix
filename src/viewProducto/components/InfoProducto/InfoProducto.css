@@ -1,0 +1,104 @@
+.info-producto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* =========================
+   ENCABEZADO
+========================= */
+.info-producto__encabezado {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.info-producto__titulo {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #111111;
+  line-height: 1.1;
+}
+
+.info-producto__subtitulo {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: #8a8a8a;
+}
+
+.info-producto__favorito {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 2px;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+/* =========================
+   PRECIO
+========================= */
+.info-producto__precio {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.info-producto__precio-actual {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #111111;
+}
+
+.info-producto__precio-original {
+  font-size: 0.9rem;
+  color: #9a9a9a;
+  text-decoration: line-through;
+}
+
+/* =========================
+   BOTON CARRITO
+========================= */
+.info-producto__carrito {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 8px;
+  background-color: #0b3d5c;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.info-producto__carrito:hover {
+  background-color: #0e4d73;
+}
+
+/* =========================
+   LINK
+========================= */
+.info-producto__link {
+  align-self: center;
+  font-size: 0.82rem;
+  color: #5a5a5a;
+  text-decoration: underline;
+}
+
+.info-producto__link:hover {
+  color: #111111;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .info-producto__titulo {
+    font-size: 1.4rem;
+  }
+}

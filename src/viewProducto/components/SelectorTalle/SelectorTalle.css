@@ -1,0 +1,40 @@
+.selector-talle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.selector-talle__titulo {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #111111;
+}
+
+.selector-talle__grilla {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.selector-talle__opcion {
+  height: 48px;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  background-color: #ffffff;
+  font-size: 0.95rem;
+  color: #111111;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.selector-talle__opcion:hover {
+  border-color: #111111;
+}
+
+.selector-talle__opcion.is-active {
+  border-color: #0b3d5c;
+  box-shadow: 0 0 0 1px #0b3d5c;
+  background-color: #f4f8fb;
+  font-weight: 600;
+}

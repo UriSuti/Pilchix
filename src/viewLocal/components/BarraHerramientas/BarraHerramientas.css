@@ -1,0 +1,161 @@
+/* Barra de herramientas (tabs + orden + filtros + contador) */
+.barra-herramientas {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+  box-sizing: border-box;
+}
+
+/* Fila superior: tabs a la izq, acciones a la der */
+.barra-herramientas__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 12px;
+}
+
+/* =========================
+   TABS
+========================= */
+.barra-herramientas__tabs {
+  display: flex;
+  gap: 28px;
+}
+
+.barra-herramientas__tab {
+  position: relative;
+  border: none;
+  background: none;
+  padding: 6px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #9a9a9a;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.barra-herramientas__tab:hover {
+  color: #111111;
+}
+
+.barra-herramientas__tab.is-active {
+  color: #111111;
+}
+
+/* subrayado del tab activo */
+.barra-herramientas__tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -13px;
+  height: 2px;
+  background-color: #111111;
+}
+
+/* =========================
+   ACCIONES (orden + filtros)
+========================= */
+.barra-herramientas__acciones {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+/* Selector de orden */
+.barra-herramientas__orden {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 6px 14px;
+  min-width: 180px;
+  background-color: #ffffff;
+}
+
+.barra-herramientas__orden-label {
+  font-size: 0.68rem;
+  color: #9a9a9a;
+  line-height: 1.2;
+}
+
+.barra-herramientas__orden-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.barra-herramientas__orden-select {
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #111111;
+  cursor: pointer;
+  /* saco la flecha nativa para usar la nuestra */
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 8px;
+  width: 100%;
+}
+
+.barra-herramientas__orden-flecha {
+  color: #555555;
+  line-height: 0;
+  pointer-events: none;
+}
+
+/* Botón filtros */
+.barra-herramientas__filtros {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  background-color: #f3f3f3;
+  padding: 0 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111111;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.barra-herramientas__filtros:hover {
+  background-color: #e9e9e9;
+}
+
+/* =========================
+   CONTADOR
+========================= */
+.barra-herramientas__contador {
+  margin: 14px 0 0;
+  font-size: 0.82rem;
+  color: #777777;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 640px) {
+  .barra-herramientas__fila {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .barra-herramientas__acciones {
+    justify-content: space-between;
+  }
+
+  .barra-herramientas__orden {
+    flex: 1;
+    min-width: 0;
+  }
+}
