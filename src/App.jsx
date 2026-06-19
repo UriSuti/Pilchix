@@ -4,6 +4,8 @@ import ViewLanding from './viewLanding/ViewLanding.jsx'
 import ViewLocal from './viewLocal/viewLocal.jsx'
 import ViewProducto from './viewProducto/viewProducto.jsx'
 import SesionTest from './SessionTest.jsx'
+import Login from './viewAuth/Login.jsx'
+import Registro from './viewAuth/Registro.jsx'
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
       <Route path="/producto" element={<ViewProducto />} />
       <Route path="/:storeSlug" element={<ViewLocal />} />
       <Route path="/test" element={<SesionTest />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/registro" element={<Registro />} />
     </Routes>
   )
 }

@@ -1,7 +1,10 @@
-import { useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar/SearchBar.jsx";
 import { useLandingSearch } from "../../hooks/useLandingSearch";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useToast } from "../../context/ToastContext.jsx";
 import "./Header.css";
 
 const IconSearch = () => (
@@ -43,6 +46,8 @@ const IconClose = () => (
 function Header({ idUsuario = null }) {
   const navigate = useNavigate();
 
+  const { mostrarToast } = useToast();
+
   const {
     textoBusqueda,
     setTextoBusqueda,
@@ -51,7 +56,12 @@ function Header({ idUsuario = null }) {
     buscarProductos,
   } = useLandingSearch(idUsuario);
 
+  const [menuPerfilAbierto, setMenuPerfilAbierto] = useState(false);
+  const perfilRef = useRef(null);
+
   const searchWrapperRef = useRef(null);
+
+  const { estaLogueado, usuario, logout } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -62,6 +72,16 @@ function Header({ idUsuario = null }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setTextoBusqueda]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (perfilRef.current && !perfilRef.current.contains(event.target)) {
+        setMenuPerfilAbierto(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="site-header">
@@ -105,9 +125,38 @@ function Header({ idUsuario = null }) {
         <button className="site-header__action" type="button" aria-label="Notificaciones">
           <IconBell />
         </button>
-        <button className="site-header__action site-header__action--profile" type="button" aria-label="Perfil">
-          <IconUser />
-        </button>
+        <div className="site-header__perfil" ref={perfilRef}>
+          <button
+            className="site-header__action site-header__action--profile"
+            type="button"
+            aria-label="Perfil"
+            onClick={() =>
+              estaLogueado ? setMenuPerfilAbierto((v) => !v) : navigate("/login")
+            }
+          >{estaLogueado && usuario.foto_perfil ? (
+            <img src={usuario.foto_perfil} alt="Perfil" className="site-header__avatar" />
+          ) : (
+            <IconUser />
+          )}
+          </button>
+
+          {estaLogueado && menuPerfilAbierto && (
+            <div className="site-header__perfil-menu">
+              <p className="site-header__perfil-nombre">Hola, {usuario.nombre}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  logout();
+                  setMenuPerfilAbierto(false);
+                  mostrarToast("Cerraste sesión", "info")
+                  navigate("/");
+                }}
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
