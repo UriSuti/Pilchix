@@ -1,5 +1,9 @@
 import './InfoProducto.css'
 import { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../../../context/AuthContext'
+import { useToast } from '../../../context/ToastContext'
+import { agregarAlCarrito } from '../../../viewCarrito/services/cart'
 import SelectorColor from '../SelectorColor/SelectorColor.jsx'
 import SelectorTalle from '../SelectorTalle/SelectorTalle.jsx'
 
@@ -15,20 +19,16 @@ const IconCorazon = () => (
 )
 
 function InfoProducto({ producto, loading }) {
-  if (loading) {
-    return <section className="info-producto">Cargando...</section>
-  }
-
-  if (!producto) {
-    return <section className="info-producto">Producto no encontrado</section>
-  }
-
   const productId = producto?.id_producto ?? producto?.id ?? producto?.id_marca ?? 'unknown'
-
   const storageKey = `productSelection_${productId}`
 
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedTalle, setSelectedTalle] = useState(null)
+  const [agregando, setAgregando] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { estaLogueado, idUsuario } = useAuth()
+  const { mostrarToast } = useToast()
 
   useEffect(() => {
     try {
@@ -37,11 +37,22 @@ function InfoProducto({ producto, loading }) {
         const parsed = JSON.parse(raw)
         setSelectedColor(parsed.color ?? null)
         setSelectedTalle(parsed.talle ?? null)
+      } else {
+        setSelectedColor(null)
+        setSelectedTalle(null)
       }
     } catch (e) {
       // ignore
     }
   }, [storageKey])
+
+  if (loading) {
+    return <section className="info-producto">Cargando...</section>
+  }
+
+  if (!producto) {
+    return <section className="info-producto">Producto no encontrado</section>
+  }
 
   const saveSelection = (color, talle) => {
     try {
@@ -61,34 +72,39 @@ function InfoProducto({ producto, loading }) {
     saveSelection(selectedColor, talle)
   }
 
-  const handleAgregarCarrito = () => {
-    const cartKey = 'cart'
+  const handleAgregarCarrito = async () => {
+    if (!selectedColor || !selectedTalle) {
+      mostrarToast('Seleccioná talle y color antes de agregar', 'info')
+      return
+    }
+
+    if (!estaLogueado) {
+      mostrarToast('Iniciá sesión para agregar al carrito', 'info')
+      navigate('/login', { state: { from: location.pathname } })
+      return
+    }
+
+    setAgregando(true)
     try {
-      const raw = localStorage.getItem(cartKey)
-      const cart = raw ? JSON.parse(raw) : []
-
-      const newItem = {
-        id: producto.id_producto ?? producto.id ?? producto.id_marca ?? null,
-        nombre: producto.nombre,
-        precio: producto.precio,
-        color: selectedColor,
-        talle: selectedTalle,
+      await agregarAlCarrito({
+        idUsuario,
+        idProducto: producto.id_producto ?? producto.id ?? producto.id_marca ?? null,
         cantidad: 1,
-        imagen: producto.Imagen?.[0]?.imagen ?? null,
-      }
-
-      cart.push(newItem)
-      localStorage.setItem(cartKey, JSON.stringify(cart))
-      // optionally: show a toast or feedback
-      console.log('Añadido al carrito', newItem)
+        precioUnitario: producto.precio,
+        talle: selectedTalle,
+        color: selectedColor,
+      })
+      mostrarToast('Producto agregado al carrito', 'exito')
     } catch (e) {
       console.error('Error agregando al carrito', e)
+      mostrarToast('Ocurrió un error al agregar al carrito', 'error')
+    } finally {
+      setAgregando(false)
     }
   }
 
   return (
     <section className="info-producto">
-      {/* encabezado: titulo + favorito */}
       <div className="info-producto__encabezado">
         <div>
           <h1 className="info-producto__titulo">{producto.nombre}</h1>
@@ -102,23 +118,18 @@ function InfoProducto({ producto, loading }) {
         </button>
       </div>
 
-      {/* precio */}
       <div className="info-producto__precio">
         <span className="info-producto__precio-actual">{formatearPrecio(producto.precio)}</span>
       </div>
 
-      {/* colores */}
       <SelectorColor colores={producto?.colores} value={selectedColor} onChange={handleColorChange} />
 
-      {/* talles */}
       <SelectorTalle guiaTalles={producto?.guia_talles} value={selectedTalle} onChange={handleTalleChange} />
 
-      {/* carrito */}
-      <button type="button" className="info-producto__carrito" onClick={handleAgregarCarrito}>
-        AGREGAR AL CARRITO
+      <button type="button" className="info-producto__carrito" onClick={handleAgregarCarrito} disabled={agregando}>
+        {agregando ? 'AGREGANDO...' : 'AGREGAR AL CARRITO'}
       </button>
 
-      {/* link */}
       <a className="info-producto__link" href="#">
         Leer más sobre el producto
       </a>

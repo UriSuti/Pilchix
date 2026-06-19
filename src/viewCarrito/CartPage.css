@@ -1,0 +1,173 @@
+.cart-loading {
+  display: flex;
+  justify-content: center;
+  padding: 64px 24px;
+  color: #6b7280;
+}
+
+.cart-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 24px 80px;
+}
+
+.cart-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.cart-page__header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: #111827;
+}
+
+.cart-page__header p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.cart-page__help {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  padding-top: 8px;
+}
+
+.cart-page__help a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cart-page__help a:hover {
+  text-decoration: underline;
+}
+
+.cart-page__content {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.cart-page__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Table card ── */
+.cart-table {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cart-table__head {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 14px 24px;
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cart-table__empty {
+  padding: 40px 24px;
+  color: #6b7280;
+  text-align: center;
+  margin: 0;
+}
+
+.cart-table__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cart-table__continue {
+  color: #2563eb;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.cart-table__continue:hover {
+  text-decoration: underline;
+}
+
+.cart-table__update {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: #374151;
+  font-weight: 500;
+}
+
+.cart-table__update:hover {
+  background: #f9fafb;
+}
+
+/* ── Benefits strip ── */
+.cart-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.cart-benefit {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.cart-benefit__icon {
+  color: #2563eb;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cart-benefit__text strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 3px;
+}
+
+.cart-benefit__text span {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+@media (max-width: 1024px) {
+  .cart-page__content { flex-direction: column; }
+  .cart-benefits { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .cart-page { padding-inline: 16px; }
+  .cart-table__head { display: none; }
+  .cart-benefits { grid-template-columns: 1fr; }
+}

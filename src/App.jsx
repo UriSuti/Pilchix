@@ -6,6 +6,7 @@ import ViewProducto from './viewProducto/viewProducto.jsx'
 import SesionTest from './SessionTest.jsx'
 import Login from './viewAuth/Login.jsx'
 import Registro from './viewAuth/Registro.jsx'
+import CartPage from './viewCarrito/CartPage.jsx'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/test" element={<SesionTest />} />
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registro />} />
+      <Route path="/carrito" element={<CartPage />} />
     </Routes>
   )
 }

@@ -119,7 +119,7 @@ function Header({ idUsuario = null }) {
       </div>
 
       <div className="site-header__actions" aria-label="Acciones">
-        <button className="site-header__action" type="button" aria-label="Carrito">
+        <button className="site-header__action" type="button" aria-label="Carrito" onClick={() => navigate('/carrito')}>
           <IconCart />
         </button>
         <button className="site-header__action" type="button" aria-label="Notificaciones">
