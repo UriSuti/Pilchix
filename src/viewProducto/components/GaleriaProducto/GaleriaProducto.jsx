@@ -1,6 +1,10 @@
 import './GaleriaProducto.css'
 import nike from '../../../assets/nike.webp'
 
+function getImagenUrl(producto, index = 0) {
+  return producto?.Imagen?.[index]?.imagen || nike
+}
+
 const IconReloj = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" />
@@ -8,32 +12,38 @@ const IconReloj = () => (
   </svg>
 )
 
-function GaleriaProducto() {
+function GaleriaProducto({ producto, loading }) {
+  if (loading) {
+    return <section className="galeria-producto">Cargando...</section>
+  }
+
+  if (!producto) {
+    return <section className="galeria-producto">Producto no encontrado</section>
+  }
+
+  const imagenes = producto.Imagen || []
+
   return (
     <section className="galeria-producto">
       <div className="galeria-producto__principal">
         {/* miniaturas */}
         <div className="galeria-producto__miniaturas">
-          <button type="button" className="galeria-producto__miniatura is-active">
-            <img src={nike} alt="Miniatura 1" />
-          </button>
-          <button type="button" className="galeria-producto__miniatura">
-            <img src={nike} alt="Miniatura 2" />
-          </button>
-          <button type="button" className="galeria-producto__miniatura">
-            <img src={nike} alt="Miniatura 3" />
-          </button>
-          <button type="button" className="galeria-producto__miniatura">
-            <img src={nike} alt="Miniatura 4" />
-          </button>
-          <button type="button" className="galeria-producto__miniatura">
-            <img src={nike} alt="Miniatura 5" />
-          </button>
+          {imagenes.length > 0 ? (
+            imagenes.map((img, i) => (
+              <button key={i} type="button" className={`galeria-producto__miniatura ${i === 0 ? 'is-active' : ''}`}>
+                <img src={img.imagen} alt={`Miniatura ${i + 1}`} />
+              </button>
+            ))
+          ) : (
+            <button type="button" className="galeria-producto__miniatura is-active">
+              <img src={nike} alt="Miniatura" />
+            </button>
+          )}
         </div>
 
         {/* imagen principal */}
         <div className="galeria-producto__imagen">
-          <img src={nike} alt="Imagen del producto" />
+          <img src={getImagenUrl(producto)} alt={producto.nombre} />
 
           <div className="galeria-producto__flechas">
             <button type="button" aria-label="Imagen anterior">‹</button>

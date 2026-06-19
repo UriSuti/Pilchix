@@ -49,6 +49,19 @@
   border-radius: 22px;
   border: 1px solid var(--landing-line);
   background: #ffffff;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  cursor: pointer;
+}
+
+.search-results__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.search-results__card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
 }
 
 .search-results__card img,
@@ -70,6 +83,11 @@
 
 .search-results__body {
   padding: 14px;
+}
+
+.search-results__body h3 {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
 }
 
 .search-results__body h3,

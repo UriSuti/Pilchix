@@ -8,8 +8,7 @@ function SeccionPrendasLocal({productos}){
     <section className="seccion-prendas-local">
       <div className="grid-productos">
         {productos.map((producto) => (
-        
-          <Producto producto={producto} />
+          <Producto key={producto.id || producto.nombre} producto={producto} />
         ))}
       </div>
     </section>

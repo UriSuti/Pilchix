@@ -13,7 +13,7 @@ function App() {
     <Routes>
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/" element={<ViewLanding />} />
-      <Route path="/producto" element={<ViewProducto />} />
+      <Route path="/producto/:productSlug" element={<ViewProducto />} />
       <Route path="/:storeSlug" element={<ViewLocal />} />
       <Route path="/test" element={<SesionTest />} />
       <Route path="/login" element={<Login />} />
