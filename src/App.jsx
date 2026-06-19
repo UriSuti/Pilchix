@@ -7,10 +7,12 @@ import SesionTest from './SessionTest.jsx'
 import Login from './viewAuth/Login.jsx'
 import Registro from './viewAuth/Registro.jsx'
 import CartPage from './viewCarrito/CartPage.jsx'
+import Perfil from './viewPerfil/Perfil.jsx'
 
 function App() {
   return (
     <Routes>
+      <Route path="/perfil" element={<Perfil />} />
       <Route path="/" element={<ViewLanding />} />
       <Route path="/producto/:productSlug" element={<ViewProducto />} />
       <Route path="/:storeSlug" element={<ViewLocal />} />

@@ -12,6 +12,7 @@ import { useLandingData } from '../hooks/useLandingData'
 import { useLandingSearch } from '../hooks/useLandingSearch'
 import { slugify } from '../utils/slugify.js'
 import ViewLocalSkeleton from "./components/ViewLocalSkeleton/ViewLocalSkeleton.jsx";
+import BotonSuscribirse from "./components/BotonSuscribirse/BotonSuscribirse.jsx";
 
 function ViewLocal() {
   const { storeSlug } = useParams()
@@ -59,6 +60,7 @@ function ViewLocal() {
       {!cargando && marca && !error && (
         <div className="contenido-local">
           <HeroLocal marca={marca} imagenFachada={imagenFachada} />
+          <BotonSuscribirse idMarca={marca.id_marca} nombreMarca={marca.nombre} />
           <FranjaBeneficios />
           <BarraHerramientas
             orden={orden}

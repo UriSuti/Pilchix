@@ -1,0 +1,62 @@
+.editar-datos {
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.editar-datos__foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.editar-datos__avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  background: #e0e0e0;
+}
+.editar-datos__avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #123d59;
+  background: #f0f0f0;
+}
+.editar-datos__cambiar-foto {
+  font-size: 13px;
+  color: #123d59;
+  font-weight: 600;
+  cursor: pointer;
+}
+.editar-datos__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #444;
+}
+.editar-datos__field input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 9px 11px;
+  font-size: 14px;
+}
+.editar-datos__field input:focus { outline: none; border-color: #123d59; }
+.editar-datos__btn {
+  margin-top: 8px;
+  background: #123d59;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 11px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.editar-datos__btn:disabled { opacity: 0.6; cursor: default; }
