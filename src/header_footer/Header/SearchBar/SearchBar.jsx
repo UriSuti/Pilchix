@@ -1,4 +1,6 @@
 import "./SearchBar.css";
+import { Link } from 'react-router-dom'
+import { slugify } from '../../../utils/slugify.js'
 
 const formatPrice = (value) =>
   new Intl.NumberFormat("es-AR", {
@@ -28,20 +30,22 @@ function SearchBar({ resultados = [], textoBusqueda = "", cargando = false }) {
         <ul className="search-dropdown__list">
           {resultados.slice(0, 6).map((producto) => (
             <li key={producto.id_producto} className="search-dropdown__item">
-              <div className="search-dropdown__thumb">
-                {producto.imagen ? (
-                  <img src={producto.imagen} alt={producto.nombre} />
-                ) : (
-                  <span>{producto.nombre.slice(0, 1)}</span>
-                )}
-              </div>
-              <div className="search-dropdown__body">
-                <p className="search-dropdown__nombre">{producto.nombre}</p>
-                <p className="search-dropdown__marca">{producto.marca}</p>
-              </div>
-              <strong className="search-dropdown__precio">
-                {formatPrice(producto.precio)}
-              </strong>
+              <Link to={`/producto/${slugify(producto.nombre || String(producto.id_producto))}`} className="search-dropdown__link">
+                <div className="search-dropdown__thumb">
+                  {producto.imagen ? (
+                    <img src={producto.imagen} alt={producto.nombre} />
+                  ) : (
+                    <span>{producto.nombre.slice(0, 1)}</span>
+                  )}
+                </div>
+                <div className="search-dropdown__body">
+                  <p className="search-dropdown__nombre">{producto.nombre}</p>
+                  <p className="search-dropdown__marca">{producto.marca}</p>
+                </div>
+                <strong className="search-dropdown__precio">
+                  {formatPrice(producto.precio)}
+                </strong>
+              </Link>
             </li>
           ))}
         </ul>

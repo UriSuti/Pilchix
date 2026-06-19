@@ -9,7 +9,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<ViewLanding />} />
-      <Route path="/producto" element={<ViewProducto />} />
+      <Route path="/producto/:productSlug" element={<ViewProducto />} />
       <Route path="/:storeSlug" element={<ViewLocal />} />
       <Route path="/test" element={<SesionTest />} />
     </Routes>
