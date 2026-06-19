@@ -55,7 +55,7 @@ function ViewProducto() {
 
 
       <main className="contenido-producto">
-        <BotonFavorito idProducto={producto.id_producto} />
+        {producto && <BotonFavorito idProducto={producto.id_producto} />}
         <GaleriaProducto producto={producto} loading={loading} />
         <InfoProducto producto={producto} loading={loading} />
       </main>
