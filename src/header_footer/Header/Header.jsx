@@ -145,10 +145,16 @@ function Header({ idUsuario = null }) {
               <p className="site-header__perfil-nombre">Hola, {usuario.nombre}</p>
               <button
                 type="button"
+                onClick={() => { setMenuPerfilAbierto(false); navigate("/perfil"); }}
+              >
+                Mi perfil
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   logout();
                   setMenuPerfilAbierto(false);
-                  mostrarToast("Cerraste sesión", "info")
+                  mostrarToast("Cerraste sesión", "info");
                   navigate("/");
                 }}
               >

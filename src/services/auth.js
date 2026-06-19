@@ -42,3 +42,17 @@ export async function actualizarFotoPerfil(idUsuario, url) {
     }
     return { usuario: data, error: null };
 }
+
+export async function actualizarDatosUsuario(idUsuario, datos) {
+    const { data, error } = await supabase
+        .from("Usuario")
+        .update(datos)
+        .eq("id_usuario", idUsuario)
+        .select()
+        .single();
+
+    if (error) {
+        return { usuario: null, error: "No se pudieron guardar los cambios" };
+    }
+    return { usuario: data, error: null };
+}

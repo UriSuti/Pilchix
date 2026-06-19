@@ -1,0 +1,7 @@
+.boton-suscribirse {
+  background: #123d59; color: #fff; border: none; border-radius: 6px;
+  padding: 10px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.boton-suscribirse:disabled { opacity: 0.6; cursor: default; }
+.boton-suscribirse--activo { background: #fff; color: #123d59; border: 1px solid #123d59; }
