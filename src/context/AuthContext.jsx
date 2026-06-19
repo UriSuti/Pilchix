@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginUsuario } from "../services/auth";
+import { loginUsuario, registrarUsuario } from "../services/auth";
 
 const AuthContext = createContext(null);
 const STORAGE_KEY = "pilchix_usuario";
@@ -27,9 +27,22 @@ export function AuthProvider({ children }) {
         return { ok: true, error: null };
     }
 
+    async function register(datos) {
+        const { usuario: u, error } = await registrarUsuario(datos);
+        if (error) return { ok: false, error };
+        setUsuario(u);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+        return { ok: true, error: null, usuario: u };
+    }
+
     function logout() {
         setUsuario(null);
         localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function actualizarUsuarioLocal(usuarioActualizado) {
+        setUsuario(usuarioActualizado);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(usuarioActualizado));
     }
 
     const value = {
@@ -38,7 +51,9 @@ export function AuthProvider({ children }) {
         estaLogueado: Boolean(usuario),
         cargando,
         login,
+        register,
         logout,
+        actualizarUsuarioLocal,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
