@@ -38,7 +38,7 @@ function Favoritos() {
             <div
             key={f.id_favorito}
             className="card-perfil"
-            onClick={() => navigate(`/${slugify(f.Producto.Marca.nombre)}`)}
+            onClick={() => navigate(`/producto/${slugify(f.Producto.nombre)}`)}
             >
             <button
                 className="card-perfil__quitar"
