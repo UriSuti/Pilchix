@@ -4,10 +4,11 @@ import Footer from "../header_footer/Footer/Footer";
 import HeaderLanding from "./components/HeaderLanding/HeaderLanding";
 import CategorySection from "./components/CategorySection/CategorySection";
 import FeaturedStoresSection from "./components/FeaturedStoresSection/FeaturedStoresSection";
-import HeroCarousel from "./components/HeroCarousel/HeroCarousel";
 import OffersSection from "./components/OffersSection/OffersSection";
+import HeroCarousel from "./components/HeroCarousel/HeroCarousel";
+import SubscribeSection from "./components/SubscribeSection/SubscribeSection";
+import LookbookDrift from "./components/LookbookDrift/LookbookDrift";
 import { LANDING_SECTION_TITLES } from "./constants";
-import { buildLandingResumen } from "./helpers/formatters";
 import { useLandingData } from "../hooks/useLandingData";
 import ViewLandingSkeleton from "./components/ViewLandingSkeleton/ViewLandingSkeleton";
 
@@ -16,47 +17,38 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
 
   const { landingData, loading, error: dataError } = useLandingData(idUsuario);
 
-  const resumen = buildLandingResumen({
-    categorias: landingData.categorias,
-    marcas: landingData.marcas,
-    descuentos: landingData.descuentos,
-  });
-
-  const recomendaciones = landingData.productosPopulares.slice(0, 6);
-  const masElegidos = [...landingData.productosPopulares]
-    .sort((a, b) => b.visualizaciones - a.visualizaciones)
-    .slice(0, 6);
-
-  const errorGeneral = dataError;
+  const recomendaciones = landingData.productosPopulares.slice(0, 8);
 
   if (loading) {
-    return <ViewLandingSkeleton />
+    return <ViewLandingSkeleton />;
   }
-
 
   return (
     <div className="landing-page">
-      <Header
-        idUsuario={idUsuario}
-        setLocal={setLocal}
-      />
+      <Header idUsuario={idUsuario} setLocal={setLocal} flotante />
 
       <HeaderLanding
-              subtitle="Nueva temporada"
-        title="LAS MEJORES OFERTAS PARA EL OTOÑO"
-        description="Descubri prendas, locales y descuentos elegidos para una experiencia de compra mucho mas visual"
+        subtitle="Nueva temporada · Otoño 2026"
+        title={
+          <>
+            Toda la moda<br />de tu ciudad,<br />
+            <em>en un solo lugar.</em>
+          </>
+        }
+        description="Explorá marcas, descubrí locales y cazá las mejores ofertas — una experiencia de compra mucho más visual."
       />
 
       <main className="landing-content">
-        <CategorySection categorias={landingData.categorias} cargando={loading} />
+        {dataError ? <div className="lp-alert">{dataError}</div> : null}
 
-        {errorGeneral ? <div className="landing-alert">{errorGeneral}</div> : null}
+        <CategorySection categorias={landingData.categorias} cargando={loading} />
 
         <FeaturedStoresSection
           local={local}
           setLocal={setLocal}
           marcas={landingData.marcas}
           marcasPopulares={landingData.marcasPopulares}
+          productos={landingData.productosPopulares}
           cargando={loading}
         />
 
@@ -70,14 +62,14 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
           productos={recomendaciones}
           cargando={loading}
           titulo={LANDING_SECTION_TITLES.recommendations}
+          eyebrow="Pensado para vos"
+          alt
         />
 
-        <HeroCarousel
-          productos={masElegidos}
-          cargando={loading}
-          titulo={LANDING_SECTION_TITLES.mostChosen}
-        />
+        <SubscribeSection />
       </main>
+
+      <LookbookDrift productos={landingData.productosPopulares} />
 
       <Footer />
     </div>

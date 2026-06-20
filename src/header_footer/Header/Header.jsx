@@ -43,8 +43,18 @@ const IconClose = () => (
   </svg>
 );
 
-function Header({ idUsuario = null }) {
+function Header({ idUsuario = null, flotante = false }) {
   const navigate = useNavigate();
+
+  const [scrolled, setScrolled] = useState(false);
+
+  // En todas las páginas el header se vuelve glass al bajar.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const { mostrarToast } = useToast();
 
@@ -83,10 +93,18 @@ function Header({ idUsuario = null }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const headerClass = [
+    "site-header",
+    flotante ? "site-header--flotante" : "",
+    scrolled ? "site-header--scrolled" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <header className="site-header">
+    <header className={headerClass}>
       <a className="site-header__brand" onClick={() => navigate("/")}>
-        PILCHIX
+        Pilchix
       </a>
 
       <div className="site-header__search-wrapper" ref={searchWrapperRef}>

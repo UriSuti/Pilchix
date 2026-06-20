@@ -1,0 +1,119 @@
+.drift {
+  position: relative;
+  overflow: hidden;
+  background: var(--lp-cream);
+  height: 700px;
+}
+
+.drift__track {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 100%;
+  width: max-content;
+  padding-inline: 16px;
+  animation: drift-move 48s linear infinite;
+}
+.drift:hover .drift__track {
+  animation-play-state: paused;
+}
+
+@keyframes drift-move {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.drift__item {
+  flex: 0 0 auto;
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--lp-shadow-sm);
+}
+.drift__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* tamaños y alturas variadas → look disperso */
+.drift__item.s1 {
+  width: 240px;
+  height: 320px;
+  align-self: flex-start;
+  margin-top: 70px;
+}
+.drift__item.s2 {
+  width: 300px;
+  height: 420px;
+  align-self: center;
+}
+.drift__item.s3 {
+  width: 200px;
+  height: 280px;
+  align-self: flex-end;
+  margin-bottom: 80px;
+}
+.drift__item.s4 {
+  width: 280px;
+  height: 360px;
+  align-self: flex-start;
+  margin-top: 30px;
+}
+
+.drift__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.drift__overlay::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(243, 245, 246, 0.92), rgba(243, 245, 246, 0));
+}
+.drift__overlay h2 {
+  position: relative;
+  font-family: var(--lp-display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--lp-navy);
+}
+.drift__overlay p {
+  position: relative;
+  margin-top: 6px;
+  color: var(--lp-muted);
+}
+.drift__overlay a {
+  position: relative;
+  pointer-events: auto;
+  margin-top: 18px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: var(--lp-navy);
+  text-decoration: none;
+  border-bottom: 2px solid var(--lp-navy);
+  padding-bottom: 4px;
+}
+.drift__overlay a:hover {
+  color: var(--lp-petrol-light);
+  border-color: var(--lp-petrol-light);
+}
+
+@media (max-width: 600px) {
+  .drift {
+    height: 520px;
+  }
+}
