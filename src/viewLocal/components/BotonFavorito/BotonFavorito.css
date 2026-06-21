@@ -1,11 +1,12 @@
 .boton-favorito {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e0e0e0;
-  border-radius: 50%;
-  width: 36px; height: 36px;
-  font-size: 18px; color: #c0392b; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.1s ease;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #333;                /* outline gris oscuro por defecto */
+  display: inline-flex;
+  transition: color 0.15s ease, transform 0.1s ease;
 }
 .boton-favorito:hover { transform: scale(1.1); }
 .boton-favorito:disabled { opacity: 0.6; }
+.boton-favorito--activo { color: #123d59; }   /* navy: rellena y pinta el borde */

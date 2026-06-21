@@ -59,8 +59,12 @@ function ViewLocal() {
 
       {!cargando && marca && !error && (
         <div className="contenido-local">
-          <HeroLocal marca={marca} imagenFachada={imagenFachada} />
-          <BotonSuscribirse idMarca={marca.id_marca} nombreMarca={marca.nombre} />
+          <div className="local-hero">
+            <HeroLocal marca={marca} imagenFachada={imagenFachada} />
+            <div className="local-hero__suscribir">
+              <BotonSuscribirse idMarca={marca.id_marca} nombreMarca={marca.nombre} />
+            </div>
+          </div>
           <FranjaBeneficios />
           <BarraHerramientas
             orden={orden}

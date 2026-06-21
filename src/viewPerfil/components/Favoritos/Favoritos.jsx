@@ -47,7 +47,15 @@ function Favoritos() {
             >
                 ✕
             </button>
-            <div className="card-perfil__placeholder">{f.Producto.nombre.charAt(0)}</div>
+            {f.Producto.Imagen?.[0]?.imagen ? (
+                <img
+                    src={f.Producto.Imagen[0].imagen}
+                    alt={f.Producto.nombre}
+                    className="card-perfil__img"
+                />
+                ) : (
+                <div className="card-perfil__placeholder">{f.Producto.nombre.charAt(0)}</div>
+            )}
             <span className="card-perfil__nombre">{f.Producto.nombre}</span>
             <span className="card-perfil__precio">${f.Producto.precio}</span>
             </div>

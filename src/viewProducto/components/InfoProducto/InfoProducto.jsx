@@ -6,17 +6,12 @@ import { useToast } from '../../../context/ToastContext'
 import { agregarAlCarrito } from '../../../viewCarrito/services/cart'
 import SelectorColor from '../SelectorColor/SelectorColor.jsx'
 import SelectorTalle from '../SelectorTalle/SelectorTalle.jsx'
+import BotonFavorito from '../../../viewLocal/components/BotonFavorito/BotonFavorito.jsx'
 
 function formatearPrecio(valor) {
   if (valor == null) return ''
   return '$' + Number(valor).toLocaleString('es-AR')
 }
-
-const IconCorazon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-  </svg>
-)
 
 function InfoProducto({ producto, loading }) {
   const productId = producto?.id_producto ?? producto?.id ?? producto?.id_marca ?? 'unknown'
@@ -113,9 +108,7 @@ function InfoProducto({ producto, loading }) {
           )}
         </div>
 
-        <button type="button" className="info-producto__favorito" aria-label="Guardar en favoritos">
-          <IconCorazon />
-        </button>
+        <BotonFavorito idProducto={producto.id_producto} />
       </div>
 
       <div className="info-producto__precio">

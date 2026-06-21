@@ -1,7 +1,22 @@
 .boton-suscribirse {
-  background: #123d59; color: #fff; border: none; border-radius: 6px;
-  padding: 10px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
-  transition: opacity 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #123d59;
+  color: #fff;
+  border: 1px solid #123d59;
+  border-radius: 999px;
+  padding: 11px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
-.boton-suscribirse:disabled { opacity: 0.6; cursor: default; }
-.boton-suscribirse--activo { background: #fff; color: #123d59; border: 1px solid #123d59; }
+.boton-suscribirse:hover {
+  background: #0d2d45;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(18, 61, 89, 0.25);
+}
+.boton-suscribirse:disabled { opacity: 0.6; cursor: default; transform: none; box-shadow: none; }
+.boton-suscribirse--activo { background: #fff; color: #123d59; }
+.boton-suscribirse--activo:hover { background: #f0f4f8; }

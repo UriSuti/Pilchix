@@ -8,7 +8,6 @@ import Header from '../header_footer/Header/Header.jsx'
 import { useLandingSearch } from '../hooks/useLandingSearch'
 import GaleriaProducto from './components/GaleriaProducto/GaleriaProducto.jsx'
 import InfoProducto from './components/InfoProducto/InfoProducto.jsx'
-import BotonFavorito from '../viewLocal/components/BotonFavorito/BotonFavorito.jsx'
 
 function ViewProducto() {
   const { productSlug } = useParams()
@@ -55,7 +54,6 @@ function ViewProducto() {
 
 
       <main className="contenido-producto">
-        {producto && <BotonFavorito idProducto={producto.id_producto} />}
         <GaleriaProducto producto={producto} loading={loading} />
         <InfoProducto producto={producto} loading={loading} />
       </main>
