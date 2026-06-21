@@ -4,6 +4,10 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth; /* desplazamiento suave al ir a secciones (#locales, #ofertas) */
+}
+
 body {
   margin: 0;
   /* sin display: flex ni place-items */

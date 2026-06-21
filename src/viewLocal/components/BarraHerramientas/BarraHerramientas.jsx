@@ -6,13 +6,13 @@ const IconChevron = () => (
   </svg>
 )
 
-const IconFiltros = () => (
+const IconSearch = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
 )
 
-function BarraHerramientas({ orden, setOrden, cantidad = 0 }) {
+function BarraHerramientas({ orden, setOrden, busqueda = '', setBusqueda, cantidad = 0 }) {
   return (
     <section className="barra-herramientas">
       <div className="barra-herramientas__fila">
@@ -45,10 +45,17 @@ function BarraHerramientas({ orden, setOrden, cantidad = 0 }) {
             </div>
           </div>
 
-          <button type="button" className="barra-herramientas__filtros">
-            <IconFiltros />
-            <span>Filtros</span>
-          </button>
+          <div className="barra-herramientas__buscar">
+            <span className="barra-herramientas__buscar-icon"><IconSearch /></span>
+            <input
+              type="search"
+              className="barra-herramientas__buscar-input"
+              placeholder="Buscar en este local"
+              value={busqueda}
+              onChange={(e) => setBusqueda?.(e.target.value)}
+              aria-label="Buscar productos del local"
+            />
+          </div>
         </div>
       </div>
 

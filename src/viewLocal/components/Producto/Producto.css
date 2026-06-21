@@ -1,3 +1,10 @@
+/* el link envuelve la card: sin subrayado ni color azul por defecto */
+.card-producto__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 /* Card de producto */
 .card-producto {
   display: flex;
@@ -49,6 +56,15 @@
 
 .card-producto__fav:hover {
   background-color: #ffffff;
+}
+
+/* el botón de favorito (reutilizado) centrado dentro del círculo */
+.card-producto__fav .boton-favorito {
+  padding: 0;
+}
+.card-producto__fav .boton-favorito svg {
+  width: 20px;
+  height: 20px;
 }
 
 /* =========================

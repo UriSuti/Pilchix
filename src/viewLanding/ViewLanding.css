@@ -27,7 +27,12 @@
   color: var(--lp-ink);
   font-family: var(--lp-font);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip; /* recorta desborde horizontal sin romper position: sticky del header */
+}
+
+/* el footer va pegado a la galería, sin la franja blanca de su margen superior */
+.drift + .site-footer {
+  margin-top: 0;
 }
 
 .landing-content {
@@ -41,6 +46,7 @@
 
 .lp-section {
   padding: clamp(56px, 9vh, 110px) 0;
+  scroll-margin-top: 72px; /* deja aire bajo el header sticky al hacer scroll a la sección */
 }
 
 .lp-section--alt {

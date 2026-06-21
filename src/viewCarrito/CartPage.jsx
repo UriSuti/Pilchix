@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import CartItem from './components/CartItem'
 import CartSummary from './components/CartSummary'
+import Header from '../header_footer/Header/Header'
+import Footer from '../header_footer/Footer/Footer'
 import { obtenerItemsCarrito, actualizarCantidadItem, eliminarItemCarrito } from './services/cart'
 import './CartPage.css'
 
@@ -83,6 +85,8 @@ function CartPage() {
   }
 
   return (
+    <div className="cart-layout">
+    <Header idUsuario={idUsuario} />
     <div className="cart-page">
       <div className="cart-page__header">
         <div>
@@ -142,6 +146,9 @@ function CartPage() {
 
         <CartSummary items={items} />
       </div>
+    </div>
+
+    <Footer />
     </div>
   )
 }

@@ -5,10 +5,24 @@
   color: #6b7280;
 }
 
+/* layout en columna: empuja el footer al fondo aunque el carrito sea corto */
+.cart-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .cart-page {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 36px 24px 80px;
+  padding: 36px 24px 56px;
+  flex: 1 0 auto; /* crece para llenar y empujar el footer abajo */
+}
+
+/* el footer ocupa el fondo sin dejar franja blanca arriba */
+.cart-page + .site-footer {
+  margin-top: 0;
 }
 
 .cart-page__header {

@@ -43,12 +43,12 @@ const IconClose = () => (
   </svg>
 );
 
-function Header({ idUsuario = null, flotante = false }) {
+function Header({ idUsuario = null, teal = false }) {
   const navigate = useNavigate();
 
   const [scrolled, setScrolled] = useState(false);
 
-  // En todas las páginas el header se vuelve glass al bajar.
+  // Mismo header en todas las páginas: se vuelve glass al bajar.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
@@ -95,7 +95,7 @@ function Header({ idUsuario = null, flotante = false }) {
 
   const headerClass = [
     "site-header",
-    flotante ? "site-header--flotante" : "",
+    teal ? "site-header--teal" : "",
     scrolled ? "site-header--scrolled" : "",
   ]
     .filter(Boolean)
@@ -163,12 +163,14 @@ function Header({ idUsuario = null, flotante = false }) {
               <p className="site-header__perfil-nombre">Hola, {usuario.nombre}</p>
               <button
                 type="button"
+                className="site-header__perfil-link"
                 onClick={() => { setMenuPerfilAbierto(false); navigate("/perfil"); }}
               >
                 Mi perfil
               </button>
               <button
                 type="button"
+                className="site-header__logout"
                 onClick={() => {
                   logout();
                   setMenuPerfilAbierto(false);

@@ -17,6 +17,7 @@ import BotonSuscribirse from "./components/BotonSuscribirse/BotonSuscribirse.jsx
 function ViewLocal() {
   const { storeSlug } = useParams()
   const [orden, setOrden] = useState('')
+  const [busqueda, setBusqueda] = useState('')
 
   // 1) traigo todas las marcas y encuentro la que pide la URL
   const { landingData, loading: cargandoMarcas } = useLandingData()
@@ -34,6 +35,13 @@ function ViewLocal() {
     if (orden === 'bestSeller') return (b.ventas || 0) - (a.ventas || 0)
     return 0
   })
+
+  const termino = busqueda.trim().toLowerCase()
+  const productosFiltrados = termino
+    ? productosOrdenados.filter((p) =>
+        `${p.nombre ?? ''} ${p.descripcion ?? ''}`.toLowerCase().includes(termino)
+      )
+    : productosOrdenados
 
   const cargando = cargandoMarcas || loading
   const noEncontrado = !cargandoMarcas && !marca
@@ -69,10 +77,12 @@ function ViewLocal() {
           <BarraHerramientas
             orden={orden}
             setOrden={setOrden}
-            cantidad={productosOrdenados.length}
+            busqueda={busqueda}
+            setBusqueda={setBusqueda}
+            cantidad={productosFiltrados.length}
           />
           <main className="view-content">
-            <SeccionPrendasLocal productos={productosOrdenados} />
+            <SeccionPrendasLocal productos={productosFiltrados} />
           </main>
           <div className="spacer-footer" />
           <footer><Footer /></footer>

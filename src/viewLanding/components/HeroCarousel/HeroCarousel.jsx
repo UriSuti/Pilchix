@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import "./HeroCarousel.css";
 import { slugify } from "../../../utils/slugify";
 import { useShowroomDrift } from "../../hooks/useShowroomDrift";
+import BotonFavorito from "../../../viewLocal/components/BotonFavorito/BotonFavorito";
 
 const formatPrice = (value) =>
   new Intl.NumberFormat("es-AR", {
@@ -14,9 +15,9 @@ function ProductCard({ producto }) {
   return (
     <Link className="sh-card" to={`/producto/${slugify(producto.nombre || "")}`}>
       <div className="sh-card__img">
-        <span className="sh-card__fav" aria-hidden="true">
-          ♡
-        </span>
+        <div className="sh-card__fav">
+          <BotonFavorito idProducto={producto.id_producto} />
+        </div>
         {producto.imagen ? (
           <img src={producto.imagen} alt={producto.nombre} loading="lazy" />
         ) : (

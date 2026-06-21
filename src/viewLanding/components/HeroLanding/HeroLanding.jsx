@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
-import "./HeaderLanding.css";
+import "./HeroLanding.css";
 
 const HERO_IMG =
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1920&q=80";
 
-function HeaderLanding({ subtitle, title, description }) {
+function HeroLanding({ subtitle, title, description }) {
   const bgRef = useRef(null);
+  const sectionRef = useRef(null);
   const fondo = HERO_IMG;
 
   // Parallax suave del fondo mientras se está sobre el hero
@@ -22,8 +23,23 @@ function HeaderLanding({ subtitle, title, description }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // El hero ocupa exactamente la pantalla menos el header (sticky), así el
+  // "Seguí bajando" queda justo en el borde inferior, como en el mockup.
+  useEffect(() => {
+    function ajustarAlto() {
+      const header = document.querySelector(".site-header");
+      const h = header ? header.offsetHeight : 0;
+      if (sectionRef.current) {
+        sectionRef.current.style.minHeight = `calc(100svh - ${h}px)`;
+      }
+    }
+    ajustarAlto();
+    window.addEventListener("resize", ajustarAlto, { passive: true });
+    return () => window.removeEventListener("resize", ajustarAlto);
+  }, []);
+
   return (
-    <section className="hero">
+    <section className="hero" ref={sectionRef}>
       <div
         className="hero__bg"
         ref={bgRef}
@@ -51,4 +67,4 @@ function HeaderLanding({ subtitle, title, description }) {
   );
 }
 
-export default HeaderLanding;
+export default HeroLanding;

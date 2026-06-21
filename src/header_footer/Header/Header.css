@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Poppins:wght@400;500;600;700&display=swap");
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -16,7 +16,17 @@
   padding: 10px clamp(24px, 4vw, 48px);
   background: #123d59;
   color: #ffffff;
+  /* fuente y tamaño propios: el header NO hereda de la página (así es idéntico en todas) */
+  font-family: "Poppins", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
   transition: background 0.4s ease, box-shadow 0.4s ease, color 0.4s ease, padding 0.4s ease;
+}
+
+/* Variante teal: SOLO la landing, para fundirse con la foto del hero.
+   El resto de las páginas usa el petróleo de marca por defecto. */
+.site-header--teal:not(.site-header--scrolled) {
+  background: #0e4a59;
 }
 
 .site-header__brand {
@@ -39,10 +49,13 @@
 
 .site-header__search input {
   width: 100%;
-  min-width: 0;            /* 👈 nuevo */
+  min-width: 0;
   border: 0;
   outline: 0;
-  font: inherit;
+  /* fuente explícita: el texto del buscador es igual en TODAS las páginas */
+  font-family: "Poppins", system-ui, sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.4;
   color: #111111;
   background: transparent;
 }
@@ -77,6 +90,34 @@
 
 .site-header__action:hover {
   background: rgba(255, 255, 255, 0.18);
+}
+
+/* ============ SCROLL: glass al bajar (igual en TODAS las páginas) ============ */
+.site-header--scrolled {
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 4px 18px rgba(12, 44, 66, 0.08);
+  color: #123d59;
+  padding-block: 8px;
+}
+.site-header--scrolled .site-header__brand,
+.site-header--scrolled .site-header__action,
+.site-header--scrolled .site-header__search-icon {
+  color: #123d59;
+}
+.site-header--scrolled .site-header__search {
+  background: #eef1f3;
+  border: 1px solid #e7ebee;
+}
+.site-header--scrolled .site-header__search input {
+  color: #111111;
+}
+.site-header--scrolled .site-header__search input::placeholder {
+  color: #5d6b73;
+}
+.site-header--scrolled .site-header__action:hover {
+  background: rgba(18, 61, 89, 0.08);
 }
 
 .site-header__action span {
@@ -135,29 +176,70 @@
 .site-header__perfil-menu {
   position: absolute;
   right: 0;
-  top: calc(100% + 8px);
+  top: calc(100% + 10px);
   background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  padding: 10px;
-  min-width: 160px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 14px 34px rgba(12, 44, 66, 0.18);
+  padding: 14px;
+  min-width: 210px;
   z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* botones más separados */
+  transform-origin: top right;
+  animation: perfil-menu-in 0.16s ease-out;
 }
+
+@keyframes perfil-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .site-header__perfil-nombre {
-  margin: 0 0 8px;
-  font-size: 13px;
-  color: #333;
+  margin: 2px 2px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0c1116;
 }
+
 .site-header__perfil-menu button {
   width: 100%;
+  border-radius: 9px;
+  padding: 11px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Mi perfil: relleno petróleo */
+.site-header__perfil-link {
   background: #123d59;
   color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 13px;
-  cursor: pointer;
+  border: 1.5px solid #123d59;
+}
+.site-header__perfil-link:hover {
+  background: #0c2c42;
+  border-color: #0c2c42;
+}
+
+/* Cerrar sesión: línea roja, interior blanco; al pasar el cursor se llena de rojo */
+.site-header__logout {
+  background: #fff;
+  color: #e11d48;
+  border: 1.5px solid #e11d48;
+}
+.site-header__logout:hover {
+  background: #e11d48;
+  color: #fff;
 }
 
 .site-header__avatar {
@@ -168,60 +250,3 @@
   display: block;
 }
 
-/* ============ SCROLL: glass al bajar (TODAS las páginas) ============ */
-.site-header--scrolled {
-  background: rgba(255, 255, 255, 0.72);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
-  box-shadow: 0 4px 18px rgba(12, 44, 66, 0.08);
-  color: #123d59;
-  padding-block: 8px; /* se compacta aún más al bajar */
-}
-.site-header--scrolled .site-header__brand,
-.site-header--scrolled .site-header__action,
-.site-header--scrolled .site-header__search-icon {
-  color: #123d59;
-}
-.site-header--scrolled .site-header__search {
-  background: #eef1f3;
-  border: 1px solid #e7ebee;
-}
-.site-header--scrolled .site-header__search input {
-  color: #111111;
-}
-.site-header--scrolled .site-header__search input::placeholder {
-  color: #5d6b73;
-}
-.site-header--scrolled .site-header__action:hover {
-  background: rgba(18, 61, 89, 0.08);
-}
-
-/* ============ HEADER FLOTANTE (landing: overlay transparente sobre el hero) ============ */
-.site-header--flotante {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-/* en el tope, sin scroll: transparente y en blanco sobre el hero */
-.site-header--flotante:not(.site-header--scrolled) {
-  background: transparent;
-  color: #ffffff;
-}
-.site-header--flotante:not(.site-header--scrolled) .site-header__brand,
-.site-header--flotante:not(.site-header--scrolled) .site-header__action,
-.site-header--flotante:not(.site-header--scrolled) .site-header__search-icon {
-  color: #ffffff;
-}
-.site-header--flotante:not(.site-header--scrolled) .site-header__search {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-}
-.site-header--flotante:not(.site-header--scrolled) .site-header__search input {
-  color: #ffffff;
-}
-.site-header--flotante:not(.site-header--scrolled) .site-header__search input::placeholder {
-  color: rgba(255, 255, 255, 0.75);
-}

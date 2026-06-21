@@ -64,7 +64,15 @@
 }
 .sh-card:hover .sh-card__fav {
   transform: scale(1.1);
-  color: var(--lp-petrol-light);
+}
+
+/* botón de favorito reutilizado, centrado dentro del círculo */
+.sh-card__fav .boton-favorito {
+  padding: 0;
+}
+.sh-card__fav .boton-favorito svg {
+  width: 20px;
+  height: 20px;
 }
 
 .sh-card__body {

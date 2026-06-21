@@ -1,7 +1,7 @@
 import "./ViewLanding.css";
 import Header from "../header_footer/Header/Header";
 import Footer from "../header_footer/Footer/Footer";
-import HeaderLanding from "./components/HeaderLanding/HeaderLanding";
+import HeroLanding from "./components/HeroLanding/HeroLanding";
 import CategorySection from "./components/CategorySection/CategorySection";
 import FeaturedStoresSection from "./components/FeaturedStoresSection/FeaturedStoresSection";
 import OffersSection from "./components/OffersSection/OffersSection";
@@ -25,9 +25,9 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
 
   return (
     <div className="landing-page">
-      <Header idUsuario={idUsuario} setLocal={setLocal} flotante />
+      <Header idUsuario={idUsuario} setLocal={setLocal} teal />
 
-      <HeaderLanding
+      <HeroLanding
         subtitle="Nueva temporada · Otoño 2026"
         title={
           <>
