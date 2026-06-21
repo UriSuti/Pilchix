@@ -27,7 +27,9 @@ function LookbookDrift({ productos = [] }) {
       <div className="drift__overlay">
         <h2>Seguinos en Instagram</h2>
         <p>Inspirate con los looks de la comunidad Pilchix.</p>
-        <a href="#">@pilchix →</a>
+        <a href="https://www.instagram.com/pilchix/" target="_blank" rel="noopener noreferrer">
+          @pilchix →
+        </a>
       </div>
     </section>
   );
