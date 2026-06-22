@@ -149,3 +149,24 @@
   color: #1e293b;
   white-space: nowrap;
 }
+
+.search-results__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px 16px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+.search-results__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #d8dee6;
+  border-top-color: #123d59;
+  border-radius: 50%;
+  animation: search-spin 0.7s linear infinite;
+}
+@keyframes search-spin {
+  to { transform: rotate(360deg); }
+}
