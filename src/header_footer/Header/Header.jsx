@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar/SearchBar.jsx";
 import { useLandingSearch } from "../../hooks/useLandingSearch";
 import { Link } from "react-router-dom";
+import { useCarrito } from "../../hooks/useCarrito.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
 import "./Header.css";
@@ -72,7 +73,8 @@ function Header({ idUsuario = null, teal = false }) {
 
   const searchWrapperRef = useRef(null);
 
-  const { estaLogueado, usuario, logout } = useAuth();
+  const { estaLogueado, usuario, logout, idUsuario: idUsuarioActual } = useAuth();
+  const { cantidad: cantidadCarrito } = useCarrito(idUsuarioActual)
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -140,6 +142,9 @@ function Header({ idUsuario = null, teal = false }) {
       <div className="site-header__actions" aria-label="Acciones">
         <button className="site-header__action" type="button" aria-label="Carrito" onClick={() => navigate('/carrito')}>
           <IconCart />
+          {cantidadCarrito > 0 && (
+            <span className="site-header__badge">{cantidadCarrito}</span>
+          )}
         </button>
         <button className="site-header__action" type="button" aria-label="Notificaciones">
           <IconBell />
@@ -152,11 +157,15 @@ function Header({ idUsuario = null, teal = false }) {
             onClick={() =>
               estaLogueado ? setMenuPerfilAbierto((v) => !v) : navigate("/login")
             }
-          >{estaLogueado && usuario.foto_perfil ? (
-            <img src={usuario.foto_perfil} alt="Perfil" className="site-header__avatar" />
-          ) : (
-            <IconUser />
-          )}
+          >{!estaLogueado ? (
+              <IconUser />
+            ) : usuario.foto_perfil ? (
+              <img src={usuario.foto_perfil} alt="Perfil" className="site-header__avatar" />
+            ) : (
+              <span className="site-header__avatar-inicial">
+                {usuario.nombre?.charAt(0).toUpperCase()}
+              </span>
+            )}
           </button>
 
           {estaLogueado && menuPerfilAbierto && (
