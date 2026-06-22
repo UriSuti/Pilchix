@@ -1,6 +1,6 @@
 import "./SearchBar.css";
-import { Link } from 'react-router-dom'
-import { slugify } from '../../../utils/slugify.js'
+import { Link } from "react-router-dom";
+import { slugify } from "../../../utils/slugify.js";
 
 const formatPrice = (value) =>
   new Intl.NumberFormat("es-AR", {
@@ -9,48 +9,83 @@ const formatPrice = (value) =>
     maximumFractionDigits: 0,
   }).format(Number(value || 0));
 
-function SearchBar({ resultados = [], textoBusqueda = "", cargando = false }) {
+function SearchBar({ resultados = [], marcas = [], textoBusqueda = "" }) {
+  if (!textoBusqueda.trim()) return null;
+
+  const total = resultados.length + marcas.length;
+
   return (
-    <div className="search-dropdown">
-      <div className="search-dropdown__header">
-        <span>Resultados para "{textoBusqueda}"</span>
-        {!cargando && (
-          <span className="search-dropdown__count">{resultados.length} items</span>
-        )}
+    <section className="search-results">
+      <div className="search-results__header">
+        <div>
+          <p className="search-results__eyebrow">Busqueda</p>
+          <h2>Resultados para "{textoBusqueda}"</h2>
+        </div>
+        <span>{total} items</span>
       </div>
 
-      {cargando ? (
-        <div className="search-dropdown__loading">
-          <span className="search-dropdown__spinner" aria-hidden="true" />
-          Buscando…
-        </div>
-      ) : resultados.length === 0 ? (
-        <p className="search-dropdown__empty">No encontramos coincidencias exactas.</p>
+      {total === 0 ? (
+        <p className="search-results__empty">No encontramos coincidencias exactas.</p>
       ) : (
-        <ul className="search-dropdown__list">
-          {resultados.slice(0, 6).map((producto) => (
-            <li key={producto.id_producto} className="search-dropdown__item">
-              <Link to={`/producto/${slugify(producto.nombre || String(producto.id_producto))}`} className="search-dropdown__link">
-                <div className="search-dropdown__thumb">
-                  {producto.imagen ? (
-                    <img src={producto.imagen} alt={producto.nombre} />
-                  ) : (
-                    <span>{producto.nombre.slice(0, 1)}</span>
-                  )}
-                </div>
-                <div className="search-dropdown__body">
-                  <p className="search-dropdown__nombre">{producto.nombre}</p>
-                  <p className="search-dropdown__marca">{producto.marca}</p>
-                </div>
-                <strong className="search-dropdown__precio">
-                  {formatPrice(producto.precio)}
-                </strong>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <>
+          {marcas.length > 0 && (
+            <div className="search-results__seccion">
+              <p className="search-results__seccion-titulo">Marcas</p>
+              <div className="search-results__grid">
+                {marcas.slice(0, 4).map((marca) => (
+                  <article key={`marca-${marca.id_marca}`} className="search-results__card">
+                    <Link to={`/${slugify(marca.nombre)}`} className="search-results__link">
+                      {marca.logo ? (
+                        <img src={marca.logo} alt={marca.nombre} />
+                      ) : (
+                        <div className="search-results__placeholder">{marca.nombre.slice(0, 1)}</div>
+                      )}
+                      <div className="search-results__body">
+                        <h3>{marca.nombre}</h3>
+                        <p>{marca.descripcion || "Marca"}</p>
+                        <div className="search-results__meta">
+                          <span>Ver local</span>
+                        </div>
+                      </div>
+                    </Link>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {resultados.length > 0 && (
+            <div className="search-results__seccion">
+              <p className="search-results__seccion-titulo">Productos</p>
+              <div className="search-results__grid">
+                {resultados.slice(0, 6).map((producto) => (
+                  <article key={producto.id_producto} className="search-results__card">
+                    <Link
+                      to={`/producto/${slugify(producto.nombre || String(producto.id_producto))}`}
+                      className="search-results__link"
+                    >
+                      {producto.imagen ? (
+                        <img src={producto.imagen} alt={producto.nombre} />
+                      ) : (
+                        <div className="search-results__placeholder">{producto.nombre.slice(0, 1)}</div>
+                      )}
+                      <div className="search-results__body">
+                        <h3>{producto.nombre}</h3>
+                        <p>{producto.marca}</p>
+                        <div className="search-results__meta">
+                          <span>{producto.categoria || "Producto"}</span>
+                          <strong>{formatPrice(producto.precio)}</strong>
+                        </div>
+                      </div>
+                    </Link>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
-    </div>
+    </section>
   );
 }
 

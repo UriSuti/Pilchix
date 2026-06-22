@@ -210,3 +210,11 @@ export function searchLandingCategorias(textoBusqueda) {
     .eq("Producto.estado", 1)
     .ilike("Categoria.nombre", `%${textoBusqueda}%`);
 }
+
+export function searchLandingMarcas(textoBusqueda) {
+  return supabase
+    .from("Marca")
+    .select("id_marca, nombre, descripcion, logo")
+    .eq("estado", 1)
+    .ilike("nombre", `%${textoBusqueda}%`);
+}

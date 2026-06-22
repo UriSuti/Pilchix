@@ -9,6 +9,7 @@ import {
   saveBusquedaUsuario,
   searchLandingCategorias,
   searchLandingProductos,
+  searchLandingMarcas,
 } from "../viewLanding/services/landing";
 
 export function useLandingSearch(idUsuario) {
@@ -16,6 +17,7 @@ export function useLandingSearch(idUsuario) {
   const [resultadosBusqueda, setResultadosBusqueda] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
+  const [marcasBusqueda, setMarcasBusqueda] = useState([]);
 
   const hasSearch = useMemo(() => textoBusqueda.trim().length > 0, [textoBusqueda]);
   const debounceRef = useRef(null);
@@ -24,37 +26,40 @@ export function useLandingSearch(idUsuario) {
 
   async function doSearch(texto) {
     const q = texto.trim();
-
     if (!q) {
       setResultadosBusqueda([]);
+      setMarcasBusqueda([]); // ← limpiar marcas
       setCargando(false);
       return;
     }
-
-    const requestId = ++requestIdRef.current; // marca esta búsqueda como la más nueva
+    const requestId = ++requestIdRef.current;
     setError("");
     setCargando(true);
-
     try {
       if (isValidUserId(idUsuario)) {
         const { error: errorBusqueda } = await saveBusquedaUsuario(idUsuario, q);
         if (errorBusqueda) setError(errorBusqueda.message);
       }
 
-      const [productosResult, categoriasResult] = await Promise.all([
+      const [productosResult, categoriasResult, marcasResult] = await Promise.all([
         searchLandingProductos(q),
         searchLandingCategorias(q),
+        searchLandingMarcas(q), // ← nueva consulta
       ]);
 
-      // si mientras tanto escribiste otra cosa, descartamos este resultado viejo
       if (requestId !== requestIdRef.current) return;
 
-      const errores = [productosResult.error?.message, categoriasResult.error?.message].filter(Boolean);
+      const errores = [
+        productosResult.error?.message,
+        categoriasResult.error?.message,
+        marcasResult.error?.message,
+      ].filter(Boolean);
       if (errores.length > 0) {
         setError(errores[0]);
         return;
       }
 
+      // --- productos (tu lógica de siempre) ---
       const productosTexto = formatSearchProducts(productosResult.data ?? []);
       const productosCategoria = formatSearchCategoryProducts(categoriasResult.data ?? []);
       const unidos = mergeResultadosBusqueda(productosTexto, productosCategoria);
@@ -70,14 +75,14 @@ export function useLandingSearch(idUsuario) {
           (categoria && categoria.includes(qLower))
         );
       });
-
       setResultadosBusqueda(filtrados);
+
+      // --- marcas (ya vienen filtradas por nombre desde el ilike) ---
+      setMarcasBusqueda(marcasResult.data ?? []);
     } finally {
-      // solo apaga el loading si sigue siendo la búsqueda actual
       if (requestId === requestIdRef.current) setCargando(false);
     }
   }
-
   async function buscarProductos(event) {
     if (event && typeof event.preventDefault === "function") event.preventDefault();
     await doSearch(textoBusqueda);
@@ -89,6 +94,7 @@ export function useLandingSearch(idUsuario) {
 
     if (!texto) {
       setResultadosBusqueda([]);
+      setMarcasBusqueda([]); // ← agregar
       setCargando(false);
       return;
     }
@@ -106,6 +112,7 @@ export function useLandingSearch(idUsuario) {
     textoBusqueda,
     setTextoBusqueda,
     resultadosBusqueda,
+    marcasBusqueda, // ← nuevo
     cargando,
     buscarProductos,
     error,
