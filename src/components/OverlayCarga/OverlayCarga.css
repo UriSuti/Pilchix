@@ -1,0 +1,31 @@
+.overlay-carga {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.overlay-carga--visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;   /* bloquea clicks mientras carga */
+}
+.overlay-carga__spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(18, 61, 89, 0.18);
+  border-top-color: #123d59;
+  border-radius: 50%;
+  animation: overlay-spin 0.7s linear infinite;
+}
+@keyframes overlay-spin {
+  to { transform: rotate(360deg); }
+}
