@@ -8,6 +8,14 @@ import Login from './viewAuth/Login.jsx'
 import Registro from './viewAuth/Registro.jsx'
 import CartPage from './viewCarrito/CartPage.jsx'
 import Perfil from './viewPerfil/Perfil.jsx'
+import LayoutAdmin from './viewAdmin/LayoutAdmin.jsx'
+import LoginMarca from './viewAdmin/Login/LoginMarca.jsx'
+import Dashboard from './viewAdmin/Dashboard/Dashboard.jsx'
+import Catalogo from './viewAdmin/Catalogo/Catalogo.jsx'
+import AgregarProducto from './viewAdmin/AgregarProducto/AgregarProducto.jsx'
+import Metricas from './viewAdmin/Metricas/Metricas.jsx'
+import Configuracion from './viewAdmin/Configuracion/Configuracion.jsx'
+import RegistroMarca from './viewAdmin/Login/RegistroMarca.jsx'
 
 function App() {
   return (
@@ -20,6 +28,15 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/carrito" element={<CartPage />} />
+      <Route path="/admin/login" element={<LoginMarca />} />
+      <Route path="/admin/registro" element={<RegistroMarca />} />
+      <Route path="/admin" element={<LayoutAdmin />}>
+        <Route index element={<Dashboard />} />
+        <Route path="catalogo" element={<Catalogo />} />
+        <Route path="catalogo/nuevo" element={<AgregarProducto />} />
+        <Route path="metricas" element={<Metricas />} />
+        <Route path="configuracion" element={<Configuracion />} />
+      </Route>
     </Routes>
   )
 }

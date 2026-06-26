@@ -6,16 +6,19 @@ import { ToastProvider } from './context/ToastContext.jsx'
 import { NavLoadingProvider } from './context/NavLoadingContext.jsx'
 import App from './App.jsx'
 import './index.css'
+import { MarcaAuthProvider } from './context/MarcaAuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <ToastProvider>
-          <NavLoadingProvider>
-            <App />
-          </NavLoadingProvider>
-        </ToastProvider>
+        <MarcaAuthProvider>
+          <ToastProvider>
+            <NavLoadingProvider>
+              <App />
+            </NavLoadingProvider>
+          </ToastProvider>
+        </MarcaAuthProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>

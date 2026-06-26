@@ -1,0 +1,31 @@
+/* LoginMarca.css */
+.login-marca {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #123d59;
+}
+.login-marca__card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.login-marca__logo { font-size: 24px; font-weight: 800; text-align: center; margin: 0; color: #123d59; }
+.login-marca__sub { text-align: center; color: #888; font-size: 13px; margin: 0 0 8px; }
+.login-marca__field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #444; }
+.login-marca__field input { border: 1px solid #ccc; border-radius: 6px; padding: 10px; font-size: 14px; }
+.login-marca__field input:focus { outline: none; border-color: #123d59; }
+.login-marca__error { color: #c0392b; font-size: 13px; text-align: center; }
+.login-marca__btn {
+  margin-top: 6px; background: #123d59; color: #fff; border: none;
+  border-radius: 6px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.login-marca__btn:disabled { opacity: 0.6; }
+.login-marca__switch { text-align: center; font-size: 13px; color: #666; margin: 4px 0 0; }
+.login-marca__switch a { color: #123d59; font-weight: 600; }
