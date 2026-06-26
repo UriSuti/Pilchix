@@ -10,7 +10,7 @@ import SubscribeSection from "./components/SubscribeSection/SubscribeSection";
 import LookbookDrift from "./components/LookbookDrift/LookbookDrift";
 import { LANDING_SECTION_TITLES } from "./constants";
 import { useLandingData } from "../hooks/useLandingData";
-import ViewLandingSkeleton from "./components/ViewLandingSkeleton/ViewLandingSkeleton";
+import { usePaginaCargando } from "../context/NavLoadingContext";
 
 function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) {
   const idUsuario = idUsuarioProp ?? id_usuario;
@@ -19,9 +19,7 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
 
   const recomendaciones = landingData.productosPopulares.slice(0, 8);
 
-  if (loading) {
-    return <ViewLandingSkeleton />;
-  }
+  usePaginaCargando(loading);
 
   return (
     <div className="landing-page">

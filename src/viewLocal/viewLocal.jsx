@@ -11,7 +11,7 @@ import { useLocalData } from './hooks/useLocalData.js'
 import { useLandingData } from '../hooks/useLandingData'
 import { useLandingSearch } from '../hooks/useLandingSearch'
 import { slugify } from '../utils/slugify.js'
-import ViewLocalSkeleton from "./components/ViewLocalSkeleton/ViewLocalSkeleton.jsx";
+import { usePaginaCargando } from "../context/NavLoadingContext.jsx";
 import BotonSuscribirse from "./components/BotonSuscribirse/BotonSuscribirse.jsx";
 
 function ViewLocal() {
@@ -45,6 +45,7 @@ function ViewLocal() {
 
   const cargando = cargandoMarcas || loading
   const noEncontrado = !cargandoMarcas && !marca
+  usePaginaCargando(cargando)
 
   return (
     <div className="view-local">
@@ -54,8 +55,6 @@ function ViewLocal() {
         onBuscar={buscarProductos}
         resultados={resultadosBusqueda}
       />
-
-      {cargando && <ViewLocalSkeleton />}
 
       {!cargando && noEncontrado && (
         <div className="view-estado">No encontramos ese local 😕</div>

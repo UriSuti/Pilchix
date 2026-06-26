@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext.jsx";
 import { slugify } from "../utils/slugify.js";
 import { useSuscripciones } from "./hooks/useSuscripciones.js";
+import { usePaginaCargando } from "../context/NavLoadingContext.jsx";
 import "./Perfil.css";
 import EditarDatos from "./components/EditarDatos/EditarDatos.jsx";
 import Favoritos from "./components/Favoritos/Favoritos.jsx";
@@ -20,6 +21,7 @@ function Perfil() {
     const { mostrarToast } = useToast();
     const [tabActiva, setTabActiva] = useState("Editar datos");
     const { suscripciones, cargando: cargandoSus } = useSuscripciones(idUsuario);
+    usePaginaCargando(cargando || cargandoSus);
 
     useEffect(() => {
         if (!cargando && !estaLogueado) navigate("/login");

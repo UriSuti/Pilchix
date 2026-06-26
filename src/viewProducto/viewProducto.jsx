@@ -8,12 +8,14 @@ import Header from '../header_footer/Header/Header.jsx'
 import { useLandingSearch } from '../hooks/useLandingSearch'
 import GaleriaProducto from './components/GaleriaProducto/GaleriaProducto.jsx'
 import InfoProducto from './components/InfoProducto/InfoProducto.jsx'
+import { usePaginaCargando } from '../context/NavLoadingContext.jsx'
 
 function ViewProducto() {
   const { productSlug } = useParams()
   const [producto, setProducto] = useState(null)
   const [loading, setLoading] = useState(true)
   const { textoBusqueda, setTextoBusqueda, buscarProductos, resultadosBusqueda } = useLandingSearch()
+  usePaginaCargando(loading)
 
   useEffect(() => {
     let active = true
