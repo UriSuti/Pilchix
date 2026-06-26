@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import CheckoutModal from './CheckoutModal'
 import './CartSummary.css'
 
 const IconLock = () => (
@@ -17,32 +19,47 @@ function formatPrice(valor) {
 }
 
 function CartSummary({ items }) {
+  const [modalAbierto, setModalAbierto] = useState(false)
   const subtotal = items.reduce((s, it) => s + (Number(it.precio) || 0) * (it.cantidad || 1), 0)
 
   return (
-    <aside className="cart-summary">
-      <h3>Resumen de Compra</h3>
+    <>
+      <aside className="cart-summary">
+        <h3>Resumen de Compra</h3>
 
-      <div className="cart-summary__line">
-        <span>Subtotal</span>
-        <span>{formatPrice(subtotal)}</span>
-      </div>
+        <div className="cart-summary__line">
+          <span>Subtotal</span>
+          <span>{formatPrice(subtotal)}</span>
+        </div>
 
-      <hr className="cart-summary__divider" />
+        <hr className="cart-summary__divider" />
 
-      <div className="cart-summary__total">
-        <strong>Total</strong>
-        <strong>{formatPrice(subtotal)}</strong>
-      </div>
+        <div className="cart-summary__total">
+          <strong>Total</strong>
+          <strong>{formatPrice(subtotal)}</strong>
+        </div>
 
-      <button className="cart-summary__checkout">
-        <IconLock /> Proceder al pago
-      </button>
+        <button
+          className="cart-summary__checkout"
+          onClick={() => setModalAbierto(true)}
+          disabled={items.length === 0}
+        >
+          <IconLock /> Proceder al pago
+        </button>
 
-      <p className="cart-summary__secure">
-        <IconShieldCheck /> Pago seguro y protegido
-      </p>
-    </aside>
+        <p className="cart-summary__secure">
+          <IconShieldCheck /> Pago seguro y protegido
+        </p>
+      </aside>
+
+      {modalAbierto && (
+        <CheckoutModal
+          items={items}
+          total={subtotal}
+          onClose={() => setModalAbierto(false)}
+        />
+      )}
+    </>
   )
 }
 

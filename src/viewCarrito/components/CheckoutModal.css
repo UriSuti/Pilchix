@@ -1,0 +1,225 @@
+.checkout-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+  animation: backdrop-in 0.2s ease;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.checkout-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: modal-in 0.25s ease;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.checkout-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  border-radius: 16px 16px 0 0;
+}
+
+.checkout-modal__header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.checkout-modal__close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.checkout-modal__close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.checkout-modal__body {
+  padding: 24px;
+  flex: 1;
+}
+
+/* Loading state */
+.checkout-loading,
+.checkout-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.checkout-processing {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 2;
+  border-radius: 0 0 16px 16px;
+}
+
+.checkout-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error state */
+.checkout-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* Result state */
+.checkout-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 0;
+  text-align: center;
+}
+
+.checkout-result__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.checkout-result--success .checkout-result__icon {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.checkout-result--pending .checkout-result__icon {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+.checkout-result--error .checkout-result__icon {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.checkout-result h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.checkout-result p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  max-width: 320px;
+  margin: 0;
+}
+
+.checkout-result__id {
+  font-size: 0.8rem !important;
+  color: #9ca3af !important;
+}
+
+/* Buttons */
+.checkout-btn-primary {
+  padding: 12px 28px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 8px;
+}
+
+.checkout-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.checkout-btn-secondary {
+  padding: 10px 24px;
+  background: transparent;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.checkout-btn-secondary:hover {
+  background: #f9fafb;
+}
+
+@media (max-width: 640px) {
+  .checkout-modal {
+    max-height: 95vh;
+    border-radius: 12px 12px 0 0;
+    align-self: flex-end;
+    margin: 0;
+  }
+
+  .checkout-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+}
