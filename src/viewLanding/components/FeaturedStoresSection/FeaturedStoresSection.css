@@ -41,7 +41,13 @@
   font-weight: 600;
   font-size: 1.4rem;
   color: var(--lp-ink);
+  text-decoration: none;
+  cursor: pointer;
+  width: fit-content;
   transition: color 0.3s var(--lp-ease);
+}
+.spot__name:hover {
+  text-decoration: underline;
 }
 
 .spot__cat {

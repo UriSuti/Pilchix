@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pilchix — Categoría (coverflow + filtros laterales)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #123d59;
+    --navy-ink: #06202f;
+    --ink: #0c1116;
+    --muted: #5d6b73;
+    --line: #e7ebee;
+    --cream: #f3f5f6;
+    --petrol-light: #4f97b8;
+    --glass: rgba(255,255,255,0.72);
+    --radius: 22px;
+    --ease: cubic-bezier(0.22,1,0.36,1);
+    --shadow-sm: 0 4px 18px rgba(12,44,66,0.08);
+    --shadow-lg: 0 26px 60px rgba(12,44,66,0.18);
+    --font: "Poppins", system-ui, sans-serif;
+    --display: "Fraunces", Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); color: var(--ink); background: #fff; -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; }
+  a { text-decoration: none; color: inherit; }
+  .wrap { width: min(1280px, calc(100% - 48px)); margin-inline: auto; }
+  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--navy); }
+
+  /* ---------- HEADER ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center;
+    padding: 10px clamp(24px,4vw,48px); background: var(--navy); color: #fff;
+  }
+  .brand { font-family: var(--display); font-weight: 600; font-size: 1.5rem; }
+  .topbar__search { width: 100%; max-width: 520px; margin-inline: auto; display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 999px; padding: 7px 16px; color: var(--ink); }
+  .topbar__search input { border: 0; outline: 0; width: 100%; font-family: var(--font); font-size: 0.9rem; }
+  .topbar__actions { display: flex; gap: 8px; }
+  .topbar__actions span { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.12); }
+
+  /* ---------- COVERFLOW (igual) ---------- */
+  .cover { position: relative; background: radial-gradient(120% 120% at 50% -20%, #16465f 0%, #0c2c42 55%, #06202f 100%); color: #fff; overflow: hidden; padding: 30px 0 40px; }
+  .cover__eyebrow { text-align: center; color: rgba(255,255,255,0.6); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; }
+  .stage { position: relative; height: 360px; margin-top: 18px; perspective: 1400px; }
+  .stage__track { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .cv-card { position: absolute; top: 50%; left: 50%; width: 230px; height: 300px; margin: -150px 0 0 -115px; border-radius: var(--radius); overflow: hidden; cursor: pointer; box-shadow: var(--shadow-lg); transition: transform 0.6s var(--ease), opacity 0.6s var(--ease), filter 0.6s var(--ease); will-change: transform; }
+  .cv-card img { width: 100%; height: 100%; object-fit: cover; }
+  .cv-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,32,47,0) 40%, rgba(6,32,47,0.78) 100%); }
+  .cv-card__name { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 2; text-align: center; font-family: var(--display); font-weight: 600; font-size: 1.2rem; }
+  .cv-card:not(.is-active) { filter: saturate(0.7) brightness(0.7); }
+  .stage__arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 50px; height: 50px; border-radius: 50%; border: 0; cursor: pointer; background: rgba(255,255,255,0.14); backdrop-filter: blur(8px); color: #fff; font-size: 1.4rem; display: grid; place-items: center; transition: background 0.2s, transform 0.2s; }
+  .stage__arrow:hover { background: rgba(255,255,255,0.28); }
+  .stage__arrow--prev { left: clamp(12px, 5vw, 80px); } .stage__arrow--next { right: clamp(12px, 5vw, 80px); }
+  .cover__info { text-align: center; margin-top: 4px; }
+  .cover__title { font-family: var(--display); font-weight: 600; font-size: clamp(2.2rem,5vw,3.6rem); line-height: 1; letter-spacing: -0.02em; }
+  .cover__meta { margin-top: 8px; color: rgba(255,255,255,0.72); font-weight: 500; }
+  .cover__meta b { color: #fff; }
+  .cover__dots { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+  .cover__dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s; }
+  .cover__dots i.is-active { background: #fff; width: 26px; border-radius: 99px; }
+
+  /* ---------- BARRA SUPERIOR DE LA GRILLA ---------- */
+  .resbar { position: sticky; top: 58px; z-index: 20; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .resbar__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; }
+  .resbar__count { color: var(--muted); font-size: 0.88rem; font-weight: 500; }
+  .resbar__count b { color: var(--ink); }
+  .resbar__right { display: flex; align-items: center; gap: 12px; }
+  .sortbox { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; padding: 5px 14px; }
+  .sortbox small { font-size: 0.66rem; color: var(--muted); }
+  .sortbox select { border: 0; outline: 0; background: none; font-family: var(--font); font-size: 0.88rem; font-weight: 500; cursor: pointer; }
+  .searchbox { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 0 14px; min-width: 220px; }
+  .searchbox:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(18,61,89,0.1); }
+  .searchbox input { border: 0; outline: 0; width: 100%; padding: 9px 0; font-family: var(--font); font-size: 0.88rem; }
+
+  /* ---------- LAYOUT: sidebar + grilla ---------- */
+  .catlayout { display: grid; grid-template-columns: 270px 1fr; gap: 34px; padding: 30px 0 90px; align-items: start; }
+
+  /* ===== PANEL DE FILTROS ===== */
+  /* sticky debajo de la barra de resultados, con alto máx = pantalla y scroll
+     interno: así nunca se tapa ni se corta al bajar */
+  .filters {
+    position: sticky;
+    top: 118px;
+    max-height: calc(100vh - 134px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+  .filters::-webkit-scrollbar { width: 6px; }
+  .filters::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+  .filters__head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+  .filters__head h3 { font-family: var(--display); font-weight: 600; font-size: 1.3rem; }
+  .filters__clear { background: none; border: 0; color: var(--petrol-light); font-family: var(--font); font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+  .filters__clear:hover { text-decoration: underline; }
+
+  .fgroup { border-top: 1px solid var(--line); padding: 18px 0; }
+  .fgroup__title { display: flex; align-items: center; justify-content: space-between; width: 100%; background: none; border: 0; cursor: pointer; font-family: var(--font); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
+  .fgroup__title .chev { transition: transform 0.3s var(--ease); color: var(--muted); }
+  .fgroup.is-collapsed .chev { transform: rotate(-90deg); }
+  .fgroup__body { margin-top: 16px; }
+  .fgroup.is-collapsed .fgroup__body { display: none; }
+
+  /* MARCA (destacada, con logos) */
+  .brandlist { display: flex; flex-direction: column; gap: 4px; }
+  .brandopt { position: relative; display: flex; align-items: center; gap: 11px; padding: 8px; border-radius: 12px; cursor: pointer; transition: background 0.18s; }
+  .brandopt:hover { background: var(--cream); }
+  .brandopt input { position: absolute; opacity: 0; pointer-events: none; }
+  .brandopt__box { width: 20px; height: 20px; flex: 0 0 auto; border: 2px solid var(--line); border-radius: 6px; display: grid; place-items: center; color: #fff; transition: all 0.18s; }
+  .brandopt input:checked + .brandopt__box { background: var(--navy); border-color: var(--navy); }
+  .brandopt__box svg { width: 12px; height: 12px; opacity: 0; transition: opacity 0.15s; }
+  .brandopt input:checked + .brandopt__box svg { opacity: 1; }
+  .brandopt__logo { width: 34px; height: 34px; flex: 0 0 auto; border-radius: 50%; object-fit: contain; background: #fff; border: 1px solid var(--line); padding: 4px; box-shadow: var(--shadow-sm); }
+  .brandopt__mono { width: 34px; height: 34px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 600; color: var(--navy); background: var(--cream); border: 1px solid var(--line); }
+  .brandopt__name { font-size: 0.9rem; font-weight: 600; flex: 1; }
+  .brandopt__count { font-size: 0.78rem; color: var(--muted); }
+
+  /* PRECIO (slider doble) */
+  .price__vals { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 16px; }
+  .range { position: relative; height: 30px; }
+  .range__track { position: absolute; top: 13px; left: 0; right: 0; height: 4px; border-radius: 99px; background: var(--line); }
+  .range__fill { position: absolute; top: 13px; height: 4px; border-radius: 99px; background: var(--navy); }
+  .range input { position: absolute; top: 0; left: 0; width: 100%; height: 30px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+  .range input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--navy); box-shadow: var(--shadow-sm); cursor: pointer; pointer-events: auto; }
+  .range input::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--navy); cursor: pointer; pointer-events: auto; }
+
+  /* TALLE (chips) */
+  .sizes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .size { padding: 9px 0; border: 1.5px solid var(--line); border-radius: 9px; background: #fff; font-family: var(--font); font-size: 0.85rem; font-weight: 600; color: var(--ink); cursor: pointer; transition: all 0.18s; text-align: center; }
+  .size:hover { border-color: var(--navy); }
+  .size.is-active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+  /* ===== GRILLA ===== */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .prod { cursor: pointer; }
+  .prod__img { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 3/4; background: var(--cream); box-shadow: var(--shadow-sm); }
+  .prod__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+  .prod:hover .prod__img img { transform: scale(1.07); }
+  .prod__fav { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--glass); backdrop-filter: blur(8px); color: var(--navy); }
+  .prod__fav svg { width: 20px; height: 20px; }
+  .prod__brand { margin: 12px 0 0; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .prod__name { font-size: 0.95rem; font-weight: 600; margin: 2px 0 6px; }
+  .prod__price { font-weight: 800; font-size: 1.05rem; color: var(--navy); }
+  .grid__empty { grid-column: 1/-1; text-align: center; color: var(--muted); padding: 60px 0; }
+
+  footer { background: var(--navy-ink); color: rgba(255,255,255,0.7); padding: 50px 0; text-align: center; font-size: 0.9rem; }
+
+  @media (max-width: 980px) {
+    .catlayout { grid-template-columns: 1fr; }
+    .filters { position: static; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .resbar__right .sortbox { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">Pilchix</div>
+    <form class="topbar__search" onsubmit="return false"><span>🔍</span><input placeholder="Buscá prendas, marcas y categorías" /></form>
+    <div class="topbar__actions"><span>🛍</span><span>🔔</span><span>👤</span></div>
+  </header>
+
+  <!-- COVERFLOW -->
+  <section class="cover">
+    <p class="cover__eyebrow">Explorá por categoría</p>
+    <div class="stage">
+      <button class="stage__arrow stage__arrow--prev" id="prev">‹</button>
+      <div class="stage__track" id="track"></div>
+      <button class="stage__arrow stage__arrow--next" id="next">›</button>
+    </div>
+    <div class="cover__info">
+      <h1 class="cover__title" id="title">Calzado</h1>
+      <p class="cover__meta"><b id="count">128 productos</b> · <span id="locales">14</span> locales</p>
+      <div class="cover__dots" id="dots"></div>
+    </div>
+  </section>
+
+  <!-- BARRA DE RESULTADOS -->
+  <div class="resbar">
+    <div class="wrap resbar__inner">
+      <p class="resbar__count"><b id="resCount">0</b> productos</p>
+      <div class="resbar__right">
+        <div class="sortbox"><small>Ordenar por</small>
+          <select id="sort"><option value="">Destacados</option><option value="low">Menor precio</option><option value="high">Mayor precio</option></select>
+        </div>
+        <div class="searchbox"><span>🔍</span><input id="search" placeholder="Buscar" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="wrap catlayout">
+    <!-- FILTROS -->
+    <aside class="filters">
+      <div class="filters__head">
+        <h3>Filtros</h3>
+        <button class="filters__clear" id="clear">Limpiar todo</button>
+      </div>
+
+      <div class="fgroup" data-group>
+        <button class="fgroup__title" data-toggle>Marca <span class="chev">▾</span></button>
+        <div class="fgroup__body"><div class="brandlist" id="brandlist"></div></div>
+      </div>
+
+      <div class="fgroup" data-group>
+        <button class="fgroup__title" data-toggle>Precio <span class="chev">▾</span></button>
+        <div class="fgroup__body">
+          <div class="price__vals"><span id="priceMinLbl">$0</span><span id="priceMaxLbl">$0</span></div>
+          <div class="range">
+            <div class="range__track"></div>
+            <div class="range__fill" id="rangeFill"></div>
+            <input type="range" id="priceMin" min="0" max="100" value="0" />
+            <input type="range" id="priceMax" min="0" max="100" value="100" />
+          </div>
+        </div>
+      </div>
+
+      <div class="fgroup" data-group>
+        <button class="fgroup__title" data-toggle>Talle <span class="chev">▾</span></button>
+        <div class="fgroup__body"><div class="sizes" id="sizes"></div></div>
+      </div>
+    </aside>
+
+    <!-- GRILLA -->
+    <main>
+      <div class="grid" id="grid"></div>
+    </main>
+  </div>
+
+  <footer>© 2026 Pilchix</footer>
+
+<script>
+  const heart = `<svg viewBox="0 0 24 24" fill="none" stroke="#123d59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+  const check = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const imgs = ['1542291026-7eec264c27ff','1595950653106-6c9ebd614d3a','1606107557195-0e29a4b5b4aa','1460353581641-37baddab0fa2','1551107696-a4b0c5a0d9a2','1556906781-9a412961c28c','1543508282-6319a3e2621f','1525966222134-fcfa99b8ae77','1539185441755-769473a23570','1597045566677-8cf032ed6634','1607522370275-f14206abe5d3','1518002171953-a080ee817e1f'];
+  const NOMBRES = ['Air Max 90','Campus 00s','Old Skool','550 White','Chuck 70','Dunk Low','Samba OG','HOVR Phantom','Classic Tee','Oversize Hoodie','Bomber Jacket','Cargo Pant','Slim Jean','Trucker Jacket','Logo Cap','Crew Sock'];
+  const LOGOS = { 'Nike':'nike.com','Adidas':'adidas.com','Vans':'vans.com','Converse':'converse.com','New Balance':'newbalance.com','Zara':'zara.com','H&M':'hm.com','Levi’s':'levi.com','Uniqlo':'uniqlo.com','Fossil':'fossil.com','Ray-Ban':'ray-ban.com','Casio':'casio.com','Under Armour':'underarmour.com','Puma':'puma.com','Wrangler':'wrangler.com','Lee':'lee.com','Carhartt':'carhartt.com','Stüssy':'stussy.com' };
+
+  const CATS = [
+    { nombre:'Calzado',      img:'1542291026-7eec264c27ff', locales:14, marcas:['Nike','Adidas','Vans','Converse','New Balance'], sizes:['38','39','40','41','42','43','44','45'] },
+    { nombre:'Indumentaria', img:'1483985988355-763728e1935b', locales:18, marcas:['Zara','H&M','Levi’s','Uniqlo'], sizes:['XS','S','M','L','XL','XXL'] },
+    { nombre:'Accesorios',   img:'1492707892479-7bc8d5a4ee93', locales:11, marcas:['Fossil','Ray-Ban','Casio'], sizes:['Único'] },
+    { nombre:'Deportivo',    img:'1517466787929-bc90951d0974', locales:13, marcas:['Nike','Adidas','Under Armour','Puma'], sizes:['S','M','L','XL'] },
+    { nombre:'Denim',        img:'1542272604-787c3835535d', locales:9,  marcas:['Levi’s','Wrangler','Lee'], sizes:['38','40','42','44','46'] },
+    { nombre:'Urbano',       img:'1523398002811-999ca8dec234', locales:12, marcas:['Vans','Carhartt','Stüssy'], sizes:['S','M','L','XL'] },
+  ];
+  const url = (id, w) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
+  const money = (n) => '$' + n.toLocaleString('es-AR');
+
+  function brandAvatar(marca, cls) {
+    const dom = LOGOS[marca];
+    if (dom) return `<img class="${cls}" src="https://logo.clearbit.com/${dom}" alt="${marca}" onerror="this.outerHTML='<span class=&quot;${cls.replace('logo','mono')}&quot;>${marca[0]}</span>'">`;
+    return `<span class="${cls.replace('logo','mono')}">${marca[0]}</span>`;
+  }
+
+  // genera productos demo de la categoría activa (deterministas)
+  function generarProductos(ci) {
+    const c = CATS[ci];
+    const out = [];
+    for (let k = 0; k < 18; k++) {
+      const marca = c.marcas[k % c.marcas.length];
+      const precio = 25000 + ((k * 8443 + ci * 5000) % 160000);
+      out.push({
+        marca, precio,
+        nombre: NOMBRES[(k + ci) % NOMBRES.length],
+        img: imgs[(ci * 3 + k) % imgs.length],
+        sizes: c.sizes.filter((_, i) => (k + i) % 3 !== 0), // subset de talles
+      });
+    }
+    return out;
+  }
+
+  let active = 0;
+  let productos = [];
+  let filtro = { marcas: new Set(), sizes: new Set(), pmin: 0, pmax: 0, busqueda: '', orden: '' };
+  let priceBounds = [0, 0];
+
+  // ---- COVERFLOW ----
+  const track = document.getElementById('track');
+  CATS.forEach((c, i) => {
+    const card = document.createElement('article');
+    card.className = 'cv-card';
+    card.innerHTML = `<img src="${url(c.img,600)}" alt="${c.nombre}"><span class="cv-card__name">${c.nombre}</span>`;
+    card.addEventListener('click', () => irA(i));
+    track.appendChild(card);
+  });
+  const dots = document.getElementById('dots');
+  CATS.forEach((_, i) => { const d = document.createElement('i'); d.addEventListener('click', () => irA(i)); dots.appendChild(d); });
+
+  function layoutCover() {
+    document.querySelectorAll('.cv-card').forEach((card, i) => {
+      let off = i - active; const n = CATS.length;
+      if (off > n/2) off -= n; if (off < -n/2) off += n;
+      const abs = Math.abs(off);
+      card.style.transform = `translate3d(${off*170}px,0,${-abs*220}px) rotateY(${off===0?0:(off<0?38:-38)}deg) scale(${off===0?1.06:0.9})`;
+      card.style.opacity = abs > 2 ? 0 : 1; card.style.zIndex = 100 - abs;
+      card.style.pointerEvents = abs > 2 ? 'none' : 'auto';
+      card.classList.toggle('is-active', off === 0);
+    });
+    document.querySelectorAll('.cover__dots i').forEach((d, i) => d.classList.toggle('is-active', i === active));
+  }
+
+  // ---- al cambiar de categoría: regenera productos y reconstruye filtros ----
+  function irA(i) {
+    active = (i + CATS.length) % CATS.length;
+    const c = CATS[active];
+    document.getElementById('title').textContent = c.nombre;
+    document.getElementById('count').textContent = (18) + ' productos';
+    document.getElementById('locales').textContent = c.locales;
+
+    productos = generarProductos(active);
+    const precios = productos.map(p => p.precio);
+    priceBounds = [Math.min(...precios), Math.max(...precios)];
+
+    // reset filtros
+    filtro = { marcas: new Set(), sizes: new Set(), pmin: priceBounds[0], pmax: priceBounds[1], busqueda: '', orden: document.getElementById('sort').value };
+    document.getElementById('search').value = '';
+
+    construirFiltros();
+    layoutCover();
+    render();
+  }
+
+  // ---- construye el panel de filtros para la categoría ----
+  function construirFiltros() {
+    const c = CATS[active];
+
+    // marcas con conteo
+    const bl = document.getElementById('brandlist');
+    bl.innerHTML = c.marcas.map(m => {
+      const cnt = productos.filter(p => p.marca === m).length;
+      return `<label class="brandopt">
+        <input type="checkbox" value="${m}">
+        <span class="brandopt__box">${check}</span>
+        ${brandAvatar(m, 'brandopt__logo')}
+        <span class="brandopt__name">${m}</span>
+        <span class="brandopt__count">${cnt}</span>
+      </label>`;
+    }).join('');
+    bl.querySelectorAll('input').forEach(inp => inp.addEventListener('change', () => {
+      inp.checked ? filtro.marcas.add(inp.value) : filtro.marcas.delete(inp.value);
+      render();
+    }));
+
+    // precio
+    const [mn, mx] = priceBounds;
+    const pmin = document.getElementById('priceMin'), pmax = document.getElementById('priceMax');
+    pmin.min = mn; pmin.max = mx; pmin.value = mn;
+    pmax.min = mn; pmax.max = mx; pmax.value = mx;
+    actualizarPrecio();
+
+    // talles
+    const sz = document.getElementById('sizes');
+    sz.innerHTML = c.sizes.map(s => `<button class="size" data-size="${s}">${s}</button>`).join('');
+    sz.querySelectorAll('.size').forEach(b => b.addEventListener('click', () => {
+      const s = b.dataset.size;
+      if (filtro.sizes.has(s)) { filtro.sizes.delete(s); b.classList.remove('is-active'); }
+      else { filtro.sizes.add(s); b.classList.add('is-active'); }
+      render();
+    }));
+  }
+
+  // slider doble de precio
+  const pmin = document.getElementById('priceMin'), pmax = document.getElementById('priceMax');
+  function actualizarPrecio() {
+    let lo = Number(pmin.value), hi = Number(pmax.value);
+    if (lo > hi) { [lo, hi] = [hi, lo]; }
+    filtro.pmin = lo; filtro.pmax = hi;
+    const [mn, mx] = priceBounds; const span = (mx - mn) || 1;
+    const fill = document.getElementById('rangeFill');
+    fill.style.left = ((lo - mn) / span * 100) + '%';
+    fill.style.right = ((mx - hi) / span * 100) + '%';
+    document.getElementById('priceMinLbl').textContent = money(lo);
+    document.getElementById('priceMaxLbl').textContent = money(hi);
+  }
+  pmin.addEventListener('input', () => { actualizarPrecio(); render(); });
+  pmax.addEventListener('input', () => { actualizarPrecio(); render(); });
+
+  // sort + search
+  document.getElementById('sort').addEventListener('change', e => { filtro.orden = e.target.value; render(); });
+  document.getElementById('search').addEventListener('input', e => { filtro.busqueda = e.target.value.toLowerCase(); render(); });
+
+  // limpiar
+  document.getElementById('clear').addEventListener('click', () => irA(active));
+
+  // colapsar grupos
+  document.querySelectorAll('[data-toggle]').forEach(t => t.addEventListener('click', () => t.closest('[data-group]').classList.toggle('is-collapsed')));
+
+  // ---- aplica filtros y dibuja la grilla ----
+  function render() {
+    let lista = productos.filter(p => {
+      if (filtro.marcas.size && !filtro.marcas.has(p.marca)) return false;
+      if (p.precio < filtro.pmin || p.precio > filtro.pmax) return false;
+      if (filtro.sizes.size && !p.sizes.some(s => filtro.sizes.has(s))) return false;
+      if (filtro.busqueda && !p.nombre.toLowerCase().includes(filtro.busqueda)) return false;
+      return true;
+    });
+    if (filtro.orden === 'low') lista.sort((a,b) => a.precio - b.precio);
+    if (filtro.orden === 'high') lista.sort((a,b) => b.precio - a.precio);
+
+    document.getElementById('resCount').textContent = lista.length;
+    const grid = document.getElementById('grid');
+    if (!lista.length) { grid.innerHTML = `<p class="grid__empty">No hay productos con esos filtros.</p>`; return; }
+    grid.innerHTML = lista.map(p => `<article class="prod">
+      <div class="prod__img"><span class="prod__fav">${heart}</span><img src="${url(p.img,500)}" alt=""></div>
+      <p class="prod__brand">${p.marca}</p>
+      <h3 class="prod__name">${p.nombre}</h3>
+      <p class="prod__price">${money(p.precio)}</p>
+    </article>`).join('');
+  }
+
+  document.getElementById('next').addEventListener('click', () => irA(active+1));
+  document.getElementById('prev').addEventListener('click', () => irA(active-1));
+
+  irA(0);
+</script>
+</body>
+</html>

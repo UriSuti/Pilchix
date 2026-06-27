@@ -8,6 +8,7 @@ import Login from './viewAuth/Login.jsx'
 import Registro from './viewAuth/Registro.jsx'
 import CartPage from './viewCarrito/CartPage.jsx'
 import Perfil from './viewPerfil/Perfil.jsx'
+import ViewCategoria from './viewCategoria/ViewCategoria.jsx'
 import LayoutAdmin from './viewAdmin/LayoutAdmin.jsx'
 import LoginMarca from './viewAdmin/Login/LoginMarca.jsx'
 import Dashboard from './viewAdmin/Dashboard/Dashboard.jsx'
@@ -23,6 +24,7 @@ function App() {
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/" element={<ViewLanding />} />
       <Route path="/producto/:productSlug" element={<ViewProducto />} />
+      <Route path="/categoria/:categorySlug" element={<ViewCategoria />} />
       <Route path="/:storeSlug" element={<ViewLocal />} />
       <Route path="/test" element={<SesionTest />} />
       <Route path="/login" element={<Login />} />

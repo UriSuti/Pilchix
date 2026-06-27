@@ -41,10 +41,11 @@ function HeroCarousel({
   direccion = "izquierda",
   alt = false,
 }) {
-  const trackRef = useShowroomDrift({ direccion });
-
   // contenido duplicado para el loop continuo
   const fila = productos.length > 0 ? [...productos, ...productos] : [];
+
+  // se le pasa la cantidad para reiniciar la animación cuando llegan los productos
+  const trackRef = useShowroomDrift({ direccion, cantidad: fila.length });
 
   return (
     <section className={`lp-section ${alt ? "lp-section--alt" : ""}`}>

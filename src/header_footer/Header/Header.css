@@ -254,20 +254,32 @@
 .site-header__action--carrito { position: relative; }
 .site-header__badge {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  min-width: 16px;
+  top: -4px;
+  right: -4px;
+  box-sizing: content-box;
+  width: 16px;
   height: 16px;
-  padding: 0 4px;
+  min-width: 16px;
+  padding: 0;
   border-radius: 999px;
-  background: #e63946;
+  background: #e11d48;
   color: #fff;
   font-size: 10px;
   font-weight: 700;
   line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  display: grid;
+  place-items: center;
+  /* aro del color del fondo del header: efecto "recortado" para que se despegue del ícono */
+  border: 2px solid #123d59;
+  box-shadow: 0 2px 5px rgba(12, 44, 66, 0.35);
+}
+/* el aro acompaña cada variante de fondo del header */
+.site-header--teal:not(.site-header--scrolled) .site-header__badge {
+  border-color: #0e4a59;
+}
+.site-header--scrolled .site-header__badge {
+  border-color: #f3f5f6;
 }
 
 /* inicial del avatar (logueado sin foto) */

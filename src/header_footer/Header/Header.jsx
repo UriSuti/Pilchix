@@ -140,13 +140,13 @@ function Header({ idUsuario = null, teal = false }) {
       </div>
 
       <div className="site-header__actions" aria-label="Acciones">
-        <button className="site-header__action" type="button" aria-label="Carrito" onClick={() => navigate('/carrito')}>
+        <button className="site-header__action site-header__action--carrito" type="button" aria-label="Carrito" title="Carrito" onClick={() => navigate('/carrito')}>
           <IconCart />
           {cantidadCarrito > 0 && (
             <span className="site-header__badge">{cantidadCarrito}</span>
           )}
         </button>
-        <button className="site-header__action" type="button" aria-label="Notificaciones">
+        <button className="site-header__action" type="button" aria-label="Notificaciones" title="Notificaciones">
           <IconBell />
         </button>
         <div className="site-header__perfil" ref={perfilRef}>
@@ -154,6 +154,7 @@ function Header({ idUsuario = null, teal = false }) {
             className="site-header__action site-header__action--profile"
             type="button"
             aria-label="Perfil"
+            title="Perfil"
             onClick={() =>
               estaLogueado ? setMenuPerfilAbierto((v) => !v) : navigate("/login")
             }

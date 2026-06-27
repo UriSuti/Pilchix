@@ -80,7 +80,13 @@ function FeaturedStoresSection({ marcas = [], marcasPopulares = [], productos = 
                 onClick={() => setActiva(i)}
               >
                 <span className="spot__idx">{String(i + 1).padStart(2, "0")}</span>
-                <span className="spot__name">{marca.nombre}</span>
+                <Link
+                  className="spot__name"
+                  to={`/${slugify(marca.nombre)}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {marca.nombre}
+                </Link>
                 <span className="spot__cat">{marca.ubicacion || "Local destacado"}</span>
               </li>
             ))}

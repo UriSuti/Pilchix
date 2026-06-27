@@ -5,9 +5,11 @@ import { useEffect, useRef } from "react";
  * del scroll, desacelerando suave hasta volver al ritmo de reposo.
  * El track debe contener el contenido DUPLICADO para un loop sin saltos.
  */
-export function useShowroomDrift({ direccion = "izquierda" } = {}) {
+export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {}) {
   const trackRef = useRef(null);
 
+  // `cantidad` reinicia el efecto cuando los productos llegan (la landing se
+  // renderiza antes de cargar los datos, así que el track aparece después).
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -55,7 +57,7 @@ export function useShowroomDrift({ direccion = "izquierda" } = {}) {
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [direccion]);
+  }, [direccion, cantidad]);
 
   return trackRef;
 }
