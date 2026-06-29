@@ -7,20 +7,25 @@ const app = express()
 app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:4173'] }))
 app.use(express.json())
 
-const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN })
+const client = new MercadoPagoConfig({ accessToken: 'APP_USR-7744575081225968-062607-26a6520f69f5e42563908c0ab41dec60-2615602953' })
 
 app.post('/api/create-preference', async (req, res) => {
   try {
     const { items } = req.body
+    if (!items || !items.length) {
+      return res.status(400).json({ error: 'El carrito está vacío' })
+    }
+
     const preference = new Preference(client)
     const result = await preference.create({
       body: {
         items,
         back_urls: {
-          success: 'http://localhost:5173/carrito',
-          failure: 'http://localhost:5173/carrito',
-          pending: 'http://localhost:5173/carrito',
+          success: 'http://localhost:5173/carrito?pago=aprobado',
+          failure: 'http://localhost:5173/carrito?pago=rechazado',
+          pending: 'http://localhost:5173/carrito?pago=pendiente',
         },
+        statement_descriptor: 'Pilchix',
       },
     })
     res.json({ preferenceId: result.id })

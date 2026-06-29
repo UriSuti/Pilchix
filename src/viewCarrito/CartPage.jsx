@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import CartItem from './components/CartItem'
 import CartSummary from './components/CartSummary'
 import Header from '../header_footer/Header/Header'
@@ -41,11 +41,20 @@ const BENEFITS = [
   { icon: <IconHeadset />, title: 'Atención al cliente', desc: 'Nuestro equipo está para ayudarte' },
 ]
 
+const PAGO_BANNERS = {
+  aprobado: { bg: '#dcfce7', color: '#15803d', texto: '¡Pago aprobado! Gracias por tu compra.' },
+  rechazado: { bg: '#fee2e2', color: '#dc2626', texto: 'El pago fue rechazado. Podés intentarlo de nuevo.' },
+  pendiente: { bg: '#fef9c3', color: '#a16207', texto: 'Tu pago está pendiente de acreditación.' },
+}
+
 function CartPage() {
   const { estaLogueado, idUsuario } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [items, setItems] = useState([])
   const [cargando, setCargando] = useState(true)
+
+  const estadoPago = searchParams.get('pago')
 
   const cargar = useCallback(() => {
     setCargando(true)
@@ -88,6 +97,20 @@ function CartPage() {
     <div className="cart-layout">
     <Header idUsuario={idUsuario} />
     <div className="cart-page">
+      {estadoPago && PAGO_BANNERS[estadoPago] && (
+        <div style={{
+          background: PAGO_BANNERS[estadoPago].bg,
+          color: PAGO_BANNERS[estadoPago].color,
+          padding: '14px 20px',
+          borderRadius: 8,
+          margin: '0 0 16px',
+          fontWeight: 600,
+          fontSize: '0.97rem',
+        }}>
+          {PAGO_BANNERS[estadoPago].texto}
+        </div>
+      )}
+
       <div className="cart-page__header">
         <div>
           <h1>Carrito de Compras</h1>
