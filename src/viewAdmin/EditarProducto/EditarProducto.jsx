@@ -1,120 +1,146 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMarcaAuth } from "../../context/MarcaAuthContext";
+import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import { subirImagenProducto } from "../../services/storage";
 import {
-  getCategorias, crearProducto, setCategoriasProducto, setImagenesProducto,
+  getCategorias, getProductoPorId, actualizarProducto,
+  actualizarCategoriasProducto, setImagenesProducto, borrarImagen, borrarProducto,
 } from "../services/catalogo";
-import "./AgregarProducto.css";
+import "../AgregarProducto/AgregarProducto.css";
 
 const TALLES_DISPONIBLES = ["XS", "S", "M", "L", "XL", "XXL"];
 
-function AgregarProducto() {
+function EditarProducto() {
   const navigate = useNavigate();
-  const { idMarca } = useMarcaAuth();
+  const { idProducto } = useParams();
   const { mostrarToast } = useToast();
 
-  const [form, setForm] = useState({
-    nombre: "", descripcion: "", precio: "", stock: "", estado: true,
-  });
+  const [form, setForm] = useState({ nombre: "", descripcion: "", precio: "", stock: "", estado: true });
   const [talles, setTalles] = useState([]);
   const [colores, setColores] = useState([]);
   const [colorTemp, setColorTemp] = useState("#123d59");
   const [categorias, setCategorias] = useState([]);
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
-  const [imagenes, setImagenes] = useState([]);      // File[]
-  const [previews, setPreviews] = useState([]);      // string[]
+  const [imagenesExistentes, setImagenesExistentes] = useState([]); // {id_imagen, imagen}
+  const [imagenesNuevas, setImagenesNuevas] = useState([]);          // File[]
+  const [previewsNuevas, setPreviewsNuevas] = useState([]);
+  const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
 
+  // precarga
   useEffect(() => {
-    getCategorias().then(({ data }) => setCategorias(data ?? []));
-  }, []);
+    async function cargar() {
+      const [{ data: cats }, { data: prod, error }] = await Promise.all([
+        getCategorias(),
+        getProductoPorId(idProducto),
+      ]);
+      setCategorias(cats ?? []);
+      if (error || !prod) { mostrarToast("No se encontró el producto", "error"); navigate("/admin/catalogo"); return; }
+
+      setForm({
+        nombre: prod.nombre ?? "",
+        descripcion: prod.descripcion ?? "",
+        precio: prod.precio ?? "",
+        stock: prod.stock ?? "",
+        estado: prod.estado ?? true,
+      });
+      setTalles(prod.guia_talles ?? []);
+      setColores(prod.colores ?? []);
+      setCatSeleccionadas((prod.Producto_Categoria ?? []).map((c) => c.id_categoria));
+      setImagenesExistentes(prod.Imagen ?? []);
+      setCargando(false);
+    }
+    cargar();
+  }, [idProducto, navigate, mostrarToast]);
 
   const setCampo = (campo) => (e) =>
     setForm({ ...form, [campo]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
 
   const toggleTalle = (t) =>
-    setTalles((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
-
-  const agregarColor = () => {
-    if (!colores.includes(colorTemp)) setColores([...colores, colorTemp]);
-  };
+    setTalles((p) => (p.includes(t) ? p.filter((x) => x !== t) : [...p, t]));
+  const agregarColor = () => { if (!colores.includes(colorTemp)) setColores([...colores, colorTemp]); };
   const quitarColor = (c) => setColores(colores.filter((x) => x !== c));
-
   const toggleCategoria = (id) =>
-    setCatSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setCatSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
-  const handleImagenes = (e) => {
+  const handleImagenesNuevas = (e) => {
     const files = Array.from(e.target.files);
-    setImagenes((prev) => [...prev, ...files]);
-    setPreviews((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+    setImagenesNuevas((p) => [...p, ...files]);
+    setPreviewsNuevas((p) => [...p, ...files.map((f) => URL.createObjectURL(f))]);
   };
-  const quitarImagen = (i) => {
-    setImagenes(imagenes.filter((_, idx) => idx !== i));
-    setPreviews(previews.filter((_, idx) => idx !== i));
+  const quitarImagenNueva = (i) => {
+    setImagenesNuevas(imagenesNuevas.filter((_, idx) => idx !== i));
+    setPreviewsNuevas(previewsNuevas.filter((_, idx) => idx !== i));
   };
 
-  const handleSubmit = async (e) => {
+  // borra una imagen YA guardada (de la base y el bucket)
+  const handleBorrarExistente = async (img) => {
+    const { error } = await borrarImagen(img.id_imagen, img.imagen);
+    if (error) { mostrarToast(error, "error"); return; }
+    setImagenesExistentes((prev) => prev.filter((x) => x.id_imagen !== img.id_imagen));
+    mostrarToast("Imagen eliminada", "info");
+  };
+
+  const handleGuardar = async (e) => {
     e.preventDefault();
-    if (!form.nombre.trim()) { mostrarToast("Poné un nombre al producto", "error"); return; }
+    if (!form.nombre.trim()) { mostrarToast("Poné un nombre", "error"); return; }
     setGuardando(true);
     try {
-      // 1) crear el producto
-      const { idProducto, error } = await crearProducto({
-        id_marca: idMarca,
+      const { error } = await actualizarProducto(idProducto, {
         nombre: form.nombre.trim(),
         descripcion: form.descripcion.trim() || null,
         precio: Number(form.precio) || 0,
         stock: Number(form.stock) || 0,
         estado: form.estado,
         guia_talles: talles,
-        colores: colores,
+        colores,
       });
       if (error) { mostrarToast(error, "error"); return; }
 
-      // 2) categorías
-      if (catSeleccionadas.length) {
-        await setCategoriasProducto(idProducto, catSeleccionadas);
-      }
+      await actualizarCategoriasProducto(idProducto, catSeleccionadas);
 
-      // 3) imágenes → Storage → tabla Imagen
-      if (imagenes.length) {
+      if (imagenesNuevas.length) {
         const urls = [];
-        for (const file of imagenes) {
-          const { url, error: errImg } = await subirImagenProducto(file);
+        for (const file of imagenesNuevas) {
+          const { url } = await subirImagenProducto(file);
           if (url) urls.push(url);
-          else mostrarToast(errImg, "error");
         }
         if (urls.length) await setImagenesProducto(idProducto, urls);
       }
 
-      mostrarToast("Producto creado", "exito");
+      mostrarToast("Cambios guardados", "exito");
       navigate("/admin/catalogo");
-    } catch (err) {
-      console.log("ERROR CREAR PRODUCTO:", err);
-      mostrarToast("Ocurrió un error inesperado", "error");
+    } catch {
+      mostrarToast("Ocurrió un error", "error");
     } finally {
       setGuardando(false);
     }
   };
 
+  const handleBorrarProducto = async () => {
+    if (!window.confirm("¿Seguro que querés borrar este producto? No se puede deshacer.")) return;
+    const { error } = await borrarProducto(idProducto);
+    if (error) { mostrarToast(error, "error"); return; }
+    mostrarToast("Producto borrado", "info");
+    navigate("/admin/catalogo");
+  };
+
+  if (cargando) return null;
+
   return (
-    <form className="ap" onSubmit={handleSubmit}>
+    <form className="ap" onSubmit={handleGuardar}>
       <header className="ap__head">
-        <h1>Agregar producto</h1>
+        <h1>Editar producto</h1>
         <div className="ap__head-actions">
-          <button type="button" className="ap__btn-sec" onClick={() => navigate("/admin/catalogo")}>
-            Cancelar
-          </button>
+          <button type="button" className="ap__btn-danger" onClick={handleBorrarProducto}>Borrar</button>
+          <button type="button" className="ap__btn-sec" onClick={() => navigate("/admin/catalogo")}>Cancelar</button>
           <button type="submit" className="ap__btn-pri" disabled={guardando}>
-            {guardando ? "Guardando..." : "Guardar producto"}
+            {guardando ? "Guardando..." : "Guardar cambios"}
           </button>
         </div>
       </header>
 
       <div className="ap__grid">
-        {/* columna izquierda: datos */}
         <section className="ap__col">
           <div className="ap__card">
             <h2>Información general</h2>
@@ -150,27 +176,34 @@ function AgregarProducto() {
             <div className="ap__colores">
               {colores.map((c) => (
                 <span key={c} className="ap__color-chip" style={{ background: c }}
-                  onClick={() => quitarColor(c)} title="Quitar">
-                  <i>✕</i>
-                </span>
+                  onClick={() => quitarColor(c)} title="Quitar"><i>✕</i></span>
               ))}
             </div>
           </div>
         </section>
 
-        {/* columna derecha: imágenes, categorías, estado */}
         <section className="ap__col">
           <div className="ap__card">
             <h2>Imágenes</h2>
+            {/* existentes */}
+            <div className="ap__previews">
+              {imagenesExistentes.map((img) => (
+                <div key={img.id_imagen} className="ap__preview">
+                  <img src={img.imagen} alt="" />
+                  <button type="button" onClick={() => handleBorrarExistente(img)}>✕</button>
+                </div>
+              ))}
+            </div>
+            {/* nuevas */}
             <label className="ap__dropzone">
-              <input type="file" accept="image/*" multiple hidden onChange={handleImagenes} />
-              <span>+ Subir imágenes</span>
+              <input type="file" accept="image/*" multiple hidden onChange={handleImagenesNuevas} />
+              <span>+ Agregar imágenes</span>
             </label>
             <div className="ap__previews">
-              {previews.map((src, i) => (
+              {previewsNuevas.map((src, i) => (
                 <div key={i} className="ap__preview">
                   <img src={src} alt="" />
-                  <button type="button" onClick={() => quitarImagen(i)}>✕</button>
+                  <button type="button" onClick={() => quitarImagenNueva(i)}>✕</button>
                 </div>
               ))}
             </div>
@@ -203,4 +236,4 @@ function AgregarProducto() {
   );
 }
 
-export default AgregarProducto;
+export default EditarProducto;
