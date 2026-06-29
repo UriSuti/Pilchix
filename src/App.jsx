@@ -17,6 +17,7 @@ import AgregarProducto from './viewAdmin/AgregarProducto/AgregarProducto.jsx'
 import Metricas from './viewAdmin/Metricas/Metricas.jsx'
 import Configuracion from './viewAdmin/Configuracion/Configuracion.jsx'
 import RegistroMarca from './viewAdmin/Login/RegistroMarca.jsx'
+import EditarProducto from './viewAdmin/EditarProducto/EditarProducto.jsx'
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="catalogo" element={<Catalogo />} />
         <Route path="catalogo/nuevo" element={<AgregarProducto />} />
+        <Route path="catalogo/editar/:idProducto" element={<EditarProducto />} />
         <Route path="metricas" element={<Metricas />} />
         <Route path="configuracion" element={<Configuracion />} />
       </Route>
