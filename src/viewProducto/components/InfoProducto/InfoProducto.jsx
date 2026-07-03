@@ -1,6 +1,7 @@
 import './InfoProducto.css'
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { supabase } from '../../../utils/supabase'
 import { useAuth } from '../../../context/AuthContext'
 import { useToast } from '../../../context/ToastContext'
 import { agregarAlCarrito } from '../../../viewCarrito/services/cart'
@@ -90,6 +91,13 @@ function InfoProducto({ producto, loading }) {
         color: selectedColor,
       })
       mostrarToast('Producto agregado al carrito', 'exito')
+
+      // Contamos el clic recién acá, no al apretar el botón: si "agregarAlCarrito"
+      // falló arriba, este código ni se ejecuta, y está bien — no fue un clic "real".
+      const { error: rpcError } = await supabase.rpc('incrementar_clic', {
+        p_id_producto: producto.id_producto,
+      })
+      if (rpcError) console.error('No se pudo registrar el clic:', rpcError)
     } catch (e) {
       console.error('Error agregando al carrito', e)
       mostrarToast('Ocurrió un error al agregar al carrito', 'error')

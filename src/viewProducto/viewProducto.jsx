@@ -36,6 +36,14 @@ function ViewProducto() {
       const found = (data || []).find((p) => slugify(p.nombre) === productSlug)
       setProducto(found || null)
       setLoading(false)
+
+      if (found) {
+        supabase
+          .rpc('incrementar_visualizacion', { p_id_producto: found.id_producto })
+          .then(({ error: rpcError }) => {
+            if (rpcError) console.error('No se pudo registrar la visualización:', rpcError)
+          })
+      }
     }
 
     loadProducto()
