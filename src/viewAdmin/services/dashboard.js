@@ -23,3 +23,18 @@ export function getDashboardData(idMarca, dias = 30) {
     .eq("id_marca", idMarca)
     .gte("Metrica_Producto.fecha", desde);
 }
+
+// productos de la marca con métricas del rango + sus categorías
+export function getMetricasData(idMarca, dias = 30) {
+  const desde = fechaDesde(dias);
+  return supabase
+    .from("Producto")
+    .select(`
+      id_producto, nombre, precio, stock, estado,
+      Imagen ( imagen ),
+      Producto_Categoria ( Categoria ( nombre ) ),
+      Metrica_Producto ( visualizaciones, clics, ventas, fecha )
+    `)
+    .eq("id_marca", idMarca)
+    .gte("Metrica_Producto.fecha", desde);
+}

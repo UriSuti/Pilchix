@@ -1,5 +1,5 @@
 import './viewProducto.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import { slugify } from '../utils/slugify'
@@ -14,6 +14,7 @@ function ViewProducto() {
   const { productSlug } = useParams()
   const [producto, setProducto] = useState(null)
   const [loading, setLoading] = useState(true)
+  const contadoRef = useRef(null)
   const { textoBusqueda, setTextoBusqueda, buscarProductos, resultadosBusqueda } = useLandingSearch()
   usePaginaCargando(loading)
 
@@ -37,7 +38,8 @@ function ViewProducto() {
       setProducto(found || null)
       setLoading(false)
 
-      if (found) {
+      if (found && contadoRef.current !== found.id_producto) {
+        contadoRef.current = found.id_producto   // marca este producto como contado
         supabase
           .rpc('incrementar_visualizacion', { p_id_producto: found.id_producto })
           .then(({ error: rpcError }) => {
