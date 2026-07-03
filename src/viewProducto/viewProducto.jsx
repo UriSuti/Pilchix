@@ -45,6 +45,8 @@ function ViewProducto() {
     }
   }, [productSlug])
 
+  const noEncontrado = !loading && !producto
+
   return (
     <div className="view-producto">
       <Header
@@ -55,10 +57,16 @@ function ViewProducto() {
       />
 
 
-      <main className="contenido-producto">
-        <GaleriaProducto producto={producto} loading={loading} />
-        <InfoProducto producto={producto} loading={loading} />
-      </main>
+      {noEncontrado ? (
+        <div className="catpage__estado" style={{ padding: "80px 20px", textAlign: "center" }}>
+          No encontramos ese producto 😕
+        </div>
+      ) : (
+        <main className="contenido-producto">
+          <GaleriaProducto producto={producto} loading={loading} />
+          <InfoProducto producto={producto} loading={loading} />
+        </main>
+      )}
       <Footer />
     </div>
   )

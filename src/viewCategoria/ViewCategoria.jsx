@@ -7,6 +7,7 @@ import Producto from "../viewLocal/components/Producto/Producto";
 import CategoryCoverflow from "./components/CategoryCoverflow/CategoryCoverflow";
 import FiltrosCategoria from "./components/FiltrosCategoria/FiltrosCategoria";
 import { useCategoriasData } from "./hooks/useCategoriasData";
+import { usePaginaCargando } from "../context/NavLoadingContext";
 
 const IconSearch = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -19,6 +20,7 @@ function ViewCategoria() {
   const { categorySlug } = useParams();
   const navigate = useNavigate();
   const { categorias, loading, error } = useCategoriasData();
+  usePaginaCargando(loading);
 
   const [marcasSel, setMarcasSel] = useState(() => new Set());
   const [tallesSel, setTallesSel] = useState(() => new Set());

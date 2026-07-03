@@ -52,7 +52,7 @@ export async function setImagenesProducto(idProducto, urls) {
 }
 
 // traer un producto completo para editar
-export function getProductoPorId(idProducto) {
+export function getProductoPorId(idProducto, idMarca) {
   return supabase
     .from("Producto")
     .select(`
@@ -62,6 +62,7 @@ export function getProductoPorId(idProducto) {
       Producto_Categoria ( id_categoria )
     `)
     .eq("id_producto", idProducto)
+    .eq("id_marca", idMarca)   // ← solo si el producto es de esta marca
     .single();
 }
 

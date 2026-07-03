@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import { subirImagenProducto } from "../../services/storage";
+import { useMarcaAuth } from "../../context/MarcaAuthContext.jsx";
 import {
   getCategorias, getProductoPorId, actualizarProducto,
   actualizarCategoriasProducto, setImagenesProducto, borrarImagen, borrarProducto,
@@ -14,6 +15,7 @@ function EditarProducto() {
   const navigate = useNavigate();
   const { idProducto } = useParams();
   const { mostrarToast } = useToast();
+  const { idMarca } = useMarcaAuth();
 
   const [form, setForm] = useState({ nombre: "", descripcion: "", precio: "", stock: "", estado: true });
   const [talles, setTalles] = useState([]);
@@ -32,7 +34,7 @@ function EditarProducto() {
     async function cargar() {
       const [{ data: cats }, { data: prod, error }] = await Promise.all([
         getCategorias(),
-        getProductoPorId(idProducto),
+        getProductoPorId(idProducto, idMarca),
       ]);
       setCategorias(cats ?? []);
       if (error || !prod) { mostrarToast("No se encontró el producto", "error"); navigate("/admin/catalogo"); return; }
