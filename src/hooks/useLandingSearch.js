@@ -10,6 +10,7 @@ import {
   searchLandingCategorias,
   searchLandingProductos,
   searchLandingMarcas,
+  searchLandingCategoriasPorNombre,
 } from "../viewLanding/services/landing";
 
 export function useLandingSearch(idUsuario) {
@@ -18,6 +19,7 @@ export function useLandingSearch(idUsuario) {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
   const [marcasBusqueda, setMarcasBusqueda] = useState([]);
+  const [categoriasBusqueda, setCategoriasBusqueda] = useState([]);
 
   const hasSearch = useMemo(() => textoBusqueda.trim().length > 0, [textoBusqueda]);
   const debounceRef = useRef(null);
@@ -41,10 +43,11 @@ export function useLandingSearch(idUsuario) {
         if (errorBusqueda) setError(errorBusqueda.message);
       }
 
-      const [productosResult, categoriasResult, marcasResult] = await Promise.all([
+      const [productosResult, categoriasResult, marcasResult, categoriasNombreResult] = await Promise.all([
         searchLandingProductos(q),
         searchLandingCategorias(q),
-        searchLandingMarcas(q), // ← nueva consulta
+        searchLandingMarcas(q),
+        searchLandingCategoriasPorNombre(q),
       ]);
 
       if (requestId !== requestIdRef.current) return;
@@ -53,6 +56,7 @@ export function useLandingSearch(idUsuario) {
         productosResult.error?.message,
         categoriasResult.error?.message,
         marcasResult.error?.message,
+        categoriasNombreResult.error?.message,
       ].filter(Boolean);
       if (errores.length > 0) {
         setError(errores[0]);
@@ -79,6 +83,7 @@ export function useLandingSearch(idUsuario) {
 
       // --- marcas (ya vienen filtradas por nombre desde el ilike) ---
       setMarcasBusqueda(marcasResult.data ?? []);
+      setCategoriasBusqueda(categoriasNombreResult.data ?? [])
     } finally {
       if (requestId === requestIdRef.current) setCargando(false);
     }
@@ -94,7 +99,8 @@ export function useLandingSearch(idUsuario) {
 
     if (!texto) {
       setResultadosBusqueda([]);
-      setMarcasBusqueda([]); // ← agregar
+      setMarcasBusqueda([]);
+      setCategoriasBusqueda([]);
       setCargando(false);
       return;
     }
@@ -112,7 +118,8 @@ export function useLandingSearch(idUsuario) {
     textoBusqueda,
     setTextoBusqueda,
     resultadosBusqueda,
-    marcasBusqueda, // ← nuevo
+    marcasBusqueda,
+    categoriasBusqueda,
     cargando,
     buscarProductos,
     error,

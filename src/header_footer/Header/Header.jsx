@@ -63,7 +63,8 @@ function Header({ idUsuario = null, teal = false }) {
     textoBusqueda,
     setTextoBusqueda,
     resultadosBusqueda,
-    marcasBusqueda, // ← nuevo
+    marcasBusqueda,
+    categoriasBusqueda,
     cargando,
     buscarProductos,
   } = useLandingSearch(idUsuario);
@@ -135,7 +136,7 @@ function Header({ idUsuario = null, teal = false }) {
         </form>
 
         {textoBusqueda.trim() && (
-          <SearchBar resultados={resultadosBusqueda} marcas={marcasBusqueda} textoBusqueda={textoBusqueda} cargando={cargando} />
+          <SearchBar resultados={resultadosBusqueda} marcas={marcasBusqueda} categorias={categoriasBusqueda} textoBusqueda={textoBusqueda} cargando={cargando} />
         )}
       </div>
 
