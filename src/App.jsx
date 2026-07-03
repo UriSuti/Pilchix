@@ -18,6 +18,8 @@ import Metricas from './viewAdmin/Metricas/Metricas.jsx'
 import Configuracion from './viewAdmin/Configuracion/Configuracion.jsx'
 import RegistroMarca from './viewAdmin/Login/RegistroMarca.jsx'
 import EditarProducto from './viewAdmin/EditarProducto/EditarProducto.jsx'
+import SoloInvitados from './components/SoloInvitados.jsx'
+import SoloInvitadosMarca from './components/SoloInvitadosMarca.jsx'
 
 function App() {
   return (
@@ -28,11 +30,11 @@ function App() {
       <Route path="/categoria/:categorySlug" element={<ViewCategoria />} />
       <Route path="/:storeSlug" element={<ViewLocal />} />
       <Route path="/test" element={<SesionTest />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/registro" element={<Registro />} />
+      <Route path="/login" element={<SoloInvitados><Login /></SoloInvitados>} />
+      <Route path="/registro" element={<SoloInvitados><Registro /></SoloInvitados>} />
       <Route path="/carrito" element={<CartPage />} />
-      <Route path="/admin/login" element={<LoginMarca />} />
-      <Route path="/admin/registro" element={<RegistroMarca />} />
+      <Route path="/admin/login" element={<SoloInvitadosMarca><LoginMarca /></SoloInvitadosMarca>} />
+      <Route path="/admin/registro" element={<SoloInvitadosMarca><RegistroMarca /></SoloInvitadosMarca>} />
       <Route path="/admin" element={<LayoutAdmin />}>
         <Route index element={<Dashboard />} />
         <Route path="catalogo" element={<Catalogo />} />

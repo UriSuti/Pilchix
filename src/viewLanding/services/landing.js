@@ -218,3 +218,18 @@ export function searchLandingMarcas(textoBusqueda) {
     .eq("estado", 1)
     .ilike("nombre", `%${textoBusqueda}%`);
 }
+
+export function searchLandingCategoriasPorNombre(textoBusqueda) {
+  return supabase
+    .from("Categoria")
+    .select(`
+      id_categoria,
+      nombre,
+      Producto_Categoria (
+        Producto (
+          Imagen ( imagen )
+        )
+      )
+    `)
+    .ilike("nombre", `%${textoBusqueda}%`);
+}

@@ -15,7 +15,9 @@ function LoginMarca() {
     e.preventDefault();
     setError("");
     setEnviando(true);
+    console.log("LOGIN: llamando...")
     const { ok, error } = await login(email.trim(), password);
+    console.log("LOGIN: respondió", { ok, error });
     setEnviando(false);
     if (!ok) { setError(error); return; }
     navigate("/admin");

@@ -6,14 +6,14 @@ export async function loginMarca(email, contraseña) {
         .select("id_marca, nombre, email, logo, descripcion, sitio_web, ubicacion, estado")
         .eq("email", email)
         .eq("contraseña", contraseña)
-        .single();
+        .maybeSingle();   // ← clave: maybeSingle en vez de single
 
-    console.log("LOGIN estado:", data.estado, typeof data.estado);
-
+    // 1) primero: sin fila o error → credenciales incorrectas (corta acá)
     if (error || !data) {
         return { marca: null, error: "Email o contraseña incorrectos" };
     }
 
+    // 2) recién ahora es seguro leer data.estado
     if (data.estado !== true) {
         return { marca: null, error: "Tu marca todavía está pendiente de aprobación." };
     }
