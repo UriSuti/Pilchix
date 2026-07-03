@@ -36,13 +36,27 @@
   border: 2px dashed #d4d7da; border-radius: 10px; padding: 22px; cursor: pointer; color: #5f6368; margin-bottom: 12px;
 }
 .ap__dropzone:hover { border-color: #123d59; color: #123d59; }
-.ap__previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
-.ap__preview { position: relative; aspect-ratio: 1; }
-.ap__preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
-.ap__preview button {
+.ap__previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+.ap__preview { display: flex; flex-direction: column; gap: 6px; }
+.ap__preview-img { position: relative; aspect-ratio: 1; }
+.ap__preview-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.ap__preview-img button {
   position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%;
   border: none; background: #c0392b; color: #fff; cursor: pointer; font-size: 12px;
 }
+.ap__preview-colores { display: flex; flex-wrap: wrap; gap: 4px; }
+.ap__preview-swatch {
+  width: 18px; height: 18px; border-radius: 50%; padding: 0; cursor: pointer;
+  border: 1px solid #00000018; display: flex; align-items: center; justify-content: center;
+}
+.ap__preview-swatch.is-selected { box-shadow: 0 0 0 2px #123d59; }
+.ap__preview-swatch--none { background: #fff; }
+.ap__preview-swatch--none i { font-size: 9px; color: #999; font-style: normal; }
+.ap__preview-portada {
+  border: 1px solid #d4d7da; border-radius: 6px; background: #fff; padding: 4px 6px;
+  font-size: 11px; cursor: pointer; color: #5f6368;
+}
+.ap__preview-portada.is-on { background: #f5b301; border-color: #f5b301; color: #1a1a1a; font-weight: 600; }
 
 .ap__cats { display: flex; flex-direction: column; gap: 8px; }
 .ap__cat { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #444; }

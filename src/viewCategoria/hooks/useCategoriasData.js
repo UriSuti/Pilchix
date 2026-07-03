@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getCategorias, getCategoriaProductos } from "../services/categoria";
 import { slugify } from "../../utils/slugify";
 import { parseTalles, ordenarTalles } from "../helpers/talles";
+import { getImagenPortada } from "../../utils/producto";
 
 /**
  * Trae todas las categorías y sus productos (de todas las marcas) desde Supabase
@@ -55,9 +56,9 @@ export function useCategoriasData() {
       const shaped = cats.map((cat) => {
         const productos = porCategoria.get(cat.id_categoria) ?? [];
 
-        // imagen de portada: primera imagen disponible entre sus productos
+        // imagen de portada: la portada del primer producto que tenga alguna imagen
         const imagen =
-          productos.find((p) => p.Imagen?.[0]?.imagen)?.Imagen?.[0]?.imagen ?? null;
+          getImagenPortada(productos.find((p) => p.Imagen?.length > 0)?.Imagen)?.imagen ?? null;
 
         // marcas únicas (para el filtro de marca)
         const marcasMap = new Map();

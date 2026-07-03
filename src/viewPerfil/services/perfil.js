@@ -43,7 +43,7 @@ export function getFavoritosUsuario(idUsuario) {
         precio,
         id_marca,
         Marca ( nombre ),
-        Imagen ( imagen )
+        Imagen ( imagen, es_portada )
       )
     `)
     .eq("id_usuario", idUsuario);

@@ -1,4 +1,5 @@
 import { supabase } from '../../utils/supabase'
+import { getImagenPortada } from '../../utils/producto'
 
 // In-memory cache so repeated adds don't query Carrito every time
 const cartIdCache = {}
@@ -84,7 +85,7 @@ export async function obtenerItemsCarrito(idUsuario) {
 
   const { data: productos, error: productosError } = await supabase
     .from('Producto')
-    .select('id_producto, nombre, Imagen(imagen)')
+    .select('id_producto, nombre, Imagen(imagen, es_portada)')
     .in('id_producto', productIds)
 
   if (productosError) throw productosError
@@ -99,7 +100,7 @@ export async function obtenerItemsCarrito(idUsuario) {
     color: d.color,
     talle: d.talle,
     cantidad: d.cantidad,
-    imagen: productoMap[d.id_producto]?.Imagen?.[0]?.imagen ?? null,
+    imagen: getImagenPortada(productoMap[d.id_producto]?.Imagen)?.imagen ?? null,
   }))
 }
 

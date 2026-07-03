@@ -14,8 +14,44 @@ function ViewProducto() {
   const { productSlug } = useParams()
   const [producto, setProducto] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [selectedColor, setSelectedColor] = useState(null)
+  const [selectedTalle, setSelectedTalle] = useState(null)
   const { textoBusqueda, setTextoBusqueda, buscarProductos, resultadosBusqueda } = useLandingSearch()
   usePaginaCargando(loading)
+
+  const productId = producto?.id_producto ?? producto?.id ?? producto?.id_marca ?? 'unknown'
+  const storageKey = `productSelection_${productId}`
+
+  useEffect(() => {
+    if (!producto) return
+    try {
+      const raw = localStorage.getItem(storageKey)
+      const parsed = raw ? JSON.parse(raw) : null
+      setSelectedColor(parsed?.color ?? null)
+      setSelectedTalle(parsed?.talle ?? null)
+    } catch {
+      setSelectedColor(null)
+      setSelectedTalle(null)
+    }
+  }, [storageKey, producto])
+
+  const saveSelection = (color, talle) => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ color, talle }))
+    } catch (e) {
+      console.warn('No se pudo guardar selección en localStorage', e)
+    }
+  }
+
+  const handleColorChange = (color) => {
+    setSelectedColor(color)
+    saveSelection(color, selectedTalle)
+  }
+
+  const handleTalleChange = (talle) => {
+    setSelectedTalle(talle)
+    saveSelection(selectedColor, talle)
+  }
 
   useEffect(() => {
     let active = true
@@ -56,8 +92,15 @@ function ViewProducto() {
 
 
       <main className="contenido-producto">
-        <GaleriaProducto producto={producto} loading={loading} />
-        <InfoProducto producto={producto} loading={loading} />
+        <GaleriaProducto producto={producto} loading={loading} selectedColor={selectedColor} />
+        <InfoProducto
+          producto={producto}
+          loading={loading}
+          selectedColor={selectedColor}
+          selectedTalle={selectedTalle}
+          onColorChange={handleColorChange}
+          onTalleChange={handleTalleChange}
+        />
       </main>
       <Footer />
     </div>

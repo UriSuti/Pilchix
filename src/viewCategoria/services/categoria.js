@@ -23,7 +23,7 @@ export function getCategoriaProductos() {
         precio,
         estado,
         guia_talles,
-        Imagen ( imagen ),
+        Imagen ( imagen, es_portada ),
         Marca ( id_marca, nombre, logo )
       )
     `

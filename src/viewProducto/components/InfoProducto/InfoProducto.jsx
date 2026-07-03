@@ -1,5 +1,5 @@
 import './InfoProducto.css'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
 import { useToast } from '../../../context/ToastContext'
@@ -13,33 +13,12 @@ function formatearPrecio(valor) {
   return '$' + Number(valor).toLocaleString('es-AR')
 }
 
-function InfoProducto({ producto, loading }) {
-  const productId = producto?.id_producto ?? producto?.id ?? producto?.id_marca ?? 'unknown'
-  const storageKey = `productSelection_${productId}`
-
-  const [selectedColor, setSelectedColor] = useState(null)
-  const [selectedTalle, setSelectedTalle] = useState(null)
+function InfoProducto({ producto, loading, selectedColor, selectedTalle, onColorChange, onTalleChange }) {
   const [agregando, setAgregando] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { estaLogueado, idUsuario } = useAuth()
   const { mostrarToast } = useToast()
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(storageKey)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        setSelectedColor(parsed.color ?? null)
-        setSelectedTalle(parsed.talle ?? null)
-      } else {
-        setSelectedColor(null)
-        setSelectedTalle(null)
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, [storageKey])
 
   if (loading) {
     return <section className="info-producto">Cargando...</section>
@@ -47,24 +26,6 @@ function InfoProducto({ producto, loading }) {
 
   if (!producto) {
     return <section className="info-producto">Producto no encontrado</section>
-  }
-
-  const saveSelection = (color, talle) => {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify({ color, talle }))
-    } catch (e) {
-      console.warn('No se pudo guardar selección en localStorage', e)
-    }
-  }
-
-  const handleColorChange = (color) => {
-    setSelectedColor(color)
-    saveSelection(color, selectedTalle)
-  }
-
-  const handleTalleChange = (talle) => {
-    setSelectedTalle(talle)
-    saveSelection(selectedColor, talle)
   }
 
   const handleAgregarCarrito = async () => {
@@ -115,9 +76,9 @@ function InfoProducto({ producto, loading }) {
         <span className="info-producto__precio-actual">{formatearPrecio(producto.precio)}</span>
       </div>
 
-      <SelectorColor colores={producto?.colores} value={selectedColor} onChange={handleColorChange} />
+      <SelectorColor colores={producto?.colores} value={selectedColor} onChange={onColorChange} />
 
-      <SelectorTalle guiaTalles={producto?.guia_talles} value={selectedTalle} onChange={handleTalleChange} />
+      <SelectorTalle guiaTalles={producto?.guia_talles} value={selectedTalle} onChange={onTalleChange} />
 
       <button type="button" className="info-producto__carrito" onClick={handleAgregarCarrito} disabled={agregando}>
         {agregando ? 'AGREGANDO...' : 'AGREGAR AL CARRITO'}

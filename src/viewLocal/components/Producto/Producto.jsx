@@ -1,6 +1,7 @@
 import './Producto.css'
 import { Link } from 'react-router-dom'
 import { slugify } from '../../../utils/slugify.js'
+import { getImagenPortada } from '../../../utils/producto'
 import BotonFavorito from '../BotonFavorito/BotonFavorito.jsx'
 
 function formatearPrecio(valor) {
@@ -9,7 +10,7 @@ function formatearPrecio(valor) {
 }
 
 function Producto({ producto }) {
-  const imagenUrl = producto.Imagen?.[0]?.imagen || '/placeholder.png'
+  const imagenUrl = getImagenPortada(producto.Imagen)?.imagen || '/placeholder.png'
   const productSlug = slugify(producto.nombre || String(producto.id_producto || 'producto'))
 
   return (

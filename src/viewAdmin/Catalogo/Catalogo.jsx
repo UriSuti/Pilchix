@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useMarcaAuth } from "../../context/MarcaAuthContext";
 import { useCatalogo } from "../hooks/useCatalogo";
 import { usePaginaCargando } from "../../context/NavLoadingContext";
+import { getImagenPortada } from "../../utils/producto";
 import "./Catalogo.css";
 
 const formatPrecio = (v) =>
@@ -34,11 +35,13 @@ function Catalogo() {
         </div>
       ) : (
         <div className="catalogo__grid">
-          {productos.map((p) => (
+          {productos.map((p) => {
+            const portada = getImagenPortada(p.Imagen);
+            return (
             <article key={p.id_producto} className="prod-card">
               <div className="prod-card__img">
-                {p.Imagen?.[0]?.imagen ? (
-                  <img src={p.Imagen[0].imagen} alt={p.nombre} />
+                {portada?.imagen ? (
+                  <img src={portada.imagen} alt={p.nombre} />
                 ) : (
                   <div className="prod-card__placeholder">{p.nombre?.charAt(0)}</div>
                 )}
@@ -59,7 +62,8 @@ function Catalogo() {
                 </button>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -17,7 +17,7 @@ export function getLandingCategoriasConProductos() {
         id_producto,
         estado,
         Imagen (
-          imagen
+          imagen, es_portada
         )
       )
     `
@@ -79,7 +79,7 @@ export function getLandingProductosPopulares() {
         nombre
       ),
       Imagen (
-        imagen
+        imagen, es_portada
       ),
       Metrica_Producto (
         visualizaciones
@@ -110,7 +110,7 @@ export function getLandingDescuentos(fechaActual) {
           nombre
         ),
         Imagen (
-          imagen
+          imagen, es_portada
         )
       )
     `
@@ -172,7 +172,7 @@ export function searchLandingProductos(textoBusqueda) {
       stock,
       estado,
       Imagen (
-        imagen
+        imagen, es_portada
       ),
       Marca (
         nombre
@@ -196,7 +196,7 @@ export function searchLandingCategorias(textoBusqueda) {
         stock,
         estado,
         Imagen (
-          imagen
+          imagen, es_portada
         ),
         Marca (
           nombre

@@ -8,7 +8,19 @@
       "WebFetch(domain:www.youtube.com)",
       "WebSearch",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git stash *)",
+      "Bash(npx eslint *)",
+      "Bash(chromium-cli --help)",
+      "Bash(curl -s --ssl-no-revoke 'https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?id_producto=eq.13&select=id_producto,nombre,estado' -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN')",
+      "Bash(curl -s --ssl-no-revoke -X PATCH https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?id_producto=eq.13 -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Content-Type: application/json' -H 'Prefer: return=representation' -d '{\"estado\": false}')",
+      "Bash(curl -s --ssl-no-revoke -X PATCH https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?id_producto=eq.13 -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Content-Type: application/json' -H 'Prefer: return=representation' -d '{\"estado\": true}')",
+      "Bash(curl -s --ssl-no-revoke 'https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?select=id_producto&order=id_producto' -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN')",
+      "Bash(curl -s --ssl-no-revoke -X POST https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Content-Type: application/json' -H 'Prefer: return=representation' -d '{\"id_marca\": 8, \"nombre\": \"TEST_BORRAR_DIAGNOSTICO\", \"precio\": 1, \"stock\": 0, \"estado\": false}')",
+      "Bash(curl -s --ssl-no-revoke -X DELETE https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?id_producto=eq.34 -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Prefer: return=representation')",
+      "Bash(curl -s --ssl-no-revoke https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?id_producto=eq.34 -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN')",
+      "Bash(curl -s --ssl-no-revoke 'https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Imagen?select=id_imagen&order=id_imagen' -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN')",
+      "Bash(npm run *)"
     ]
   }
 }

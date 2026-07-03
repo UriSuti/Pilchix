@@ -23,8 +23,7 @@ function AgregarProducto() {
   const [colorTemp, setColorTemp] = useState("#123d59");
   const [categorias, setCategorias] = useState([]);
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
-  const [imagenes, setImagenes] = useState([]);      // File[]
-  const [previews, setPreviews] = useState([]);      // string[]
+  const [imagenes, setImagenes] = useState([]);      // { file, preview, color, esPortada }[]
   const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
@@ -47,13 +46,16 @@ function AgregarProducto() {
 
   const handleImagenes = (e) => {
     const files = Array.from(e.target.files);
-    setImagenes((prev) => [...prev, ...files]);
-    setPreviews((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+    setImagenes((prev) => [
+      ...prev,
+      ...files.map((file) => ({ file, preview: URL.createObjectURL(file), color: "", esPortada: false })),
+    ]);
   };
-  const quitarImagen = (i) => {
-    setImagenes(imagenes.filter((_, idx) => idx !== i));
-    setPreviews(previews.filter((_, idx) => idx !== i));
-  };
+  const quitarImagen = (i) => setImagenes((prev) => prev.filter((_, idx) => idx !== i));
+  const setColorImagen = (i, color) =>
+    setImagenes((prev) => prev.map((img, idx) => (idx === i ? { ...img, color } : img)));
+  const marcarPortadaImagen = (i) =>
+    setImagenes((prev) => prev.map((img, idx) => ({ ...img, esPortada: idx === i })));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,18 +77,19 @@ function AgregarProducto() {
 
       // 2) categorías
       if (catSeleccionadas.length) {
-        await setCategoriasProducto(idProducto, catSeleccionadas);
+        const { error: errorCat } = await setCategoriasProducto(idProducto, catSeleccionadas);
+        if (errorCat) mostrarToast(errorCat, "error");
       }
 
       // 3) imágenes → Storage → tabla Imagen
       if (imagenes.length) {
-        const urls = [];
-        for (const file of imagenes) {
-          const { url, error: errImg } = await subirImagenProducto(file);
-          if (url) urls.push(url);
+        const subidas = [];
+        for (const img of imagenes) {
+          const { url, error: errImg } = await subirImagenProducto(img.file);
+          if (url) subidas.push({ imagen: url, color: img.color, es_portada: img.esPortada });
           else mostrarToast(errImg, "error");
         }
-        if (urls.length) await setImagenesProducto(idProducto, urls);
+        if (subidas.length) await setImagenesProducto(idProducto, subidas);
       }
 
       mostrarToast("Producto creado", "exito");
@@ -167,10 +170,39 @@ function AgregarProducto() {
               <span>+ Subir imágenes</span>
             </label>
             <div className="ap__previews">
-              {previews.map((src, i) => (
+              {imagenes.map((img, i) => (
                 <div key={i} className="ap__preview">
-                  <img src={src} alt="" />
-                  <button type="button" onClick={() => quitarImagen(i)}>✕</button>
+                  <div className="ap__preview-img">
+                    <img src={img.preview} alt="" />
+                    <button type="button" onClick={() => quitarImagen(i)}>✕</button>
+                  </div>
+                  <div className="ap__preview-colores">
+                    <button
+                      type="button"
+                      className={`ap__preview-swatch ap__preview-swatch--none ${!img.color ? "is-selected" : ""}`}
+                      title="Sin color"
+                      onClick={() => setColorImagen(i, "")}
+                    >
+                      <i>✕</i>
+                    </button>
+                    {colores.map((c) => (
+                      <button
+                        type="button"
+                        key={c}
+                        className={`ap__preview-swatch ${img.color === c ? "is-selected" : ""}`}
+                        style={{ background: c }}
+                        title={c}
+                        onClick={() => setColorImagen(i, c)}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className={`ap__preview-portada ${img.esPortada ? "is-on" : ""}`}
+                    onClick={() => marcarPortadaImagen(i)}
+                  >
+                    ★ Portada
+                  </button>
                 </div>
               ))}
             </div>

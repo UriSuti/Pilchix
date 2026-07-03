@@ -5,6 +5,7 @@ import { subirImagenProducto } from "../../services/storage";
 import {
   getCategorias, getProductoPorId, actualizarProducto,
   actualizarCategoriasProducto, setImagenesProducto, borrarImagen, borrarProducto,
+  marcarPortada, actualizarColorImagen,
 } from "../services/catalogo";
 import "../AgregarProducto/AgregarProducto.css";
 
@@ -21,9 +22,9 @@ function EditarProducto() {
   const [colorTemp, setColorTemp] = useState("#123d59");
   const [categorias, setCategorias] = useState([]);
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
-  const [imagenesExistentes, setImagenesExistentes] = useState([]); // {id_imagen, imagen}
-  const [imagenesNuevas, setImagenesNuevas] = useState([]);          // File[]
-  const [previewsNuevas, setPreviewsNuevas] = useState([]);
+  const [imagenesExistentes, setImagenesExistentes] = useState([]); // {id_imagen, imagen, color, es_portada}
+  const [imagenesNuevas, setImagenesNuevas] = useState([]);          // { file, preview, color, esPortada }[]
+  const [portada, setPortada] = useState(null);                     // { tipo: 'existente'|'nueva', ref }
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
 
@@ -47,7 +48,10 @@ function EditarProducto() {
       setTalles(prod.guia_talles ?? []);
       setColores(prod.colores ?? []);
       setCatSeleccionadas((prod.Producto_Categoria ?? []).map((c) => c.id_categoria));
-      setImagenesExistentes(prod.Imagen ?? []);
+      const imgs = prod.Imagen ?? [];
+      setImagenesExistentes(imgs);
+      const portadaExistente = imgs.find((img) => img.es_portada);
+      if (portadaExistente) setPortada({ tipo: "existente", ref: portadaExistente.id_imagen });
       setCargando(false);
     }
     cargar();
@@ -65,20 +69,55 @@ function EditarProducto() {
 
   const handleImagenesNuevas = (e) => {
     const files = Array.from(e.target.files);
-    setImagenesNuevas((p) => [...p, ...files]);
-    setPreviewsNuevas((p) => [...p, ...files.map((f) => URL.createObjectURL(f))]);
+    setImagenesNuevas((p) => [
+      ...p,
+      ...files.map((file) => ({ file, preview: URL.createObjectURL(file), color: "", esPortada: false })),
+    ]);
   };
-  const quitarImagenNueva = (i) => {
-    setImagenesNuevas(imagenesNuevas.filter((_, idx) => idx !== i));
-    setPreviewsNuevas(previewsNuevas.filter((_, idx) => idx !== i));
-  };
+  const quitarImagenNueva = (i) => setImagenesNuevas((prev) => prev.filter((_, idx) => idx !== i));
 
   // borra una imagen YA guardada (de la base y el bucket)
   const handleBorrarExistente = async (img) => {
     const { error } = await borrarImagen(img.id_imagen, img.imagen);
     if (error) { mostrarToast(error, "error"); return; }
     setImagenesExistentes((prev) => prev.filter((x) => x.id_imagen !== img.id_imagen));
+    if (portada?.tipo === "existente" && portada.ref === img.id_imagen) setPortada(null);
     mostrarToast("Imagen eliminada", "info");
+  };
+
+  // cambia el color asociado a una imagen ya guardada: se refleja al toque, el guardado va en segundo plano
+  const handleColorExistente = (img, color) => {
+    setImagenesExistentes((prev) =>
+      prev.map((x) => (x.id_imagen === img.id_imagen ? { ...x, color } : x))
+    );
+    actualizarColorImagen(img.id_imagen, color).then(({ error }) => {
+      if (!error) return;
+      mostrarToast(error, "error");
+      setImagenesExistentes((prev) =>
+        prev.map((x) => (x.id_imagen === img.id_imagen ? { ...x, color: img.color } : x))
+      );
+    });
+  };
+
+  // marca una imagen ya guardada como portada: se refleja al toque, el guardado va en segundo plano
+  const handleMarcarPortadaExistente = (img) => {
+    const portadaAnterior = portada;
+    setPortada({ tipo: "existente", ref: img.id_imagen });
+    setImagenesNuevas((prev) => prev.map((x) => ({ ...x, esPortada: false })));
+    marcarPortada(idProducto, img.id_imagen).then(({ error }) => {
+      if (!error) return;
+      mostrarToast(error, "error");
+      setPortada(portadaAnterior);
+    });
+  };
+
+  const setColorImagenNueva = (i, color) =>
+    setImagenesNuevas((prev) => prev.map((img, idx) => (idx === i ? { ...img, color } : img)));
+
+  // marca una imagen recién subida como portada (se persiste al guardar, cuando ya tenga id_imagen)
+  const marcarPortadaImagenNueva = (i) => {
+    setImagenesNuevas((prev) => prev.map((img, idx) => ({ ...img, esPortada: idx === i })));
+    setPortada({ tipo: "nueva", ref: i });
   };
 
   const handleGuardar = async (e) => {
@@ -97,15 +136,25 @@ function EditarProducto() {
       });
       if (error) { mostrarToast(error, "error"); return; }
 
-      await actualizarCategoriasProducto(idProducto, catSeleccionadas);
+      const { error: errorCat } = await actualizarCategoriasProducto(idProducto, catSeleccionadas);
+      if (errorCat) mostrarToast(errorCat, "error");
 
       if (imagenesNuevas.length) {
-        const urls = [];
-        for (const file of imagenesNuevas) {
-          const { url } = await subirImagenProducto(file);
-          if (url) urls.push(url);
+        const subidas = [];
+        for (let i = 0; i < imagenesNuevas.length; i++) {
+          const { url } = await subirImagenProducto(imagenesNuevas[i].file);
+          if (url) subidas.push({ imagen: url, color: imagenesNuevas[i].color, es_portada: false, indiceOriginal: i });
         }
-        if (urls.length) await setImagenesProducto(idProducto, urls);
+        if (subidas.length) {
+          const { data: insertadas } = await setImagenesProducto(
+            idProducto,
+            subidas.map(({ imagen, color, es_portada }) => ({ imagen, color, es_portada }))
+          );
+          if (portada?.tipo === "nueva") {
+            const pos = subidas.findIndex((s) => s.indiceOriginal === portada.ref);
+            if (pos !== -1 && insertadas[pos]) await marcarPortada(idProducto, insertadas[pos].id_imagen);
+          }
+        }
       }
 
       mostrarToast("Cambios guardados", "exito");
@@ -189,8 +238,37 @@ function EditarProducto() {
             <div className="ap__previews">
               {imagenesExistentes.map((img) => (
                 <div key={img.id_imagen} className="ap__preview">
-                  <img src={img.imagen} alt="" />
-                  <button type="button" onClick={() => handleBorrarExistente(img)}>✕</button>
+                  <div className="ap__preview-img">
+                    <img src={img.imagen} alt="" />
+                    <button type="button" onClick={() => handleBorrarExistente(img)}>✕</button>
+                  </div>
+                  <div className="ap__preview-colores">
+                    <button
+                      type="button"
+                      className={`ap__preview-swatch ap__preview-swatch--none ${!img.color ? "is-selected" : ""}`}
+                      title="Sin color"
+                      onClick={() => handleColorExistente(img, "")}
+                    >
+                      <i>✕</i>
+                    </button>
+                    {colores.map((c) => (
+                      <button
+                        type="button"
+                        key={c}
+                        className={`ap__preview-swatch ${img.color === c ? "is-selected" : ""}`}
+                        style={{ background: c }}
+                        title={c}
+                        onClick={() => handleColorExistente(img, c)}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className={`ap__preview-portada ${portada?.tipo === "existente" && portada.ref === img.id_imagen ? "is-on" : ""}`}
+                    onClick={() => handleMarcarPortadaExistente(img)}
+                  >
+                    ★ Portada
+                  </button>
                 </div>
               ))}
             </div>
@@ -200,10 +278,39 @@ function EditarProducto() {
               <span>+ Agregar imágenes</span>
             </label>
             <div className="ap__previews">
-              {previewsNuevas.map((src, i) => (
+              {imagenesNuevas.map((img, i) => (
                 <div key={i} className="ap__preview">
-                  <img src={src} alt="" />
-                  <button type="button" onClick={() => quitarImagenNueva(i)}>✕</button>
+                  <div className="ap__preview-img">
+                    <img src={img.preview} alt="" />
+                    <button type="button" onClick={() => quitarImagenNueva(i)}>✕</button>
+                  </div>
+                  <div className="ap__preview-colores">
+                    <button
+                      type="button"
+                      className={`ap__preview-swatch ap__preview-swatch--none ${!img.color ? "is-selected" : ""}`}
+                      title="Sin color"
+                      onClick={() => setColorImagenNueva(i, "")}
+                    >
+                      <i>✕</i>
+                    </button>
+                    {colores.map((c) => (
+                      <button
+                        type="button"
+                        key={c}
+                        className={`ap__preview-swatch ${img.color === c ? "is-selected" : ""}`}
+                        style={{ background: c }}
+                        title={c}
+                        onClick={() => setColorImagenNueva(i, c)}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className={`ap__preview-portada ${portada?.tipo === "nueva" && portada.ref === i ? "is-on" : ""}`}
+                    onClick={() => marcarPortadaImagenNueva(i)}
+                  >
+                    ★ Portada
+                  </button>
                 </div>
               ))}
             </div>

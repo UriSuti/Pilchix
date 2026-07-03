@@ -1,3 +1,5 @@
+import { getImagenPortada } from "../../utils/producto";
+
 export const isValidUserId = (value) =>
   value !== undefined && value !== null && value !== "" && value !== "undefined";
 
@@ -20,7 +22,7 @@ export const formatCategorias = (categoriasData = [], productosCategoriasData = 
 
     return {
       ...categoria,
-      imagen_categoria: relacion?.Producto?.Imagen?.[0]?.imagen ?? null,
+      imagen_categoria: getImagenPortada(relacion?.Producto?.Imagen)?.imagen ?? null,
     };
   });
 
@@ -57,7 +59,7 @@ export const formatProductosPopulares = (productosData = []) =>
       nombre: producto.nombre,
       descripcion: producto.descripcion,
       precio: producto.precio,
-      imagen: producto.Imagen?.[0]?.imagen ?? null,
+      imagen: getImagenPortada(producto.Imagen)?.imagen ?? null,
       visualizaciones: producto.Metrica_Producto?.[0]?.visualizaciones || 0,
       marca: producto.Marca?.nombre ?? "The North Face",
       categoria: producto.descripcion?.slice(0, 12) ?? "11km",
@@ -77,7 +79,7 @@ export const formatDescuentos = (descuentosData = []) =>
     producto: descuento.Producto?.nombre,
     descripcion: descuento.Producto?.descripcion,
     precio: descuento.Producto?.precio,
-    imagen: descuento.Producto?.Imagen?.[0]?.imagen ?? null,
+    imagen: getImagenPortada(descuento.Producto?.Imagen)?.imagen ?? null,
     marca: descuento.Producto?.Marca?.nombre ?? "The North Face",
   }));
 
@@ -88,7 +90,7 @@ export const formatSearchProducts = (productosData = []) =>
     descripcion: producto.descripcion,
     precio: producto.precio,
     stock: producto.stock,
-    imagen: producto.Imagen?.[0]?.imagen ?? null,
+    imagen: getImagenPortada(producto.Imagen)?.imagen ?? null,
     marca: producto.Marca?.nombre ?? "Sin marca",
     categoria: null,
   }));
@@ -102,7 +104,7 @@ export const formatSearchCategoryProducts = (categoriasData = []) =>
       descripcion: item.Producto.descripcion,
       precio: item.Producto.precio,
       stock: item.Producto.stock,
-      imagen: item.Producto.Imagen?.[0]?.imagen ?? null,
+      imagen: getImagenPortada(item.Producto.Imagen)?.imagen ?? null,
       marca: item.Producto.Marca?.nombre ?? "Sin marca",
       categoria: item.Categoria?.nombre ?? null,
     }));

@@ -4,6 +4,7 @@ import { useToast } from "../../../context/ToastContext.jsx";
 import { useFavoritos } from "../../hooks/useFavoritos";
 import { quitarFavorito } from "../../services/perfil";
 import { slugify } from "../../../utils/slugify.js";
+import { getImagenPortada } from "../../../utils/producto";
 
 function Favoritos() {
     const navigate = useNavigate();
@@ -34,7 +35,9 @@ function Favoritos() {
 
     return (
         <div className="perfil-grid">
-        {favoritos.map((f) => (
+        {favoritos.map((f) => {
+            const portada = getImagenPortada(f.Producto.Imagen);
+            return (
             <div
             key={f.id_favorito}
             className="card-perfil"
@@ -47,9 +50,9 @@ function Favoritos() {
             >
                 ✕
             </button>
-            {f.Producto.Imagen?.[0]?.imagen ? (
+            {portada?.imagen ? (
                 <img
-                    src={f.Producto.Imagen[0].imagen}
+                    src={portada.imagen}
                     alt={f.Producto.nombre}
                     className="card-perfil__img"
                 />
@@ -59,7 +62,8 @@ function Favoritos() {
             <span className="card-perfil__nombre">{f.Producto.nombre}</span>
             <span className="card-perfil__precio">${f.Producto.precio}</span>
             </div>
-        ))}
+            );
+        })}
         </div>
     );
 }
