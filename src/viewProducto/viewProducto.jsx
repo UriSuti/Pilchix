@@ -1,5 +1,5 @@
 import './viewProducto.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import { slugify } from '../utils/slugify'
@@ -14,8 +14,12 @@ function ViewProducto() {
   const { productSlug } = useParams()
   const [producto, setProducto] = useState(null)
   const [loading, setLoading] = useState(true)
+<<<<<<< HEAD
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedTalle, setSelectedTalle] = useState(null)
+=======
+  const contadoRef = useRef(null)
+>>>>>>> a0c23f4a0f1f6b7493d42de2e309af65ad330cf9
   const { textoBusqueda, setTextoBusqueda, buscarProductos, resultadosBusqueda } = useLandingSearch()
   usePaginaCargando(loading)
 
@@ -72,6 +76,15 @@ function ViewProducto() {
       const found = (data || []).find((p) => slugify(p.nombre) === productSlug)
       setProducto(found || null)
       setLoading(false)
+
+      if (found && contadoRef.current !== found.id_producto) {
+        contadoRef.current = found.id_producto   // marca este producto como contado
+        supabase
+          .rpc('incrementar_visualizacion', { p_id_producto: found.id_producto })
+          .then(({ error: rpcError }) => {
+            if (rpcError) console.error('No se pudo registrar la visualización:', rpcError)
+          })
+      }
     }
 
     loadProducto()
@@ -80,6 +93,8 @@ function ViewProducto() {
       active = false
     }
   }, [productSlug])
+
+  const noEncontrado = !loading && !producto
 
   return (
     <div className="view-producto">
@@ -91,6 +106,7 @@ function ViewProducto() {
       />
 
 
+<<<<<<< HEAD
       <main className="contenido-producto">
         <GaleriaProducto producto={producto} loading={loading} selectedColor={selectedColor} />
         <InfoProducto
@@ -102,6 +118,18 @@ function ViewProducto() {
           onTalleChange={handleTalleChange}
         />
       </main>
+=======
+      {noEncontrado ? (
+        <div className="catpage__estado" style={{ padding: "80px 20px", textAlign: "center" }}>
+          No encontramos ese producto 😕
+        </div>
+      ) : (
+        <main className="contenido-producto">
+          <GaleriaProducto producto={producto} loading={loading} />
+          <InfoProducto producto={producto} loading={loading} />
+        </main>
+      )}
+>>>>>>> a0c23f4a0f1f6b7493d42de2e309af65ad330cf9
       <Footer />
     </div>
   )
