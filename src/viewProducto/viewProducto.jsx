@@ -14,12 +14,9 @@ function ViewProducto() {
   const { productSlug } = useParams()
   const [producto, setProducto] = useState(null)
   const [loading, setLoading] = useState(true)
-<<<<<<< HEAD
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedTalle, setSelectedTalle] = useState(null)
-=======
   const contadoRef = useRef(null)
->>>>>>> a0c23f4a0f1f6b7493d42de2e309af65ad330cf9
   const { textoBusqueda, setTextoBusqueda, buscarProductos, resultadosBusqueda } = useLandingSearch()
   usePaginaCargando(loading)
 
@@ -106,30 +103,23 @@ function ViewProducto() {
       />
 
 
-<<<<<<< HEAD
-      <main className="contenido-producto">
-        <GaleriaProducto producto={producto} loading={loading} selectedColor={selectedColor} />
-        <InfoProducto
-          producto={producto}
-          loading={loading}
-          selectedColor={selectedColor}
-          selectedTalle={selectedTalle}
-          onColorChange={handleColorChange}
-          onTalleChange={handleTalleChange}
-        />
-      </main>
-=======
       {noEncontrado ? (
         <div className="catpage__estado" style={{ padding: "80px 20px", textAlign: "center" }}>
           No encontramos ese producto 😕
         </div>
       ) : (
         <main className="contenido-producto">
-          <GaleriaProducto producto={producto} loading={loading} />
-          <InfoProducto producto={producto} loading={loading} />
+          <GaleriaProducto producto={producto} loading={loading} selectedColor={selectedColor} />
+          <InfoProducto
+            producto={producto}
+            loading={loading}
+            selectedColor={selectedColor}
+            selectedTalle={selectedTalle}
+            onColorChange={handleColorChange}
+            onTalleChange={handleTalleChange}
+          />
         </main>
       )}
->>>>>>> a0c23f4a0f1f6b7493d42de2e309af65ad330cf9
       <Footer />
     </div>
   )
