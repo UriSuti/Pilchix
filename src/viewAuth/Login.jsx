@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Header from "../header_footer/Header/Header.jsx";
-import Footer from "../header_footer/Footer/Footer.jsx";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext.jsx";
 import "./auth.css";
@@ -28,34 +26,66 @@ function Login() {
   };
 
   return (
-    <div className="auth-page">
-      <Header />
-      <main className="auth-main">
-        <h1 className="auth-hero">DONDE LAS MARCAS<br />SE ENCUENTRAN CON VOS</h1>
+    <div className="auth">
+      <aside className="auth__aside">
+        <div className="auth__aside-inner">
+          <Link to="/" className="auth__brand">Pilchix</Link>
+          <div className="auth__aside-copy">
+            <h1>
+              Donde las marcas<br />
+              se encuentran<br />
+              con vos.
+            </h1>
+            <p>
+              La vidriera digital de la moda. Explorá marcas, seguí a tus favoritas y comprá desde
+              un solo lugar.
+            </p>
+          </div>
+          <p className="auth__aside-foot">© 2026 Pilchix</p>
+        </div>
+      </aside>
 
-        <form className="auth-card" onSubmit={handleSubmit}>
-          <h2 className="auth-card__title">INICIAR SESIÓN</h2>
+      <main className="auth__panel">
+        <div className="auth__card">
+          <Link to="/" className="auth__brand auth__brand--mobile">Pilchix</Link>
+          <h2 className="auth__title">Iniciá sesión</h2>
+          <p className="auth__sub">Qué bueno verte de nuevo. Ingresá para continuar.</p>
 
-          <label className="auth-field">
-            <span>Correo electrónico</span>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </label>
+          <form className="auth__form" onSubmit={handleSubmit}>
+            <label className="auth__field">
+              <span>Correo electrónico</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@email.com"
+                required
+              />
+            </label>
 
-          <label className="auth-field">
-            <span>Contraseña</span>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </label>
+            <label className="auth__field">
+              <span>Contraseña</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+            </label>
 
-          {error && <p className="auth-error">{error}</p>}
+            {error && <p className="auth__error">{error}</p>}
 
-          <button className="auth-btn" type="submit" disabled={enviando}>
-            {enviando ? "Ingresando..." : "INICIAR SESIÓN"}
-          </button>
+            <button className="auth__btn" type="submit" disabled={enviando}>
+              {enviando ? "Ingresando…" : "Iniciar sesión"}
+            </button>
+          </form>
 
-          <p className="auth-switch">¿No tenés cuenta? <Link to="/registro">Creá una</Link></p>
-        </form>
+          <p className="auth__switch">
+            ¿No tenés cuenta? <Link to="/registro">Creá una</Link>
+          </p>
+        </div>
       </main>
-      <Footer />
     </div>
   );
 }

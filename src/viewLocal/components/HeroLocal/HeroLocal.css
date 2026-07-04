@@ -1,13 +1,18 @@
-/* Banner principal del local */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap");
+
+/* Hero del local: foto de fachada a lo ancho + bloque de marca abajo */
 .hero-local {
   position: relative;
   width: 100%;
-  height: 380px;
+  height: min(66vh, 560px);
+  min-height: 420px;
   overflow: hidden;
-  background-color: #ffffff;
+  color: #fff;
+  display: flex;
+  align-items: flex-end;
+  font-family: "Poppins", system-ui, sans-serif;
 }
 
-/* Imagen de fondo que cubre toda la franja */
 .hero-local__fondo {
   position: absolute;
   inset: 0;
@@ -17,100 +22,130 @@
   z-index: 0;
 }
 
-/* Panel de info de la marca (izquierda) */
-.hero-local__panel {
-  position: relative;
+/* gradiente para que la marca se lea sobre la foto */
+.hero-local::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   z-index: 1;
-  height: 100%;
-  width: 38%;
-  min-width: 320px;
-  box-sizing: border-box;
-  padding: 48px 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 18px;
-  /* degradado para que el texto se lea sobre la imagen */
   background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.96) 0%,
-    rgba(255, 255, 255, 0.92) 70%,
-    rgba(255, 255, 255, 0) 100%
+    180deg,
+    rgba(6, 32, 47, 0.05) 0%,
+    rgba(6, 32, 47, 0.25) 42%,
+    rgba(6, 32, 47, 0.9) 100%
   );
 }
 
-/* Bloque logo + nombre (centrados entre sí) */
-.hero-local__marca-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: fit-content;
+.hero-local__inner {
+  position: relative;
+  z-index: 2;
+  width: min(1240px, calc(100% - 48px));
+  margin: 0 auto;
+  padding-bottom: clamp(26px, 4vw, 46px);
 }
 
-/* Logo de la marca (centrado sobre el nombre) */
+.hero-local__row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.hero-local__brand {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+
 .hero-local__logo {
-  width: 90px;
-  height: 58px;
+  width: 82px;
+  height: 82px;
+  flex: 0 0 auto;
+  border-radius: 20px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 26px 60px rgba(12, 44, 66, 0.18);
+  overflow: hidden;
+}
+.hero-local__logo img {
+  width: 74%;
+  height: 74%;
   object-fit: contain;
 }
 
-/* Nombre de la marca */
-.hero-local__marca {
+.hero-local__name {
   margin: 0;
-  font-size: 2.6rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #111111;
-  line-height: 1;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
 }
 
-/* Tagline */
-.hero-local__tagline {
-  margin: 0;
-  font-size: 1rem;
-  color: #444444;
-  line-height: 1.4;
-}
-
-/* Botón "Ver colección" */
-.hero-local__cta {
-  align-self: flex-start;
-  margin-top: 6px;
-  padding: 14px 32px;
-  border: none;
-  border-radius: 8px;
-  background-color: #0b3d5c;
-  color: #ffffff;
+.hero-local__tag {
+  margin: 8px 0 0;
+  opacity: 0.92;
+  max-width: 48ch;
   font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.hero-local__meta {
+  display: flex;
+  gap: 26px;
+  margin-top: 14px;
+  font-size: 0.82rem;
+}
+.hero-local__meta b {
+  display: block;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.3rem;
   font-weight: 600;
+}
+.hero-local__meta span {
+  opacity: 0.7;
+}
+
+.hero-local__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+/* "Ver colección": botón fantasma sobre la foto */
+.hero-local__cta {
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  padding: 13px 26px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-family: "Poppins", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background 0.2s ease;
 }
-
 .hero-local__cta:hover {
-  background-color: #0e4d73;
+  background: rgba(255, 255, 255, 0.24);
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
 @media (max-width: 768px) {
   .hero-local {
-    height: 320px;
+    height: 72vh;
   }
-
-  .hero-local__panel {
-    width: 100%;
-    min-width: 0;
-    padding: 32px 24px;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.96) 0%,
-      rgba(255, 255, 255, 0.88) 100%
-    );
+  .hero-local__row {
+    flex-direction: column;
+    align-items: flex-start;
   }
-
-  .hero-local__marca {
+  .hero-local__name {
     font-size: 2rem;
+  }
+  .hero-local__actions {
+    width: 100%;
   }
 }

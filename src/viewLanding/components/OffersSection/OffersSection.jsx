@@ -28,29 +28,39 @@ function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS
           <p className="lp-empty">No hay descuentos activos.</p>
         ) : (
           <div className="offers">
-            {lista.map((descuento) => (
-              <Link
-                key={descuento.id_descuento}
-                className="offer"
-                to={`/producto/${slugify(descuento.producto || "")}`}
-              >
-                {descuento.imagen ? (
-                  <img src={descuento.imagen} alt={descuento.producto} />
-                ) : (
-                  <div className="offer__placeholder" />
-                )}
-                <div className="offer__body">
-                  <span className="offer__tag">{descuento.porcentaje}% OFF</span>
-                  <h3>{descuento.producto || descuento.marca}</h3>
-                  <p>
-                    {descuento.marca}
-                    {descuento.precio_final
-                      ? ` · ${formatPrice(descuento.precio_final)}`
-                      : ""}
-                  </p>
+            {lista.map((descuento) => {
+              const nombre = descuento.producto;
+              const contenido = (
+                <>
+                  {descuento.imagen ? (
+                    <img src={descuento.imagen} alt={nombre || descuento.marca} />
+                  ) : (
+                    <div className="offer__placeholder" />
+                  )}
+                  <div className="offer__body">
+                    <span className="offer__tag">{descuento.porcentaje}% OFF</span>
+                    <h3>{nombre || descuento.marca}</h3>
+                    <p>
+                      {descuento.marca}
+                      {descuento.precio_final
+                        ? ` · ${formatPrice(descuento.precio_final)}`
+                        : ""}
+                    </p>
+                  </div>
+                </>
+              );
+
+              // solo enlazamos si hay nombre de producto (evita rutas /producto/ vacías)
+              return nombre ? (
+                <Link key={descuento.id_descuento} className="offer" to={`/producto/${slugify(nombre)}`}>
+                  {contenido}
+                </Link>
+              ) : (
+                <div key={descuento.id_descuento} className="offer offer--static">
+                  {contenido}
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

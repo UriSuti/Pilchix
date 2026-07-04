@@ -1,6 +1,6 @@
 import './viewProducto.css'
 import { useEffect, useState, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import { slugify } from '../utils/slugify'
 import Footer from '../header_footer/Footer/Footer.jsx'
@@ -8,19 +8,20 @@ import Header from '../header_footer/Header/Header.jsx'
 import { useLandingSearch } from '../hooks/useLandingSearch'
 import GaleriaProducto from './components/GaleriaProducto/GaleriaProducto.jsx'
 import InfoProducto from './components/InfoProducto/InfoProducto.jsx'
-import { usePaginaCargando } from '../context/NavLoadingContext.jsx'
+import Producto from '../viewLocal/components/Producto/Producto.jsx'
+import ViewProductoSkeleton from '../components/skeletons/ViewProductoSkeleton.jsx'
 
 function ViewProducto() {
   const { productSlug } = useParams()
   const [producto, setProducto] = useState(null)
+  const [relacionados, setRelacionados] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedTalle, setSelectedTalle] = useState(null)
   const contadoRef = useRef(null)
   const { textoBusqueda, setTextoBusqueda, buscarProductos, resultadosBusqueda } = useLandingSearch()
-  usePaginaCargando(loading)
 
-  const productId = producto?.id_producto ?? producto?.id ?? producto?.id_marca ?? 'unknown'
+  const productId = producto?.id_producto ?? producto?.id ?? 'unknown'
   const storageKey = `productSelection_${productId}`
 
   useEffect(() => {
@@ -59,23 +60,36 @@ function ViewProducto() {
 
     async function loadProducto() {
       setLoading(true)
-      const { data, error } = await supabase.from('Producto').select('*, Imagen(*)')
+      const { data, error } = await supabase
+        .from('Producto')
+        .select('*, Imagen(*), Marca(nombre, logo)')
 
       if (!active) return
 
       if (error) {
         console.error(error)
         setProducto(null)
+        setRelacionados([])
         setLoading(false)
         return
       }
 
       const found = (data || []).find((p) => slugify(p.nombre) === productSlug)
       setProducto(found || null)
+
+      // relacionados: otros productos de la misma marca
+      setRelacionados(
+        found
+          ? (data || [])
+              .filter((p) => p.id_marca === found.id_marca && p.id_producto !== found.id_producto)
+              .slice(0, 4)
+          : []
+      )
+
       setLoading(false)
 
       if (found && contadoRef.current !== found.id_producto) {
-        contadoRef.current = found.id_producto   // marca este producto como contado
+        contadoRef.current = found.id_producto // marca este producto como contado
         supabase
           .rpc('incrementar_visualizacion', { p_id_producto: found.id_producto })
           .then(({ error: rpcError }) => {
@@ -92,6 +106,7 @@ function ViewProducto() {
   }, [productSlug])
 
   const noEncontrado = !loading && !producto
+  const marcaNombre = producto?.Marca?.nombre
 
   return (
     <div className="view-producto">
@@ -102,24 +117,54 @@ function ViewProducto() {
         resultados={resultadosBusqueda}
       />
 
-
-      {noEncontrado ? (
-        <div className="catpage__estado" style={{ padding: "80px 20px", textAlign: "center" }}>
-          No encontramos ese producto 😕
-        </div>
+      {loading ? (
+        <ViewProductoSkeleton />
+      ) : noEncontrado ? (
+        <div className="pdp-estado">No encontramos ese producto 😕</div>
       ) : (
-        <main className="contenido-producto">
-          <GaleriaProducto producto={producto} loading={loading} selectedColor={selectedColor} />
-          <InfoProducto
-            producto={producto}
-            loading={loading}
-            selectedColor={selectedColor}
-            selectedTalle={selectedTalle}
-            onColorChange={handleColorChange}
-            onTalleChange={handleTalleChange}
-          />
-        </main>
+        <>
+          <div className="pdp-wrap">
+            <nav className="pdp-crumbs" aria-label="Migas de pan">
+              <Link to="/">Inicio</Link>
+              <span>›</span>
+              {marcaNombre && (
+                <>
+                  <Link to={`/${slugify(marcaNombre)}`}>{marcaNombre}</Link>
+                  <span>›</span>
+                </>
+              )}
+              <span className="pdp-crumbs__cur">{producto?.nombre || 'Producto'}</span>
+            </nav>
+
+            <section className="pdp">
+              <GaleriaProducto producto={producto} loading={loading} selectedColor={selectedColor} />
+              <InfoProducto
+                producto={producto}
+                loading={loading}
+                marca={producto?.Marca}
+                selectedColor={selectedColor}
+                selectedTalle={selectedTalle}
+                onColorChange={handleColorChange}
+                onTalleChange={handleTalleChange}
+              />
+            </section>
+          </div>
+
+          {relacionados.length > 0 && (
+            <section className="pdp-rel">
+              <div className="pdp-wrap">
+                <h2 className="pdp-rel__title">También te puede gustar</h2>
+                <div className="pdp-rel__grid">
+                  {relacionados.map((p) => (
+                    <Producto key={p.id_producto} producto={p} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+        </>
       )}
+
       <Footer />
     </div>
   )

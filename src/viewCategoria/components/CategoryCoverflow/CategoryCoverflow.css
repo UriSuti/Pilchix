@@ -1,6 +1,7 @@
 .catflow {
   position: relative;
-  background: radial-gradient(120% 120% at 50% -20%, #16465f 0%, #0c2c42 55%, #06202f 100%);
+  /* exactamente el mismo azul que el header */
+  background: #0f172a;
   color: #fff;
   overflow: hidden;
   padding: 30px 0 40px;

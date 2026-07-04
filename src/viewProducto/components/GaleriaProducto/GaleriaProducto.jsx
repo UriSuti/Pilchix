@@ -3,13 +3,6 @@ import { useState } from 'react'
 import nike from '../../../assets/nike.webp'
 import { getImagenesPorColor } from '../../../utils/producto'
 
-const IconReloj = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
-  </svg>
-)
-
 function GaleriaProducto({ producto, loading, selectedColor }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [claveGaleria, setClaveGaleria] = useState(null)
@@ -28,56 +21,35 @@ function GaleriaProducto({ producto, loading, selectedColor }) {
   }
 
   if (loading) {
-    return <section className="galeria-producto">Cargando...</section>
+    return <section className="ipgal ipgal--estado">Cargando…</section>
   }
 
   if (!producto) {
-    return <section className="galeria-producto">Producto no encontrado</section>
+    return <section className="ipgal ipgal--estado">Producto no encontrado</section>
   }
 
-  const irAnterior = () => setActiveIndex((i) => (i - 1 + imagenes.length) % imagenes.length)
-  const irSiguiente = () => setActiveIndex((i) => (i + 1) % imagenes.length)
+  const lista = imagenes.length > 0 ? imagenes : [{ imagen: nike, id_imagen: 'fallback' }]
+  const principal = lista[activeIndex]?.imagen || nike
 
   return (
-    <section className="galeria-producto">
-      <div className="galeria-producto__principal">
-        {/* miniaturas */}
-        <div className="galeria-producto__miniaturas">
-          {imagenes.length > 0 ? (
-            imagenes.map((img, i) => (
-              <button
-                key={img.id_imagen ?? i}
-                type="button"
-                className={`galeria-producto__miniatura ${i === activeIndex ? 'is-active' : ''}`}
-                onClick={() => setActiveIndex(i)}
-              >
-                <img src={img.imagen} alt={`Miniatura ${i + 1}`} />
-              </button>
-            ))
-          ) : (
-            <button type="button" className="galeria-producto__miniatura is-active">
-              <img src={nike} alt="Miniatura" />
-            </button>
-          )}
-        </div>
-
-        {/* imagen principal */}
-        <div className="galeria-producto__imagen">
-          <img src={imagenes[activeIndex]?.imagen || nike} alt={producto.nombre} />
-
-          {imagenes.length > 1 && (
-            <div className="galeria-producto__flechas">
-              <button type="button" aria-label="Imagen anterior" onClick={irAnterior}>‹</button>
-              <button type="button" aria-label="Imagen siguiente" onClick={irSiguiente}>›</button>
-            </div>
-          )}
-        </div>
+    <section className="ipgal">
+      {/* miniaturas */}
+      <div className="ipgal__thumbs">
+        {lista.map((img, i) => (
+          <button
+            key={img.id_imagen ?? i}
+            type="button"
+            className={`ipgal__thumb ${i === activeIndex ? 'is-active' : ''}`}
+            onClick={() => setActiveIndex(i)}
+          >
+            <img src={img.imagen} alt={`Vista ${i + 1} de ${producto.nombre}`} />
+          </button>
+        ))}
       </div>
 
-      {/* banner de horario */}
-      <div className="galeria-producto__horario">
-        <IconReloj />
-        <span>ACERCATE HOY 11:00 - 21:00</span>
+      {/* imagen principal */}
+      <div className="ipgal__main">
+        <img src={principal} alt={producto.nombre} />
       </div>
     </section>
   )

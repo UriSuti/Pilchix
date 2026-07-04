@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useCarrito } from "../../hooks/useCarrito.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
+import { slugify } from "../../utils/slugify.js";
 import "./Header.css";
 
 const IconSearch = () => (
@@ -69,6 +70,23 @@ function Header({ idUsuario = null, teal = false }) {
     buscarProductos,
   } = useLandingSearch(idUsuario);
 
+  // Al apretar Enter: si lo buscado coincide con una marca, va directo a su local.
+  const handleBuscar = (e) => {
+    e.preventDefault();
+    const q = textoBusqueda.trim().toLowerCase();
+    if (!q) return;
+    const marca =
+      marcasBusqueda.find((m) => m.nombre?.toLowerCase() === q) ||
+      marcasBusqueda.find((m) => m.nombre?.toLowerCase().startsWith(q)) ||
+      marcasBusqueda[0];
+    if (marca) {
+      setTextoBusqueda("");
+      navigate(`/${slugify(marca.nombre)}`);
+      return;
+    }
+    buscarProductos(e);
+  };
+
   const [menuPerfilAbierto, setMenuPerfilAbierto] = useState(false);
   const perfilRef = useRef(null);
 
@@ -112,7 +130,7 @@ function Header({ idUsuario = null, teal = false }) {
       </a>
 
       <div className="site-header__search-wrapper" ref={searchWrapperRef}>
-        <form className="site-header__search" onSubmit={buscarProductos}>
+        <form className="site-header__search" onSubmit={handleBuscar}>
           <span className="site-header__search-icon" aria-hidden="true">
             <IconSearch />
           </span>

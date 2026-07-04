@@ -25,10 +25,13 @@ function Favoritos() {
     if (favoritos.length === 0) {
         return (
         <div className="perfil-vacio">
-            <button className="perfil-agregar" onClick={() => navigate("/")}>
-            <span className="perfil-agregar__icono">+</span>
-            Explorar productos
-            </button>
+            <h3 className="perfil-vacio__titulo">Todavía no guardaste favoritos</h3>
+            <p className="perfil-vacio__texto">
+                Mirá lo que creemos que te va a gustar y sumá tus primeros.
+            </p>
+            <a className="perfil-agregar" href="/#recomendados">
+                Descubrí productos →
+            </a>
         </div>
         );
     }
@@ -60,7 +63,6 @@ function Favoritos() {
                 <div className="card-perfil__placeholder">{f.Producto.nombre.charAt(0)}</div>
             )}
             <span className="card-perfil__nombre">{f.Producto.nombre}</span>
-            <span className="card-perfil__precio">${f.Producto.precio}</span>
             </div>
             );
         })}

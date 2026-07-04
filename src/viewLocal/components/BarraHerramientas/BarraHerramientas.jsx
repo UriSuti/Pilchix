@@ -16,14 +16,9 @@ function BarraHerramientas({ orden, setOrden, busqueda = '', setBusqueda, cantid
   return (
     <section className="barra-herramientas">
       <div className="barra-herramientas__fila">
-        {/* tabs */}
+        {/* título de la sección */}
         <div className="barra-herramientas__tabs">
-          <button type="button" className="barra-herramientas__tab is-active">
-            Productos
-          </button>
-          <button type="button" className="barra-herramientas__tab">
-            Categorías
-          </button>
+          <span className="barra-herramientas__tab is-active">Productos</span>
         </div>
 
         {/* acciones derecha */}

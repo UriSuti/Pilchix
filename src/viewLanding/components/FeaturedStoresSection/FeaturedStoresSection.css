@@ -91,6 +91,21 @@
   text-decoration: none;
   box-shadow: var(--lp-shadow-lg);
   display: block;
+  background: #e3e9ed;
+}
+
+/* animación de carga (shimmer) mientras se trae la fachada */
+.spot__stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #e3e9ed 0%, #eef2f5 50%, #e3e9ed 100%);
+  background-size: 200% 100%;
+  animation: spot-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes spot-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .spot__bg {
@@ -170,6 +185,7 @@
   object-fit: cover;
   border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.15); /* reserva el espacio antes de cargar */
 }
 
 .spot__cta {

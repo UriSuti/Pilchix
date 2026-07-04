@@ -1,24 +1,90 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap");
+
 .view-producto {
-  margin: 0 auto;
-  background: #ffffff;
   min-height: 100vh;
-  position: relative;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-.contenido-producto {
   display: flex;
-  gap: 40px;
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 40px 16px;
-  box-sizing: border-box;
+  flex-direction: column;
+  background: #fff;
+  color: #0c1116;
+  font-family: "Poppins", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-@media (max-width: 768px) {
-  .contenido-producto {
-    flex-direction: column;
+.view-producto .site-footer {
+  margin-top: 40px;
+}
+
+.pdp-wrap {
+  width: min(1200px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.pdp-estado {
+  flex: 1 0 auto;
+  display: grid;
+  place-content: center;
+  padding: 100px 20px;
+  text-align: center;
+  color: #5d6b73;
+  font-size: 1.05rem;
+}
+
+/* breadcrumb */
+.pdp-crumbs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  color: #5d6b73;
+  font-size: 0.82rem;
+  padding: 22px 0 6px;
+}
+.pdp-crumbs a {
+  color: inherit;
+  text-decoration: none;
+}
+.pdp-crumbs a:hover {
+  color: #123d59;
+}
+.pdp-crumbs span {
+  opacity: 0.5;
+}
+.pdp-crumbs__cur {
+  color: #0c1116;
+  font-weight: 500;
+}
+
+/* layout galería + info */
+.pdp {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  padding: 12px 0 60px;
+  align-items: start;
+}
+
+/* relacionados */
+.pdp-rel {
+  padding: 10px 0 60px;
+}
+.pdp-rel__title {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  margin-bottom: 24px;
+}
+.pdp-rel__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .pdp {
+    grid-template-columns: 1fr;
     gap: 28px;
-    padding: 24px 16px;
+  }
+  .pdp-rel__grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

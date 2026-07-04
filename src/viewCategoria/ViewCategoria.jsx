@@ -7,7 +7,7 @@ import Producto from "../viewLocal/components/Producto/Producto";
 import CategoryCoverflow from "./components/CategoryCoverflow/CategoryCoverflow";
 import FiltrosCategoria from "./components/FiltrosCategoria/FiltrosCategoria";
 import { useCategoriasData } from "./hooks/useCategoriasData";
-import { usePaginaCargando } from "../context/NavLoadingContext";
+import ViewCategoriaSkeleton from "../components/skeletons/ViewCategoriaSkeleton";
 
 const IconSearch = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -20,7 +20,6 @@ function ViewCategoria() {
   const { categorySlug } = useParams();
   const navigate = useNavigate();
   const { categorias, loading, error } = useCategoriasData();
-  usePaginaCargando(loading);
 
   const [marcasSel, setMarcasSel] = useState(() => new Set());
   const [tallesSel, setTallesSel] = useState(() => new Set());
@@ -130,7 +129,7 @@ function ViewCategoria() {
     <div className="view-categoria">
       <Header />
 
-      {loading && <div className="catpage__estado">Cargando categorías…</div>}
+      {loading && <ViewCategoriaSkeleton />}
 
       {!loading && error && (
         <div className="catpage__estado">Ups, no pudimos cargar las categorías. Probá recargar.</div>

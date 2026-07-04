@@ -1,25 +1,16 @@
-/* el link envuelve la card: sin subrayado ni color azul por defecto */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+/* el link envuelve la card: sin subrayado ni color por defecto */
 .card-producto__link {
   text-decoration: none;
   color: inherit;
   display: block;
 }
 
-/* Card de producto */
+/* Card de producto (estilo limpio, imagen protagonista) */
 .card-producto {
-  display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
-  border: 1px solid #ececec;
-  border-radius: 12px;
-  overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.card-producto:hover {
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.10);
-  transform: translateY(-3px);
+  font-family: "Poppins", system-ui, sans-serif;
 }
 
 /* =========================
@@ -27,35 +18,41 @@
 ========================= */
 .card-producto__media {
   position: relative;
-  background-color: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: #f3f5f6;
+  box-shadow: 0 4px 18px rgba(12, 44, 66, 0.08);
 }
 
 .card-producto__media img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-producto:hover .card-producto__media img {
+  transform: scale(1.07);
 }
 
 .card-producto__fav {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
   border: none;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.9);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  transition: background-color 0.2s ease;
-}
-
-.card-producto__fav:hover {
-  background-color: #ffffff;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #123d59;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(12, 44, 66, 0.12);
 }
 
 /* el botón de favorito (reutilizado) centrado dentro del círculo */
@@ -71,47 +68,32 @@
    INFO
 ========================= */
 .card-producto__info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px 18px 18px;
+  padding: 12px 2px 0;
+}
+
+.card-producto__marca {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5d6b73;
+  font-weight: 600;
 }
 
 .card-producto__nombre {
-  margin: 0;
+  margin: 3px 0 6px;
   font-size: 0.95rem;
-  font-weight: 700;
-  color: #111111;
+  font-weight: 600;
+  color: #0c1116;
   line-height: 1.25;
-}
-
-.card-producto__subtitulo {
-  margin: 0;
-  font-size: 0.78rem;
-  color: #9a9a9a;
-  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-producto__precio {
-  margin: 8px 0 0;
-  font-size: 1.1rem;
+  margin: 0;
+  font-size: 1.05rem;
   font-weight: 800;
-  color: #111111;
-}
-
-/* =========================
-   SWATCHES DE COLOR
-========================= */
-.card-producto__colores {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.card-producto__swatch {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 1px solid #dcdcdc;
-  display: inline-block;
+  color: #123d59;
 }

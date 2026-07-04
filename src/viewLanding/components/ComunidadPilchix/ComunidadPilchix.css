@@ -1,0 +1,107 @@
+.comu__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--lp-line);
+  color: var(--lp-navy);
+  font-weight: 600;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.comu__intro {
+  max-width: 60ch;
+  margin: -18px 0 32px;
+  color: var(--lp-muted);
+  font-size: 1.06rem;
+  line-height: 1.7;
+}
+
+.comu__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.op {
+  background: #fff;
+  border: 1px solid var(--lp-line);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: var(--lp-shadow-sm);
+}
+.op__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.op__avatar {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--lp-navy);
+  color: #fff;
+  font-family: var(--lp-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.op__quien {
+  flex: 1;
+  min-width: 0;
+}
+.op__quien b {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.op__quien span {
+  font-size: 0.8rem;
+  color: var(--lp-muted);
+}
+
+.op__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 6px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.op__tag--pro {
+  background: #e6f4ea;
+  color: #12864a;
+}
+.op__tag--con {
+  background: #fdeede;
+  color: #b5651d;
+}
+
+.op__texto {
+  margin: 14px 0 0;
+  color: #45535b;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.comu__cta {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  .comu__grid {
+    grid-template-columns: 1fr;
+  }
+  .op__tag {
+    display: none;
+  }
+}

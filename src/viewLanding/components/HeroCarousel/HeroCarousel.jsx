@@ -40,6 +40,7 @@ function HeroCarousel({
   eyebrow = "Pensado para vos",
   direccion = "izquierda",
   alt = false,
+  id,
 }) {
   // contenido duplicado para el loop continuo
   const fila = productos.length > 0 ? [...productos, ...productos] : [];
@@ -48,7 +49,7 @@ function HeroCarousel({
   const trackRef = useShowroomDrift({ direccion, cantidad: fila.length });
 
   return (
-    <section className={`lp-section ${alt ? "lp-section--alt" : ""}`}>
+    <section className={`lp-section ${alt ? "lp-section--alt" : ""}`} id={id}>
       <div className="lp-wrap">
         <div className="lp-head">
           <div>

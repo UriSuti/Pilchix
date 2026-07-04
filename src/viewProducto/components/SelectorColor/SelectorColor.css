@@ -1,33 +1,39 @@
 .selector-color {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .selector-color__swatch {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: none;
   padding: 0;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
   cursor: pointer;
-  background-color: #f1f1f1;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.15s ease;
+}
+.selector-color__swatch:hover {
+  border-color: #cdd6da;
+}
+.selector-color__swatch.is-active {
+  border-color: #123d59;
 }
 
-.selector-color__swatch img,
-.selector-color__fill {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* círculo de color interno */
+.selector-color__swatch .card-producto__swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   display: block;
 }
-
-.selector-color__swatch:hover {
-  border-color: #b5b5b5;
-}
-
-.selector-color__swatch.is-active {
-  box-shadow: 0 0 0 2px #111111;
-  border-color: #111111;
+.selector-color__swatch img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
 }

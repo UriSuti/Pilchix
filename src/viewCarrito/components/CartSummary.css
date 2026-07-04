@@ -10,10 +10,14 @@
   top: 24px;
 }
 
+.cart-summary {
+  font-family: "Poppins", system-ui, sans-serif;
+}
 .cart-summary h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #111827;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0c1116;
   margin: 0 0 20px;
 }
 
@@ -45,7 +49,7 @@
 .cart-summary__checkout {
   width: 100%;
   padding: 14px;
-  background: #2563eb;
+  background: #123d59;
   border: none;
   color: #fff;
   border-radius: 8px;
@@ -61,7 +65,7 @@
 }
 
 .cart-summary__checkout:hover {
-  background: #1d4ed8;
+  background: #0c2c42;
 }
 
 .cart-summary__secure {

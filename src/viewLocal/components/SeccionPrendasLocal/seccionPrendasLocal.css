@@ -9,11 +9,11 @@
 /* Grid de productos */
 .grid-productos {
   width: 100%;
-  max-width: 1180px;
+  max-width: 1240px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 26px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px 24px;
   padding: 0 24px;
   box-sizing: border-box;
 }
@@ -21,14 +21,25 @@
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width: 520px) {
+@media (max-width: 1000px) {
+  .grid-productos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-productos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 16px;
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 400px) {
   .seccion-prendas-local {
     padding: 16px 0 30px;
   }
-
   .grid-productos {
     grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 0 16px;
   }
 }

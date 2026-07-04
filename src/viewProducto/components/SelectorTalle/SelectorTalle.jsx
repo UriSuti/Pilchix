@@ -57,8 +57,6 @@ function SelectorTalle({ guiaTalles, value: selectedTalle, onChange }) {
 
   return (
     <div className="selector-talle">
-      <p className="selector-talle__titulo">Seleccionar Talle (US)</p>
-
       <div className="selector-talle__grilla">
         {opciones.map((talle) => (
           <button

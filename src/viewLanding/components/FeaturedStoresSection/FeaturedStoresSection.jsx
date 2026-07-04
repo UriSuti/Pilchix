@@ -51,8 +51,8 @@ function FeaturedStoresSection({ marcas = [], marcasPopulares = [], productos = 
     );
   }
 
-  const fachada =
-    fachadas[marcaActiva.id_marca] || marcaActiva.logo || null;
+  // undefined = todavía cargando · null = la marca no tiene fachada · string = url
+  const estadoFachada = fachadas[marcaActiva.id_marca];
 
   const thumbs = (() => {
     const propios = productos.filter((p) => p.marca === marcaActiva.nombre && p.imagen);
@@ -93,11 +93,16 @@ function FeaturedStoresSection({ marcas = [], marcasPopulares = [], productos = 
           </ul>
 
           <Link className="spot__stage" to={`/${slugify(marcaActiva.nombre)}`}>
-            {fachada ? (
-              <img className="spot__bg" src={fachada} alt={marcaActiva.nombre} />
-            ) : (
+            {estadoFachada ? (
+              <img
+                className="spot__bg"
+                src={estadoFachada}
+                alt={marcaActiva.nombre}
+                key={marcaActiva.id_marca}
+              />
+            ) : estadoFachada === null ? (
               <div className="spot__bg spot__bg--placeholder" />
-            )}
+            ) : null /* cargando: se ve el shimmer del stage */}
 
             <span className="spot__logo">{inicial(marcaActiva.nombre)}</span>
 

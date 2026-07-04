@@ -40,6 +40,23 @@
   opacity: 0.85;
 }
 
+.subscribe__ic {
+  width: 0.72em;
+  height: 0.72em;
+  vertical-align: baseline;
+  margin-left: 4px;
+  color: var(--lp-petrol-light);
+}
+
+.subscribe__cta {
+  position: relative;
+  margin-top: 30px;
+  display: inline-flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .subscribe__form {
   position: relative;
   margin-top: 30px;
@@ -56,4 +73,19 @@
   min-width: 280px;
   font-family: var(--lp-font);
   font-size: 0.95rem;
+}
+
+.subscribe__msg {
+  position: relative;
+  margin: 22px 0 0;
+  font-weight: 600;
+}
+.subscribe__msg--ok {
+  color: #fff;
+}
+.subscribe__msg--error {
+  margin-top: 14px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #ffd7cf;
 }

@@ -4,14 +4,13 @@ import { useParams } from 'react-router-dom'
 import Header from '../header_footer/Header/Header.jsx'
 import Footer from '../header_footer/Footer/Footer.jsx'
 import HeroLocal from './components/HeroLocal/HeroLocal.jsx'
-import FranjaBeneficios from './components/FranjaBeneficios/FranjaBeneficios.jsx'
 import BarraHerramientas from './components/BarraHerramientas/BarraHerramientas.jsx'
 import SeccionPrendasLocal from './components/SeccionPrendasLocal/seccionPrendasLocal.jsx'
 import { useLocalData } from './hooks/useLocalData.js'
 import { useLandingData } from '../hooks/useLandingData'
 import { useLandingSearch } from '../hooks/useLandingSearch'
 import { slugify } from '../utils/slugify.js'
-import { usePaginaCargando } from "../context/NavLoadingContext.jsx";
+import ViewLocalSkeleton from "../components/skeletons/ViewLocalSkeleton.jsx";
 import BotonSuscribirse from "./components/BotonSuscribirse/BotonSuscribirse.jsx";
 
 function ViewLocal() {
@@ -45,7 +44,6 @@ function ViewLocal() {
 
   const cargando = cargandoMarcas || loading
   const noEncontrado = !cargandoMarcas && !marca
-  usePaginaCargando(cargando)
 
   return (
     <div className="view-local">
@@ -55,6 +53,8 @@ function ViewLocal() {
         onBuscar={buscarProductos}
         resultados={resultadosBusqueda}
       />
+
+      {cargando && <ViewLocalSkeleton />}
 
       {!cargando && noEncontrado && (
         <div className="view-estado">No encontramos ese local 😕</div>
@@ -66,13 +66,13 @@ function ViewLocal() {
 
       {!cargando && marca && !error && (
         <div className="contenido-local">
-          <div className="local-hero">
-            <HeroLocal marca={marca} imagenFachada={imagenFachada} />
-            <div className="local-hero__suscribir">
-              <BotonSuscribirse idMarca={marca.id_marca} nombreMarca={marca.nombre} />
-            </div>
-          </div>
-          <FranjaBeneficios />
+          <HeroLocal
+            marca={marca}
+            imagenFachada={imagenFachada}
+            cantidadProductos={productos.length}
+          >
+            <BotonSuscribirse idMarca={marca.id_marca} nombreMarca={marca.nombre} />
+          </HeroLocal>
           <BarraHerramientas
             orden={orden}
             setOrden={setOrden}
@@ -80,8 +80,16 @@ function ViewLocal() {
             setBusqueda={setBusqueda}
             cantidad={productosFiltrados.length}
           />
-          <main className="view-content">
-            <SeccionPrendasLocal productos={productosFiltrados} />
+          <main className="view-content" id="local-productos" style={{ scrollMarginTop: "80px" }}>
+            {productosFiltrados.length === 0 ? (
+              <div className="view-estado">
+                {busqueda
+                  ? `No encontramos productos para “${busqueda}”.`
+                  : "Este local todavía no cargó productos."}
+              </div>
+            ) : (
+              <SeccionPrendasLocal productos={productosFiltrados} />
+            )}
           </main>
           <div className="spacer-footer" />
           <footer><Footer /></footer>

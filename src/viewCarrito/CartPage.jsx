@@ -33,6 +33,11 @@ const IconRefresh = () => (
     <path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
   </svg>
 )
+const IconBag = () => (
+  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" />
+  </svg>
+)
 
 const BENEFITS = [
   { icon: <IconTruck />, title: 'Envío rápido', desc: 'Recibe tu pedido en 1-3 días hábiles' },
@@ -117,7 +122,7 @@ function CartPage() {
           <p>{items.length} artículo{items.length !== 1 ? 's' : ''} en tu carrito</p>
         </div>
         <p className="cart-page__help">
-          ¿Necesitas ayuda? <a href="#">Contáctanos</a>
+          ¿Necesitás ayuda? <a href="mailto:hola@pilchix.com">Contactanos</a>
         </p>
       </div>
 
@@ -134,7 +139,12 @@ function CartPage() {
             )}
 
             {items.length === 0 ? (
-              <p className="cart-table__empty">Tu carrito está vacío.</p>
+              <div className="cart-empty">
+                <span className="cart-empty__icon"><IconBag /></span>
+                <h3>Tu carrito está vacío</h3>
+                <p>Todavía no agregaste productos. Descubrí lo que creemos que te va a gustar.</p>
+                <a className="cart-empty__cta" href="/#recomendados">Descubrí productos →</a>
+              </div>
             ) : (
               items.map((item) => (
                 <CartItem

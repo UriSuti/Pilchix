@@ -24,10 +24,13 @@ function Suscripciones() {
     if (suscripciones.length === 0) {
         return (
         <div className="perfil-vacio">
-            <button className="perfil-agregar" onClick={() => navigate("/")}>
-            <span className="perfil-agregar__icono">+</span>
-            Agregar locales
-            </button>
+            <h3 className="perfil-vacio__titulo">Todavía no seguís locales</h3>
+            <p className="perfil-vacio__texto">
+                Descubrí los locales destacados y seguí a tus marcas favoritas.
+            </p>
+            <a className="perfil-agregar" href="/#locales">
+                Ver locales destacados →
+            </a>
         </div>
         );
     }

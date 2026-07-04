@@ -14,7 +14,7 @@
   max-width: 100vw;
   overflow: visible;
   padding: 10px clamp(24px, 4vw, 48px);
-  background: #123d59;
+  background: #0f172a; /* mismo color que el footer (la landing usa teal aparte) */
   color: #ffffff;
   /* fuente y tamaño propios: el header NO hereda de la página (así es idéntico en todas) */
   font-family: "Poppins", system-ui, sans-serif;
@@ -271,7 +271,7 @@
   display: grid;
   place-items: center;
   /* aro del color del fondo del header: efecto "recortado" para que se despegue del ícono */
-  border: 2px solid #123d59;
+  border: 2px solid #0f172a;
   box-shadow: 0 2px 5px rgba(12, 44, 66, 0.35);
 }
 /* el aro acompaña cada variante de fondo del header */

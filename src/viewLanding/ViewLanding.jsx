@@ -1,4 +1,5 @@
 import "./ViewLanding.css";
+import { useEffect } from "react";
 import Header from "../header_footer/Header/Header";
 import Footer from "../header_footer/Footer/Footer";
 import HeroLanding from "./components/HeroLanding/HeroLanding";
@@ -7,10 +8,11 @@ import FeaturedStoresSection from "./components/FeaturedStoresSection/FeaturedSt
 import OffersSection from "./components/OffersSection/OffersSection";
 import HeroCarousel from "./components/HeroCarousel/HeroCarousel";
 import SubscribeSection from "./components/SubscribeSection/SubscribeSection";
-import LookbookDrift from "./components/LookbookDrift/LookbookDrift";
+import NuestraHistoria from "./components/NuestraHistoria/NuestraHistoria";
+import ComunidadPilchix from "./components/ComunidadPilchix/ComunidadPilchix";
 import { LANDING_SECTION_TITLES } from "./constants";
 import { useLandingData } from "../hooks/useLandingData";
-import { usePaginaCargando } from "../context/NavLoadingContext";
+import ViewLandingSkeleton from "../components/skeletons/ViewLandingSkeleton";
 
 function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) {
   const idUsuario = idUsuarioProp ?? id_usuario;
@@ -19,12 +21,21 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
 
   const recomendaciones = landingData.productosPopulares.slice(0, 8);
 
-  usePaginaCargando(loading);
+  // si se llega con un hash (ej. #recomendados o #locales), scrollea ahí al cargar
+  useEffect(() => {
+    if (loading || !window.location.hash) return;
+    const el = document.querySelector(window.location.hash);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [loading]);
 
   return (
     <div className="landing-page">
       <Header idUsuario={idUsuario} setLocal={setLocal} teal />
 
+      {loading ? (
+        <ViewLandingSkeleton />
+      ) : (
+      <>
       <HeroLanding
         subtitle="Nueva temporada · Otoño 2026"
         title={
@@ -57,6 +68,7 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
         />
 
         <HeroCarousel
+          id="recomendados"
           productos={recomendaciones}
           cargando={loading}
           titulo={LANDING_SECTION_TITLES.recommendations}
@@ -64,10 +76,14 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
           alt
         />
 
-        <SubscribeSection />
-      </main>
+        <NuestraHistoria />
 
-      <LookbookDrift productos={landingData.productosPopulares} />
+        <SubscribeSection />
+
+        <ComunidadPilchix />
+      </main>
+      </>
+      )}
 
       <Footer />
     </div>
