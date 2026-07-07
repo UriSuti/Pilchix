@@ -65,6 +65,30 @@ export function getLandingMarcasPopulares() {
     .eq("estado", 1);
 }
 
+// Todos los locales para la página /locales: fachada + productos (para contar) + métricas (para ordenar)
+export function getLocales() {
+  return supabase
+    .from("Marca")
+    .select(
+      `
+      id_marca,
+      nombre,
+      descripcion,
+      logo,
+      ubicacion,
+      imagen_fachada,
+      Producto (
+        id_producto,
+        estado,
+        Metrica_Producto (
+          visualizaciones
+        )
+      )
+    `
+    )
+    .eq("estado", 1);
+}
+
 export function getLandingProductosPopulares() {
   return supabase
     .from("Producto")

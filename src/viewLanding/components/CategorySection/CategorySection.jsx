@@ -23,6 +23,11 @@ function CategorySection({ categorias = [], cargando }) {
             <p className="lp-eyebrow">Explorá por estilo</p>
             <h2>Categorías</h2>
           </div>
+          {lista.length > 0 && (
+            <Link className="lp-link" to={`/categoria/${slugify(lista[0].nombre)}`}>
+              Ver todas →
+            </Link>
+          )}
         </div>
 
         {cargando ? (

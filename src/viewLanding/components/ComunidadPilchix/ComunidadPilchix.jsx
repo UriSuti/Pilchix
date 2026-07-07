@@ -14,7 +14,7 @@ const IconThumbDown = () => (
   </svg>
 );
 const IconChat = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
   </svg>
 );
@@ -27,15 +27,17 @@ const OPINIONES = [
   { inicial: "N", nombre: "Nico T.", sobre: "Adidas", texto: "Buenísimo el producto, pero tardó en llegar. Igual volvería a comprar.", tipo: "con" },
 ];
 
-function ComunidadPilchix() {
+function ComunidadPilchix({ max }) {
   const { mostrarToast } = useToast();
+  const opiniones = typeof max === "number" ? OPINIONES.slice(0, max) : OPINIONES;
+
   return (
-    <section className="lp-section comu" id="comunidad">
-      <div className="lp-wrap">
-        <div className="lp-head">
+    <section className="comu" id="comunidad">
+      <div className="comu__wrap">
+        <div className="comu__head">
           <div>
-            <p className="lp-eyebrow">Comunidad</p>
-            <h2>Una comunidad abierta, sin vueltas</h2>
+            <p className="comu__eyebrow">Comunidad</p>
+            <h2 className="comu__titulo">Una comunidad abierta, sin vueltas</h2>
           </div>
           <span className="comu__badge">
             <IconChat /> Muy pronto
@@ -48,7 +50,7 @@ function ComunidadPilchix() {
         </p>
 
         <div className="comu__grid">
-          {OPINIONES.map((op) => (
+          {opiniones.map((op) => (
             <article className="op" key={op.nombre}>
               <div className="op__head">
                 <span className="op__avatar">{op.inicial}</span>
@@ -69,7 +71,7 @@ function ComunidadPilchix() {
         <div className="comu__cta">
           <button
             type="button"
-            className="lp-btn lp-btn--primary"
+            className="comu__btn"
             onClick={() => mostrarToast("Próximamente 🙂", "info")}
           >
             Sumate a la comunidad

@@ -20,12 +20,17 @@
   position: relative;
   border-radius: 18px;
   overflow: hidden;
-  aspect-ratio: 3 / 4;
+  /* caja 3:4 con padding-hack: la altura sale del padding, no de la imagen,
+     así TODAS las fotos quedan iguales sin importar su tamaño original */
+  height: 0;
+  padding-bottom: 133.333%;
   background: #f3f5f6;
   box-shadow: 0 4px 18px rgba(12, 44, 66, 0.08);
 }
 
 .card-producto__media img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;

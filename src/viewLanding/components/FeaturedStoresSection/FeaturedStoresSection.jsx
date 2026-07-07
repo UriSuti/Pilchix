@@ -68,6 +68,9 @@ function FeaturedStoresSection({ marcas = [], marcasPopulares = [], productos = 
             <p className="lp-eyebrow">Los que están rompiendo</p>
             <h2>Locales destacados</h2>
           </div>
+          <Link className="lp-link" to="/locales">
+            Ver todos →
+          </Link>
         </div>
 
         <div className="spotlight">

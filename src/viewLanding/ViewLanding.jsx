@@ -8,7 +8,7 @@ import FeaturedStoresSection from "./components/FeaturedStoresSection/FeaturedSt
 import OffersSection from "./components/OffersSection/OffersSection";
 import HeroCarousel from "./components/HeroCarousel/HeroCarousel";
 import SubscribeSection from "./components/SubscribeSection/SubscribeSection";
-import NuestraHistoria from "./components/NuestraHistoria/NuestraHistoria";
+import ShopTheLook from "./components/ShopTheLook/ShopTheLook";
 import ComunidadPilchix from "./components/ComunidadPilchix/ComunidadPilchix";
 import { LANDING_SECTION_TITLES } from "./constants";
 import { useLandingData } from "../hooks/useLandingData";
@@ -76,7 +76,7 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
           alt
         />
 
-        <NuestraHistoria />
+        <ShopTheLook productos={landingData.productosPopulares} cargando={loading} />
 
         <SubscribeSection />
 

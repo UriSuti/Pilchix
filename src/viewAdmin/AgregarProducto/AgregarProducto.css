@@ -17,8 +17,27 @@
 .ap__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .ap__talles { display: flex; flex-wrap: wrap; gap: 8px; }
-.ap__talle { width: 48px; height: 40px; border: 1px solid #d4d7da; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; }
+.ap__talle { min-width: 48px; height: 40px; padding: 0 10px; border: 1px solid #d4d7da; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; }
 .ap__talle.is-on { background: #123d59; color: #fff; border-color: #123d59; }
+
+/* selector de tipo de talle + agregar personalizado */
+.ap__talles-wrap { display: flex; flex-direction: column; gap: 14px; }
+.ap__talles-wrap select {
+  padding: 10px 12px; border: 1px solid #d4d7da; border-radius: 8px;
+  font-family: inherit; font-size: 0.92rem; background: #fff; cursor: pointer;
+}
+.ap__talles-wrap select:focus { outline: none; border-color: #123d59; }
+
+.ap__talle-add { display: flex; gap: 10px; }
+.ap__talle-add input {
+  flex: 1; min-width: 0; height: 40px; padding: 0 12px;
+  border: 1px solid #d4d7da; border-radius: 8px; font-family: inherit; font-size: 0.92rem;
+}
+.ap__talle-add input:focus { outline: none; border-color: #123d59; }
+.ap__talle-add button {
+  background: #f1f3f4; border: none; border-radius: 8px; padding: 0 16px; cursor: pointer; font-weight: 600; color: #123d59;
+}
+.ap__talle-add button:hover { background: #e6e9ea; }
 
 .ap__color-add { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
 .ap__color-add input[type="color"] { width: 44px; height: 38px; border: 1px solid #d4d7da; border-radius: 8px; cursor: pointer; }

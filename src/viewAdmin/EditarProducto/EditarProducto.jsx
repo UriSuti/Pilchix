@@ -8,9 +8,8 @@ import {
   actualizarCategoriasProducto, setImagenesProducto, borrarImagen, borrarProducto,
   marcarPortada, actualizarColorImagen,
 } from "../services/catalogo";
+import TallesPicker from "../components/TallesPicker/TallesPicker";
 import "../AgregarProducto/AgregarProducto.css";
-
-const TALLES_DISPONIBLES = ["XS", "S", "M", "L", "XL", "XXL"];
 
 function EditarProducto() {
   const navigate = useNavigate();
@@ -62,8 +61,6 @@ function EditarProducto() {
   const setCampo = (campo) => (e) =>
     setForm({ ...form, [campo]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
 
-  const toggleTalle = (t) =>
-    setTalles((p) => (p.includes(t) ? p.filter((x) => x !== t) : [...p, t]));
   const agregarColor = () => { if (!colores.includes(colorTemp)) setColores([...colores, colorTemp]); };
   const quitarColor = (c) => setColores(colores.filter((x) => x !== c));
   const toggleCategoria = (id) =>
@@ -209,13 +206,7 @@ function EditarProducto() {
 
           <div className="ap__card">
             <h2>Talles</h2>
-            <div className="ap__talles">
-              {TALLES_DISPONIBLES.map((t) => (
-                <button type="button" key={t}
-                  className={`ap__talle ${talles.includes(t) ? "is-on" : ""}`}
-                  onClick={() => toggleTalle(t)}>{t}</button>
-              ))}
-            </div>
+            <TallesPicker talles={talles} onChange={setTalles} />
           </div>
 
           <div className="ap__card">

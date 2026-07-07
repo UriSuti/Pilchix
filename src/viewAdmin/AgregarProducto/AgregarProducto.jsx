@@ -6,9 +6,8 @@ import { subirImagenProducto } from "../../services/storage";
 import {
   getCategorias, crearProducto, setCategoriasProducto, setImagenesProducto,
 } from "../services/catalogo";
+import TallesPicker from "../components/TallesPicker/TallesPicker";
 import "./AgregarProducto.css";
-
-const TALLES_DISPONIBLES = ["XS", "S", "M", "L", "XL", "XXL"];
 
 function AgregarProducto() {
   const navigate = useNavigate();
@@ -32,9 +31,6 @@ function AgregarProducto() {
 
   const setCampo = (campo) => (e) =>
     setForm({ ...form, [campo]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
-
-  const toggleTalle = (t) =>
-    setTalles((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
 
   const agregarColor = () => {
     if (!colores.includes(colorTemp)) setColores([...colores, colorTemp]);
@@ -135,13 +131,7 @@ function AgregarProducto() {
 
           <div className="ap__card">
             <h2>Talles</h2>
-            <div className="ap__talles">
-              {TALLES_DISPONIBLES.map((t) => (
-                <button type="button" key={t}
-                  className={`ap__talle ${talles.includes(t) ? "is-on" : ""}`}
-                  onClick={() => toggleTalle(t)}>{t}</button>
-              ))}
-            </div>
+            <TallesPicker talles={talles} onChange={setTalles} />
           </div>
 
           <div className="ap__card">

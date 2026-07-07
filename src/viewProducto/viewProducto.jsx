@@ -9,6 +9,7 @@ import { useLandingSearch } from '../hooks/useLandingSearch'
 import GaleriaProducto from './components/GaleriaProducto/GaleriaProducto.jsx'
 import InfoProducto from './components/InfoProducto/InfoProducto.jsx'
 import Producto from '../viewLocal/components/Producto/Producto.jsx'
+import ComunidadPilchix from '../viewLanding/components/ComunidadPilchix/ComunidadPilchix.jsx'
 import ViewProductoSkeleton from '../components/skeletons/ViewProductoSkeleton.jsx'
 
 function ViewProducto() {
@@ -162,6 +163,8 @@ function ViewProducto() {
               </div>
             </section>
           )}
+
+          <ComunidadPilchix max={2} />
         </>
       )}
 
