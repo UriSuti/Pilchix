@@ -254,25 +254,31 @@
 .site-header__action--carrito { position: relative; }
 .site-header__badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  box-sizing: content-box;
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  padding: 0;
+  top: -3px;
+  right: -3px;
+  box-sizing: border-box;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
   border-radius: 999px;
-  background: #e11d48;
+  background: #ef4444;
   color: #fff;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   display: grid;
   place-items: center;
-  /* aro del color del fondo del header: efecto "recortado" para que se despegue del ícono */
-  border: 2px solid #0f172a;
-  box-shadow: 0 2px 5px rgba(12, 44, 66, 0.35);
+  /* aro fino del color del header para despegarlo del ícono */
+  border: 1.5px solid #0f172a;
+  /* "pop" cada vez que cambia la cantidad (se re-monta por su key) */
+  animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes badge-pop {
+  0% { transform: scale(0.4); }
+  55% { transform: scale(1.18); }
+  100% { transform: scale(1); }
 }
 /* el aro acompaña cada variante de fondo del header */
 .site-header--teal:not(.site-header--scrolled) .site-header__badge {

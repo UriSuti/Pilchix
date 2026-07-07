@@ -151,7 +151,8 @@ export function getLandingCarrito(idUsuario) {
       `
       id_carrito,
       Carrito_Detalle (
-        id_detalle
+        id_detalle,
+        cantidad
       )
     `
     )

@@ -162,7 +162,9 @@ function Header({ idUsuario = null, teal = false }) {
         <button className="site-header__action site-header__action--carrito" type="button" aria-label="Carrito" title="Carrito" onClick={() => navigate('/carrito')}>
           <IconCart />
           {cantidadCarrito > 0 && (
-            <span className="site-header__badge">{cantidadCarrito}</span>
+            <span className="site-header__badge" key={cantidadCarrito}>
+              {cantidadCarrito > 99 ? "99+" : cantidadCarrito}
+            </span>
           )}
         </button>
         <button className="site-header__action" type="button" aria-label="Notificaciones" title="Notificaciones">

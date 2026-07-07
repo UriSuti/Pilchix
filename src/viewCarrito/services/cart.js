@@ -4,6 +4,13 @@ import { getImagenPortada } from '../../utils/producto'
 // In-memory cache so repeated adds don't query Carrito every time
 const cartIdCache = {}
 
+// Avisa al resto de la app (ej: el badge del header) que el carrito cambió.
+// delta = piezas sumadas/restadas (para el bump instantáneo); omitir si no se sabe.
+function notificarCambioCarrito(delta) {
+  if (typeof window === 'undefined') return
+  window.dispatchEvent(new CustomEvent('carrito:cambio', { detail: { delta } }))
+}
+
 async function obtenerOCrearCarrito(idUsuario) {
   if (cartIdCache[idUsuario]) return cartIdCache[idUsuario]
 
@@ -57,6 +64,8 @@ export async function agregarAlCarrito({ idUsuario, idProducto, cantidad = 1, pr
       .insert({ id_carrito: idCarrito, id_producto: idProducto, cantidad, precio_unitario: precioUnitario, talle, color })
     if (error) throw error
   }
+
+  notificarCambioCarrito(cantidad)
 }
 
 export async function obtenerItemsCarrito(idUsuario) {
@@ -110,6 +119,7 @@ export async function actualizarCantidadItem(idDetalle, cantidad) {
     .update({ cantidad })
     .eq('id_detalle', idDetalle)
   if (error) throw error
+  notificarCambioCarrito()
 }
 
 export async function eliminarItemCarrito(idDetalle) {
@@ -118,4 +128,5 @@ export async function eliminarItemCarrito(idDetalle) {
     .delete()
     .eq('id_detalle', idDetalle)
   if (error) throw error
+  notificarCambioCarrito()
 }
