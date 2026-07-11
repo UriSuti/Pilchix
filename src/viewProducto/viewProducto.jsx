@@ -9,7 +9,7 @@ import { useLandingSearch } from '../hooks/useLandingSearch'
 import GaleriaProducto from './components/GaleriaProducto/GaleriaProducto.jsx'
 import InfoProducto from './components/InfoProducto/InfoProducto.jsx'
 import Producto from '../viewLocal/components/Producto/Producto.jsx'
-import ComunidadPilchix from '../viewLanding/components/ComunidadPilchix/ComunidadPilchix.jsx'
+import OpinionesProducto from './components/OpinionesProducto/OpinionesProducto.jsx'
 import ViewProductoSkeleton from '../components/skeletons/ViewProductoSkeleton.jsx'
 
 function ViewProducto() {
@@ -164,7 +164,10 @@ function ViewProducto() {
             </section>
           )}
 
-          <ComunidadPilchix max={2} />
+          <OpinionesProducto
+            idProducto={producto.id_producto}
+            nombreProducto={producto.nombre}
+          />
         </>
       )}
 
