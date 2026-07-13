@@ -1,58 +1,57 @@
-import { supabase } from "../utils/supabase";
+import { apiFetch } from "./api";
+import { supabase } from "../utils/supabase";   // ← sigue haciendo falta por ahora
 
-export async function loginUsuario(email, password) {
-    const { data, error } = await supabase
-        .from("Usuario")
-        .select("*")
-        .eq("email", email)
-        .eq("contraseña", password)
-        .maybeSingle();
+export const authApi = {
+  registrarUsuario: (nombre, email, password) =>
+    apiFetch("/auth/usuario/registro", {
+      method: "POST",
+      body: { nombre, email, password },
+    }),
 
-    if (error) return { usuario: null, error: error.message };
-    if (!data) return { usuario: null, error: "Email o contraseña incorrectos" };
-    return { usuario: data, error: null };
-}
+  loginUsuario: (email, password) =>
+    apiFetch("/auth/usuario/login", {
+      method: "POST",
+      body: { email, password },
+    }),
 
-export async function registrarUsuario({ nombre, email, contraseña, foto_perfil }) {
-    const { data, error } = await supabase
-        .from("Usuario")
-        .insert([{ nombre, email, contraseña, foto_perfil: foto_perfil ?? null }])
-        .select()
-        .single();
+  registrarMarca: (nombre, email, password) =>
+    apiFetch("/auth/marca/registro", {
+      method: "POST",
+      body: { nombre, email, password },
+    }),
 
-    if (error) {
-        return {
-        usuario: null,
-        error: "No se pudo crear la cuenta. Puede que el email ya esté registrado.",
-        };
-    }
-    return { usuario: data, error: null };
-}
+  loginMarca: (email, password) =>
+    apiFetch("/auth/marca/login", {
+      method: "POST",
+      body: { email, password },
+    }),
+};
+
+/* ------------------------------------------------------------------
+   TODO: migrar al backend en la etapa de "perfil de usuario".
+   Por ahora siguen hablando con Supabase directo.
+------------------------------------------------------------------- */
 
 export async function actualizarFotoPerfil(idUsuario, url) {
-    const { data, error } = await supabase
-        .from("Usuario")
-        .update({ foto_perfil: url })
-        .eq("id_usuario", idUsuario)
-        .select()
-        .single();
+  const { data, error } = await supabase
+    .from("Usuario")
+    .update({ foto_perfil: url })
+    .eq("id_usuario", idUsuario)
+    .select()
+    .single();
 
-    if (error) {
-        return { usuario: null, error: "No se pudo guardar la foto de perfil" };
-    }
-    return { usuario: data, error: null };
+  if (error) return { usuario: null, error: "No se pudo guardar la foto de perfil" };
+  return { usuario: data, error: null };
 }
 
 export async function actualizarDatosUsuario(idUsuario, datos) {
-    const { data, error } = await supabase
-        .from("Usuario")
-        .update(datos)
-        .eq("id_usuario", idUsuario)
-        .select()
-        .single();
+  const { data, error } = await supabase
+    .from("Usuario")
+    .update(datos)
+    .eq("id_usuario", idUsuario)
+    .select()
+    .single();
 
-    if (error) {
-        return { usuario: null, error: "No se pudieron guardar los cambios" };
-    }
-    return { usuario: data, error: null };
+  if (error) return { usuario: null, error: "No se pudieron guardar los cambios" };
+  return { usuario: data, error: null };
 }

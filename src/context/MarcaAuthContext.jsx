@@ -1,59 +1,70 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginMarca, registrarMarca } from "../viewAdmin/services/authMarca";
+import { authApi } from "../services/auth";
+import { tokenStore } from "../services/api";
 
 const MarcaAuthContext = createContext(null);
 const STORAGE_KEY = "pilchix_marca";
 
 export function MarcaAuthProvider({ children }) {
-    const [marca, setMarca] = useState(null);
-    const [cargando, setCargando] = useState(true);
+  const [marca, setMarca] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
-    useEffect(() => {
-        try {
-            const guardado = localStorage.getItem(STORAGE_KEY);
-            if (guardado) setMarca(JSON.parse(guardado));
-        } catch {
-            localStorage.removeItem(STORAGE_KEY);
-        }
-        setCargando(false);
-    }, []);
-
-    async function login(email, contraseña) {
-        const { marca: m, error } = await loginMarca(email, contraseña);
-        if (error) return { ok: false, error };
-        setMarca(m);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(m));
-        return { ok: true, error: null };
+  useEffect(() => {
+    try {
+      const guardado = localStorage.getItem(STORAGE_KEY);
+      const token = tokenStore.getMarca();
+      if (guardado && token) setMarca(JSON.parse(guardado));
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+      tokenStore.clearMarca();
     }
+    setCargando(false);
+  }, []);
 
-    async function register(datos) {
-        const { error } = await registrarMarca(datos);
-        if (error) return { ok: false, error };
-        return { ok: true, error: null }
+  async function login(email, contraseña) {
+    try {
+      const { marca, token } = await authApi.loginMarca(email, contraseña);
+      setMarca(marca);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(marca));
+      tokenStore.setMarca(token);
+      return { ok: true, error: null };
+    } catch (err) {
+      return { ok: false, error: err.message };
     }
+  }
 
-    function logout() {
-        setMarca(null);
-        localStorage.removeItem(STORAGE_KEY);
+  async function register({ nombre, email, contraseña }) {
+    try {
+      await authApi.registrarMarca(nombre, email, contraseña);
+      return { ok: true, error: null };  // NO loguea: queda pendiente
+    } catch (err) {
+      return { ok: false, error: err.message };
     }
+  }
 
-    function actualizarMarcaLocal(marcaActualizada) {
-        setMarca(marcaActualizada);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(marcaActualizada));
-    }
+  function logout() {
+    setMarca(null);
+    localStorage.removeItem(STORAGE_KEY);
+    tokenStore.clearMarca();
+  }
 
-    const value = {
-        marca,
-        idMarca: marca?.id_marca ?? null,
-        estaLogueada: Boolean(marca),
-        cargando,
-        login,
-        register,
-        logout,
-        actualizarMarcaLocal,
-    };
+  function actualizarMarcaLocal(marcaActualizada) {
+    setMarca(marcaActualizada);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(marcaActualizada));
+  }
 
-    return <MarcaAuthContext.Provider value={value}>{children}</MarcaAuthContext.Provider>;
+  const value = {
+    marca,
+    idMarca: marca?.id_marca ?? null,
+    estaLogueada: Boolean(marca),
+    cargando,
+    login,
+    register,
+    logout,
+    actualizarMarcaLocal,
+  };
+
+  return <MarcaAuthContext.Provider value={value}>{children}</MarcaAuthContext.Provider>;
 }
 
 export function useMarcaAuth() {
