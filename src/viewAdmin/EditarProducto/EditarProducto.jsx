@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
-import { subirImagenProducto } from "../../services/storage";
-import { useMarcaAuth } from "../../context/MarcaAuthContext.jsx";
 import {
   getCategorias, getProductoPorId, actualizarProducto,
-  actualizarCategoriasProducto, setImagenesProducto, borrarImagen, borrarProducto,
+  actualizarCategoriasProducto, subirImagenesProducto, borrarImagen, borrarProducto,
   marcarPortada, actualizarColorImagen,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
@@ -15,7 +13,6 @@ function EditarProducto() {
   const navigate = useNavigate();
   const { idProducto } = useParams();
   const { mostrarToast } = useToast();
-  const { idMarca } = useMarcaAuth();
 
   const [form, setForm] = useState({ nombre: "", descripcion: "", precio: "", stock: "", estado: true });
   const [talles, setTalles] = useState([]);
@@ -34,7 +31,7 @@ function EditarProducto() {
     async function cargar() {
       const [{ data: cats }, { data: prod, error }] = await Promise.all([
         getCategorias(),
-        getProductoPorId(idProducto, idMarca),
+        getProductoPorId(idProducto),
       ]);
       setCategorias(cats ?? []);
       if (error || !prod) { mostrarToast("No se encontró el producto", "error"); navigate("/admin/catalogo"); return; }
@@ -77,7 +74,7 @@ function EditarProducto() {
 
   // borra una imagen YA guardada (de la base y el bucket)
   const handleBorrarExistente = async (img) => {
-    const { error } = await borrarImagen(img.id_imagen, img.imagen);
+    const { error } = await borrarImagen(img.id_imagen);
     if (error) { mostrarToast(error, "error"); return; }
     setImagenesExistentes((prev) => prev.filter((x) => x.id_imagen !== img.id_imagen));
     if (portada?.tipo === "existente" && portada.ref === img.id_imagen) setPortada(null);
@@ -139,20 +136,14 @@ function EditarProducto() {
       if (errorCat) mostrarToast(errorCat, "error");
 
       if (imagenesNuevas.length) {
-        const subidas = [];
-        for (let i = 0; i < imagenesNuevas.length; i++) {
-          const { url } = await subirImagenProducto(imagenesNuevas[i].file);
-          if (url) subidas.push({ imagen: url, color: imagenesNuevas[i].color, es_portada: false, indiceOriginal: i });
-        }
-        if (subidas.length) {
-          const { data: insertadas } = await setImagenesProducto(
-            idProducto,
-            subidas.map(({ imagen, color, es_portada }) => ({ imagen, color, es_portada }))
-          );
-          if (portada?.tipo === "nueva") {
-            const pos = subidas.findIndex((s) => s.indiceOriginal === portada.ref);
-            if (pos !== -1 && insertadas[pos]) await marcarPortada(idProducto, insertadas[pos].id_imagen);
-          }
+        const { data: insertadas, error: errImg } = await subirImagenesProducto(
+          idProducto,
+          imagenesNuevas.map((img) => ({ file: img.file, color: img.color, esPortada: false }))
+        );
+        if (errImg) {
+          mostrarToast(errImg, "error");
+        } else if (portada?.tipo === "nueva" && insertadas[portada.ref]) {
+          await marcarPortada(idProducto, insertadas[portada.ref].id_imagen);
         }
       }
 

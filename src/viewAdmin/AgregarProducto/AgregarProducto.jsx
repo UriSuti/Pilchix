@@ -1,17 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMarcaAuth } from "../../context/MarcaAuthContext";
 import { useToast } from "../../context/ToastContext.jsx";
-import { subirImagenProducto } from "../../services/storage";
 import {
-  getCategorias, crearProducto, setCategoriasProducto, setImagenesProducto,
+  getCategorias, crearProducto, setCategoriasProducto, subirImagenesProducto,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import "./AgregarProducto.css";
 
 function AgregarProducto() {
   const navigate = useNavigate();
-  const { idMarca } = useMarcaAuth();
   const { mostrarToast } = useToast();
 
   const [form, setForm] = useState({
@@ -60,7 +57,6 @@ function AgregarProducto() {
     try {
       // 1) crear el producto
       const { idProducto, error } = await crearProducto({
-        id_marca: idMarca,
         nombre: form.nombre.trim(),
         descripcion: form.descripcion.trim() || null,
         precio: Number(form.precio) || 0,
@@ -77,15 +73,13 @@ function AgregarProducto() {
         if (errorCat) mostrarToast(errorCat, "error");
       }
 
-      // 3) imágenes → Storage → tabla Imagen
+      // 3) imágenes: el backend las sube a Storage y las guarda en la tabla Imagen
       if (imagenes.length) {
-        const subidas = [];
-        for (const img of imagenes) {
-          const { url, error: errImg } = await subirImagenProducto(img.file);
-          if (url) subidas.push({ imagen: url, color: img.color, es_portada: img.esPortada });
-          else mostrarToast(errImg, "error");
-        }
-        if (subidas.length) await setImagenesProducto(idProducto, subidas);
+        const { error: errImg } = await subirImagenesProducto(
+          idProducto,
+          imagenes.map((img) => ({ file: img.file, color: img.color, esPortada: img.esPortada }))
+        );
+        if (errImg) mostrarToast(errImg, "error");
       }
 
       mostrarToast("Producto creado", "exito");

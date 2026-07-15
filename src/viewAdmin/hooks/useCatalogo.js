@@ -8,7 +8,7 @@ export function useCatalogo(idMarca) {
   const refrescar = useCallback(async () => {
     if (!idMarca) { setProductos([]); setCargando(false); return; }
     setCargando(true);
-    const { data, error } = await getProductosDeMarca(idMarca);
+    const { data, error } = await getProductosDeMarca();
     setProductos(error ? [] : data ?? []);
     setCargando(false);
   }, [idMarca]);
