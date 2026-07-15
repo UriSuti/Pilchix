@@ -1,7 +1,7 @@
 import './InfoProducto.css'
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { supabase } from '../../../utils/supabase'
+import { incrementarClic } from '../../services/producto'
 import { useAuth } from '../../../context/AuthContext'
 import { useToast } from '../../../context/ToastContext'
 import { agregarAlCarrito } from '../../../viewCarrito/services/cart'
@@ -99,9 +99,7 @@ function InfoProducto({ producto, loading, marca, selectedColor, selectedTalle, 
       })
       mostrarToast('Producto agregado al carrito', 'exito')
 
-      const { error: rpcError } = await supabase.rpc('incrementar_clic', {
-        p_id_producto: producto.id_producto,
-      })
+      const { error: rpcError } = await incrementarClic(producto.id_producto)
       if (rpcError) console.error('No se pudo registrar el clic:', rpcError)
     } catch (e) {
       console.error('Error agregando al carrito', e)

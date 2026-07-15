@@ -9,6 +9,19 @@ const formatPrice = (value) =>
     maximumFractionDigits: 0,
   }).format(Number(value || 0));
 
+const IconBolt = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
+
+const IconArrowRight = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+);
+
 function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS" }) {
   const lista = descuentos.slice(0, 2);
 
@@ -25,7 +38,25 @@ function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS
         {cargando ? (
           <p className="lp-empty">Cargando ofertas...</p>
         ) : lista.length === 0 ? (
-          <p className="lp-empty">No hay descuentos activos.</p>
+          <div className="offers">
+            <div className="offer offer--teaser offer--static">
+              <div className="offer__body">
+                <span className="offer__tag offer__tag--ghost"><IconBolt /> Muy pronto</span>
+                <h3>Las próximas ofertas ya se están cocinando</h3>
+                <p>Activá las notificaciones de tu local favorito para no perdértelas.</p>
+              </div>
+            </div>
+
+            <Link className="offer offer--cta" to="/locales">
+              <div className="offer__body">
+                <span className="offer__tag">Mientras tanto</span>
+                <h3>Explorá el catálogo completo</h3>
+                <p className="offer__cta-link">
+                  Ver todos los locales <IconArrowRight />
+                </p>
+              </div>
+            </Link>
+          </div>
         ) : (
           <div className="offers">
             {lista.map((descuento) => {

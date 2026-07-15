@@ -1,7 +1,7 @@
 import './viewProducto.css'
 import { useEffect, useState, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { supabase } from '../utils/supabase'
+import { getProductos, incrementarVisualizacion } from './services/producto'
 import { slugify } from '../utils/slugify'
 import Footer from '../header_footer/Footer/Footer.jsx'
 import Header from '../header_footer/Header/Header.jsx'
@@ -61,9 +61,7 @@ function ViewProducto() {
 
     async function loadProducto() {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('Producto')
-        .select('*, Imagen(*), Marca(nombre, logo)')
+      const { data, error } = await getProductos()
 
       if (!active) return
 
@@ -91,11 +89,9 @@ function ViewProducto() {
 
       if (found && contadoRef.current !== found.id_producto) {
         contadoRef.current = found.id_producto // marca este producto como contado
-        supabase
-          .rpc('incrementar_visualizacion', { p_id_producto: found.id_producto })
-          .then(({ error: rpcError }) => {
-            if (rpcError) console.error('No se pudo registrar la visualización:', rpcError)
-          })
+        incrementarVisualizacion(found.id_producto).then(({ error: rpcError }) => {
+          if (rpcError) console.error('No se pudo registrar la visualización:', rpcError)
+        })
       }
     }
 

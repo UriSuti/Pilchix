@@ -1,147 +1,47 @@
 import { supabase } from "../../utils/supabase";
+import { apiFetch } from "../../services/api";
+
+// catálogo público (locales, productos, categorías) ahora vive en el backend, sin auth
+async function apiFetchAsQuery(path) {
+  try {
+    const data = await apiFetch(path);
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err };
+  }
+}
 
 export function getLandingCategorias() {
-  return supabase
-    .from("Categoria")
-    .select("id_categoria, nombre")
-    .order("nombre", { ascending: true });
+  return apiFetchAsQuery("/productos/categorias");
 }
 
 export function getLandingCategoriasConProductos() {
-  return supabase
-    .from("Producto_Categoria")
-    .select(
-      `
-      id_categoria,
-      Producto (
-        id_producto,
-        estado,
-        Imagen (
-          imagen, es_portada
-        )
-      )
-    `
-    )
-    .eq("Producto.estado", 1);
+  return apiFetchAsQuery("/productos/categorias/resumen");
 }
 
-  export function getImagenMarca(id_marca) {
-    return supabase
-      .from("Marca")
-      .select(
-        `
-          imagen_fachada
-      `
-      )
-      .eq("id_marca", id_marca);
-  }
+export function getImagenMarca(id_marca) {
+  return apiFetchAsQuery(`/locales/${id_marca}/fachada`);
+}
 
 export function getLandingMarcas() {
-  return supabase
-    .from("Marca")
-    .select("id_marca, nombre, descripcion, logo, sitio_web, ubicacion")
-    .eq("estado", 1);
+  return apiFetchAsQuery("/locales/marcas");
 }
 
 export function getLandingMarcasPopulares() {
-  return supabase
-    .from("Marca")
-    .select(
-      `
-      id_marca,
-      nombre,
-      descripcion,
-      logo,
-      sitio_web,
-      ubicacion,
-      Producto (
-        id_producto,
-        Metrica_Producto (
-          visualizaciones
-        )
-      )
-    `
-    )
-    .eq("estado", 1);
+  return apiFetchAsQuery("/locales/marcas/populares");
 }
 
 // Todos los locales para la página /locales: fachada + productos (para contar) + métricas (para ordenar)
 export function getLocales() {
-  return supabase
-    .from("Marca")
-    .select(
-      `
-      id_marca,
-      nombre,
-      descripcion,
-      logo,
-      ubicacion,
-      imagen_fachada,
-      Producto (
-        id_producto,
-        estado,
-        Metrica_Producto (
-          visualizaciones
-        )
-      )
-    `
-    )
-    .eq("estado", 1);
+  return apiFetchAsQuery("/locales");
 }
 
 export function getLandingProductosPopulares() {
-  return supabase
-    .from("Producto")
-    .select(
-      `
-      id_producto,
-      nombre,
-      descripcion,
-      precio,
-      estado,
-      Marca (
-        nombre
-      ),
-      Imagen (
-        imagen, es_portada
-      ),
-      Metrica_Producto (
-        visualizaciones
-      )
-    `
-    )
-    .eq("estado", 1);
+  return apiFetchAsQuery("/productos/populares");
 }
 
 export function getLandingDescuentos(fechaActual) {
-  return supabase
-    .from("Descuento")
-    .select(
-      `
-      id_descuento,
-      porcentaje,
-      precio_anterior,
-      precio_final,
-      fecha_inicio,
-      fecha_fin,
-      Producto (
-        id_producto,
-        nombre,
-        descripcion,
-        precio,
-        estado,
-        Marca (
-          nombre
-        ),
-        Imagen (
-          imagen, es_portada
-        )
-      )
-    `
-    )
-    .lte("fecha_inicio", fechaActual)
-    .gte("fecha_fin", fechaActual)
-    .eq("Producto.estado", 1);
+  return apiFetchAsQuery(`/productos/descuentos?fecha=${encodeURIComponent(fechaActual)}`);
 }
 
 export function getLandingCarrito(idUsuario) {
@@ -186,75 +86,17 @@ export function saveBusquedaUsuario(idUsuario, textoBusqueda) {
 }
 
 export function searchLandingProductos(textoBusqueda) {
-  return supabase
-    .from("Producto")
-    .select(
-      `
-      id_producto,
-      nombre,
-      descripcion,
-      precio,
-      stock,
-      estado,
-      Imagen (
-        imagen, es_portada
-      ),
-      Marca (
-        nombre
-      )
-    `
-    )
-    .eq("estado", 1)
-    .or(`nombre.ilike.%${textoBusqueda}%,descripcion.ilike.%${textoBusqueda}%`);
+  return apiFetchAsQuery(`/productos/buscar?q=${encodeURIComponent(textoBusqueda)}`);
 }
 
 export function searchLandingCategorias(textoBusqueda) {
-  return supabase
-    .from("Producto_Categoria")
-    .select(
-      `
-      Producto (
-        id_producto,
-        nombre,
-        descripcion,
-        precio,
-        stock,
-        estado,
-        Imagen (
-          imagen, es_portada
-        ),
-        Marca (
-          nombre
-        )
-      ),
-      Categoria (
-        nombre
-      )
-    `
-    )
-    .eq("Producto.estado", 1)
-    .ilike("Categoria.nombre", `%${textoBusqueda}%`);
+  return apiFetchAsQuery(`/productos/buscar/categorias?q=${encodeURIComponent(textoBusqueda)}`);
 }
 
 export function searchLandingMarcas(textoBusqueda) {
-  return supabase
-    .from("Marca")
-    .select("id_marca, nombre, descripcion, logo")
-    .eq("estado", 1)
-    .ilike("nombre", `%${textoBusqueda}%`);
+  return apiFetchAsQuery(`/locales/marcas/buscar?q=${encodeURIComponent(textoBusqueda)}`);
 }
 
 export function searchLandingCategoriasPorNombre(textoBusqueda) {
-  return supabase
-    .from("Categoria")
-    .select(`
-      id_categoria,
-      nombre,
-      Producto_Categoria (
-        Producto (
-          Imagen ( imagen )
-        )
-      )
-    `)
-    .ilike("nombre", `%${textoBusqueda}%`);
+  return apiFetchAsQuery(`/productos/categorias/buscar?q=${encodeURIComponent(textoBusqueda)}`);
 }

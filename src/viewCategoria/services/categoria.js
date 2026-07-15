@@ -1,32 +1,21 @@
-import { supabase } from "../../utils/supabase";
+import { apiFetch } from "../../services/api";
+
+async function apiFetchAsQuery(path) {
+  try {
+    const data = await apiFetch(path);
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err };
+  }
+}
 
 // Todas las categorías (para la ruleta/coverflow)
 export function getCategorias() {
-  return supabase
-    .from("Categoria")
-    .select("id_categoria, nombre")
-    .order("nombre", { ascending: true });
+  return apiFetchAsQuery("/productos/categorias");
 }
 
 // Productos de TODAS las categorías, con su marca (logo) e imagen.
 // Se agrupan por categoría en el hook. Solo productos activos.
 export function getCategoriaProductos() {
-  return supabase
-    .from("Producto_Categoria")
-    .select(
-      `
-      id_categoria,
-      Producto (
-        id_producto,
-        nombre,
-        descripcion,
-        precio,
-        estado,
-        guia_talles,
-        Imagen ( imagen, es_portada ),
-        Marca ( id_marca, nombre, logo )
-      )
-    `
-    )
-    .eq("Producto.estado", 1);
+  return apiFetchAsQuery("/productos/categorias/completo");
 }

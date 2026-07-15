@@ -1,15 +1,18 @@
-import { supabase } from "../../utils/supabase";
+import { apiFetch } from "../../services/api";
+
+async function apiFetchAsQuery(path) {
+  try {
+    const data = await apiFetch(path);
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err };
+  }
+}
 
 export function getLocalProductos(idMarca) {
-  return supabase
-    .from("Producto")
-    .select("*, Imagen(*)")
-    .eq("id_marca", idMarca);
+  return apiFetchAsQuery(`/locales/${idMarca}/productos`);
 }
 
 export function getLocalMarca(idMarca) {
-  return supabase
-    .from("Marca")
-    .select("imagen_fachada")
-    .eq("id_marca", idMarca);
+  return apiFetchAsQuery(`/locales/${idMarca}/fachada`);
 }

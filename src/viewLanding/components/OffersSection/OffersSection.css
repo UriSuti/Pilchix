@@ -75,3 +75,58 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* --- tarjetas cuando no hay descuentos activos: mismo formato que las reales --- */
+@keyframes offerDrift {
+  from { background-position: 0 0; }
+  to { background-position: 120px 120px; }
+}
+
+.offer--teaser,
+.offer--cta {
+  align-items: flex-end;
+}
+
+.offer--teaser {
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1.5px, transparent 0) 0 0/26px 26px,
+    linear-gradient(135deg, var(--lp-navy-ink), var(--lp-navy) 60%, var(--lp-navy-deep));
+  animation: offerDrift 14s linear infinite;
+}
+
+.offer--cta {
+  background: linear-gradient(135deg, var(--lp-petrol-light), var(--lp-navy) 75%);
+  transition: transform 0.3s var(--lp-ease), box-shadow 0.3s var(--lp-ease);
+}
+.offer--cta:hover {
+  box-shadow: var(--lp-shadow-lg);
+}
+
+.offer__tag--ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.offer--teaser .offer__body p,
+.offer--cta .offer__body p {
+  max-width: 340px;
+}
+
+.offer__cta-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  opacity: 1 !important;
+}
+.offer__cta-link svg {
+  transition: transform 0.25s var(--lp-ease);
+}
+.offer--cta:hover .offer__cta-link svg {
+  transform: translateX(6px);
+}

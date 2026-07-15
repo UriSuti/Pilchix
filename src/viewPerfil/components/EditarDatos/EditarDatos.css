@@ -30,7 +30,7 @@
   font-family: "Fraunces", Georgia, serif;
   font-size: 30px;
   font-weight: 600;
-  color: #0f172a;
+  color: #123d59;
 }
 .editar-datos__cambiar-foto {
   display: inline-flex;
@@ -41,12 +41,12 @@
   border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #123d59;
   cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 .editar-datos__cambiar-foto:hover {
-  border-color: #0f172a;
+  border-color: #123d59;
   background: #f3f5f6;
 }
 
@@ -73,8 +73,8 @@
 }
 .editar-datos__field input:focus {
   outline: 0;
-  border-color: #0f172a;
-  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
+  border-color: #123d59;
+  box-shadow: 0 0 0 3px rgba(18, 61, 89, 0.12);
 }
 
 .editar-datos__btn {
@@ -82,18 +82,18 @@
   padding: 15px;
   border: 0;
   border-radius: 12px;
-  background: #0f172a;
+  background: #123d59;
   color: #fff;
   font-family: inherit;
   font-weight: 700;
   font-size: 0.98rem;
   cursor: pointer;
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.25);
+  box-shadow: 0 14px 30px rgba(18, 61, 89, 0.25);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .editar-datos__btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 18px 38px rgba(18, 61, 89, 0.35);
 }
 .editar-datos__btn:disabled {
   opacity: 0.7;
