@@ -8,15 +8,15 @@ import {
   isValidUserId,
 } from "../viewLanding/helpers/formatters";
 import {
-  getLandingCarrito,
   getLandingCategorias,
   getLandingCategoriasConProductos,
   getLandingDescuentos,
   getLandingMarcas,
   getLandingMarcasPopulares,
   getLandingProductosPopulares,
-  getLandingSuscripciones,
 } from "../viewLanding/services/landing";
+import { contarPiezasCarrito } from "../viewCarrito/services/cart";
+import { getSuscripcionesUsuario } from "../viewPerfil/services/perfil";
 
 export function useLandingData(idUsuario) {
   const [landingData, setLandingData] = useState({
@@ -49,7 +49,7 @@ export function useLandingData(idUsuario) {
       ];
 
       if (isValidUserId(idUsuario)) {
-        requests.push(getLandingCarrito(idUsuario), getLandingSuscripciones(idUsuario));
+        requests.push(contarPiezasCarrito(), getSuscripcionesUsuario());
       }
 
       const results = await Promise.allSettled(requests);
@@ -75,19 +75,14 @@ export function useLandingData(idUsuario) {
             return "No se pudo completar una consulta de la landing.";
           }
 
-          return result.value.error?.message ?? null;
+          return result.value?.error?.message ?? null;
         })
         .filter(Boolean);
 
       setLandingData({
         cantidadProductos:
-          isValidUserId(idUsuario) &&
-          carritoResult?.status === "fulfilled" &&
-          !carritoResult.value.error
-            ? (carritoResult.value.data?.reduce(
-                (total, carrito) => total + (carrito.Carrito_Detalle?.length || 0),
-                0
-              ) ?? 0)
+          isValidUserId(idUsuario) && carritoResult?.status === "fulfilled"
+            ? (carritoResult.value ?? 0)
             : 0,
         suscripciones:
           isValidUserId(idUsuario) &&

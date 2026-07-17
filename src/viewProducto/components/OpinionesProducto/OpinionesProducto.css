@@ -136,6 +136,24 @@
   cursor: default;
 }
 
+/* candado: solo compradores pueden opinar */
+.opr__lock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fdf6e8;
+  border: 1px solid #f0e0b8;
+  color: #8a6d1f;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 26px;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+.opr__lock svg {
+  flex: 0 0 auto;
+}
+
 /* estado vacío / cargando */
 .opr__estado {
   text-align: center;

@@ -5,7 +5,7 @@ import { parseTalles, ordenarTalles } from "../helpers/talles";
 import { getImagenPortada } from "../../utils/producto";
 
 /**
- * Trae todas las categorías y sus productos (de todas las marcas) desde Supabase
+ * Trae todas las categorías y sus productos (de todas las marcas) desde el backend
  * y los agrupa por categoría con la forma que necesita la página:
  * { id_categoria, nombre, slug, imagen, productos, marcas, talles, count, locales }
  * Cada producto lleva además `_talles` (array) para el filtro de talle.

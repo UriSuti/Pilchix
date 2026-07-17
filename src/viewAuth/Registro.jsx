@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext.jsx";
-import { subirFotoPerfil } from "../services/storage";
-import { actualizarFotoPerfil } from "../services/auth";
+import { subirFotoPerfil } from "../services/usuario";
 import "./auth.css";
 
 const IconUser = () => (
@@ -55,12 +54,11 @@ function Registro() {
       }
 
       if (foto) {
-        const { url, error: errorFoto } = await subirFotoPerfil(usuario.id_usuario, foto);
+        const { usuario: usuarioConFoto, error: errorFoto } = await subirFotoPerfil(usuario.id_usuario, foto);
         if (errorFoto) {
           mostrarToast("Cuenta creada, pero no se pudo subir la foto", "error");
-        } else {
-          const { usuario: usuarioConFoto } = await actualizarFotoPerfil(usuario.id_usuario, url);
-          if (usuarioConFoto) actualizarUsuarioLocal(usuarioConFoto);
+        } else if (usuarioConFoto) {
+          actualizarUsuarioLocal(usuarioConFoto);
         }
       }
 

@@ -1,10 +1,9 @@
-import { supabase } from "../../utils/supabase";
-import { apiFetch } from "../../services/api";
+import { apiFetch, tokenStore } from "../../services/api";
 
 // catálogo público (locales, productos, categorías) ahora vive en el backend, sin auth
-async function apiFetchAsQuery(path) {
+async function apiFetchAsQuery(path, options) {
   try {
-    const data = await apiFetch(path);
+    const data = await apiFetch(path, options);
     return { data, error: null };
   } catch (err) {
     return { data: null, error: err };
@@ -44,45 +43,12 @@ export function getLandingDescuentos(fechaActual) {
   return apiFetchAsQuery(`/productos/descuentos?fecha=${encodeURIComponent(fechaActual)}`);
 }
 
-export function getLandingCarrito(idUsuario) {
-  return supabase
-    .from("Carrito")
-    .select(
-      `
-      id_carrito,
-      Carrito_Detalle (
-        id_detalle,
-        cantidad
-      )
-    `
-    )
-    .eq("id_usuario", idUsuario);
-}
-
-export function getLandingSuscripciones(idUsuario) {
-  return supabase
-    .from("Suscripcion")
-    .select(
-      `
-      id_suscripcion,
-      id_marca,
-      fecha_inicio,
-      Marca (
-        nombre
-      )
-    `
-    )
-    .eq("id_usuario", idUsuario);
-}
-
 export function saveBusquedaUsuario(idUsuario, textoBusqueda) {
-  return supabase.from("Busqueda").insert([
-    {
-      id_usuario: idUsuario,
-      texto_busqueda: textoBusqueda,
-      fecha: new Date().toISOString(),
-    },
-  ]);
+  return apiFetchAsQuery("/busquedas", {
+    method: "POST",
+    body: { texto: textoBusqueda },
+    token: tokenStore.getUsuario(),
+  });
 }
 
 export function searchLandingProductos(textoBusqueda) {

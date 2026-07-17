@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import CartItem from './components/CartItem'
@@ -6,6 +6,8 @@ import CartSummary from './components/CartSummary'
 import Header from '../header_footer/Header/Header'
 import Footer from '../header_footer/Footer/Footer'
 import { obtenerItemsCarrito, actualizarCantidadItem, eliminarItemCarrito } from './services/cart'
+import { confirmarCompra } from '../services/compras'
+import { tokenStore } from '../services/api'
 import './CartPage.css'
 
 const IconTruck = () => (
@@ -60,6 +62,7 @@ function CartPage() {
   const [cargando, setCargando] = useState(true)
 
   const estadoPago = searchParams.get('pago')
+  const confirmadoRef = useRef(false)
 
   const cargar = useCallback(() => {
     setCargando(true)
@@ -71,8 +74,18 @@ function CartPage() {
 
   useEffect(() => {
     if (!estaLogueado) { navigate('/login'); return }
+
+    if (estadoPago === 'aprobado' && !confirmadoRef.current) {
+      confirmadoRef.current = true
+      const idPagoMp = searchParams.get('payment_id') || searchParams.get('collection_id') || null
+      confirmarCompra({ idPagoMp, token: tokenStore.getUsuario() })
+        .catch((e) => console.error('No se pudo registrar la compra', e?.message ?? e))
+        .finally(cargar)
+      return
+    }
+
     cargar()
-  }, [estaLogueado, cargar, navigate])
+  }, [estaLogueado, cargar, navigate, estadoPago, searchParams])
 
   const handleRemove = (item) => {
     setItems((prev) => prev.filter((i) => i.id_detalle !== item.id_detalle))

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../context/ToastContext.jsx";
-import { subirFotoPerfil } from "../../../services/storage";
-import { actualizarDatosUsuario } from "../../../services/auth";
+import { subirFotoPerfil, actualizarDatosUsuario } from "../../../services/usuario";
 import "./EditarDatos.css";
 
 function EditarDatos() {

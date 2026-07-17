@@ -1,21 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
-import { getLandingCarrito } from "../viewLanding/services/landing";
+import { contarPiezasCarrito } from "../viewCarrito/services/cart";
 
 export function useCarrito(idUsuario) {
   const [cantidad, setCantidad] = useState(0);
 
   const refrescar = useCallback(async () => {
     if (!idUsuario) { setCantidad(0); return; }
-    const { data, error } = await getLandingCarrito(idUsuario);
-    if (error || !data) { setCantidad(0); return; }
-    // total de piezas (suma las cantidades de cada detalle)
-    const total = data.reduce(
-      (acc, carrito) =>
-        acc +
-        (carrito.Carrito_Detalle?.reduce((s, d) => s + (d.cantidad || 1), 0) || 0),
-      0
-    );
-    setCantidad(total);
+    try {
+      setCantidad(await contarPiezasCarrito());
+    } catch {
+      setCantidad(0);
+    }
   }, [idUsuario]);
 
   useEffect(() => { refrescar(); }, [refrescar]);
