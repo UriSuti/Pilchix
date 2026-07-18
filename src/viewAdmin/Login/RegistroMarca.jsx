@@ -6,13 +6,13 @@ import "./LoginMarca.css";
 function RegistroMarca() {
     const navigate = useNavigate();
     const { register } = useMarcaAuth();
-    const [form, setForm] = useState({ nombre: "", email: "", contraseña: "", confirmar: "" });
+    const [form, setForm] = useState({
+        nombre: "", email: "", contraseña: "", confirmar: "", ubicacion: "", descripcion: "",
+    });
     const [error, setError] = useState("");
     const [enviando, setEnviando] = useState(false);
 
     const setCampo = (campo) => (e) => setForm({ ...form, [campo]: e.target.value });
-
-    const [exito, setExito] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,28 +26,12 @@ function RegistroMarca() {
             nombre: form.nombre.trim(),
             email: form.email.trim(),
             contraseña: form.contraseña,
+            ubicacion: form.ubicacion.trim(),
+            descripcion: form.descripcion.trim(),
         });
         setEnviando(false);
         if (!ok) { setError(error); return; }
-        setExito(true);    // mostramos la pantalla de "pendiente"
-    }
-
-    if (exito) {
-    return (
-        <div className="login-marca">
-        <div className="login-marca__card">
-            <h1 className="login-marca__logo">PILCHIX</h1>
-            <p className="login-marca__sub">Solicitud enviada</p>
-            <p style={{ fontSize: 14, color: "#444", textAlign: "center", lineHeight: 1.5 }}>
-                Tu marca quedó pendiente de aprobación. Te vamos a habilitar el acceso
-                una vez que revisemos la solicitud.
-            </p>
-            <Link to="/admin/login" className="login-marca__btn" style={{ textAlign: "center", textDecoration: "none" }}>
-            Volver al inicio
-            </Link>
-        </div>
-        </div>
-    );
+        navigate("/admin");    // el local queda activo y logueado → directo al panel
     }
 
   return (
@@ -63,6 +47,14 @@ function RegistroMarca() {
         <label className="login-marca__field">
           <span>Email</span>
           <input type="email" value={form.email} onChange={setCampo("email")} required />
+        </label>
+        <label className="login-marca__field">
+          <span>Ubicación <small style={{ color: "#8a939b" }}>(opcional)</small></span>
+          <input value={form.ubicacion} onChange={setCampo("ubicacion")} placeholder="Ej: Palermo, Buenos Aires" />
+        </label>
+        <label className="login-marca__field">
+          <span>Descripción <small style={{ color: "#8a939b" }}>(opcional)</small></span>
+          <input value={form.descripcion} onChange={setCampo("descripcion")} placeholder="Contá de qué es tu local" />
         </label>
         <label className="login-marca__field">
           <span>Contraseña</span>

@@ -20,6 +20,7 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
     let lastY = window.scrollY;
     let lastT = null;
     let raf = 0;
+    let hover = false; // al pasar el cursor desacelera (no frena seco), para clickear fácil
     const dir = direccion === "derecha" ? "derecha" : "izquierda";
 
     const measure = () => {
@@ -31,13 +32,17 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
       boost = Math.min(boost + Math.abs(dy) * 5, 1400); // el scroll inyecta velocidad
     };
 
+    const onEnter = () => { hover = true; };
+    const onLeave = () => { hover = false; };
+
     const frame = (t) => {
       if (lastT === null) lastT = t;
       const dt = Math.min((t - lastT) / 1000, 0.05);
       lastT = t;
 
       const base = 45; // px/s de reposo
-      offset += (base + boost) * dt;
+      const factor = hover ? 0.15 : 1; // al hover baja a ~15%: sigue vivo pero clickeable
+      offset += (base + boost) * factor * dt;
       boost *= Math.pow(0.9, dt * 60); // el extra decae suave
       if (boost < 0.4) boost = 0;
       if (half && offset >= half) offset -= half; // loop perfecto
@@ -47,15 +52,22 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
       raf = requestAnimationFrame(frame);
     };
 
+    // el hover se escucha en el área visible (el contenedor .showroom)
+    const zonaHover = track.parentElement || track;
+
     measure();
     window.addEventListener("resize", measure, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
+    zonaHover.addEventListener("mouseenter", onEnter);
+    zonaHover.addEventListener("mouseleave", onLeave);
     raf = requestAnimationFrame(frame);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", onScroll);
+      zonaHover.removeEventListener("mouseenter", onEnter);
+      zonaHover.removeEventListener("mouseleave", onLeave);
     };
   }, [direccion, cantidad]);
 

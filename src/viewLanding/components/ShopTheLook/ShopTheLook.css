@@ -51,8 +51,21 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* 2da foto: se funde encima al pasar el cursor */
+.look__foto-hover {
+  opacity: 0;
+  animation: none;
+  transition: opacity 0.55s var(--lp-ease);
+  z-index: 1;
+}
+.look__foto.has-hover:hover .look__foto-hover {
+  opacity: 1;
+}
+
 .look__tag {
   position: absolute;
+  z-index: 2;
   left: 16px;
   bottom: 16px;
   background: var(--lp-glass);

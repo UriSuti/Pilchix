@@ -6,6 +6,7 @@ const NAV = [
   { to: "/admin", label: "Dashboard", end: true },
   { to: "/admin/catalogo", label: "Catálogo", end: true },
   { to: "/admin/catalogo/nuevo", label: "Agregar producto" },
+  { to: "/admin/looks", label: "Shop the Look" },
   { to: "/admin/metricas", label: "Métricas" },
   { to: "/admin/configuracion", label: "Configuración" },
 ];

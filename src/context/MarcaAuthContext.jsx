@@ -33,10 +33,17 @@ export function MarcaAuthProvider({ children }) {
     }
   }
 
-  async function register({ nombre, email, contraseña }) {
+  async function register({ nombre, email, contraseña, descripcion, ubicacion }) {
     try {
-      await authApi.registrarMarca(nombre, email, contraseña);
-      return { ok: true, error: null };  // NO loguea: queda pendiente
+      const { marca, token } = await authApi.registrarMarca(nombre, email, contraseña, {
+        descripcion,
+        ubicacion,
+      });
+      // el local queda activo → logueamos directo
+      setMarca(marca);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(marca));
+      tokenStore.setMarca(token);
+      return { ok: true, error: null };
     } catch (err) {
       return { ok: false, error: err.message };
     }

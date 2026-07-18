@@ -66,9 +66,15 @@
   transform: scale(1.1);
 }
 
-/* botón de favorito reutilizado, centrado dentro del círculo */
+/* botón de favorito reutilizado: ocupa TODO el círculo para que sea clickeable
+   hasta el borde (no solo el ícono) */
 .sh-card__fav .boton-favorito {
+  width: 100%;
+  height: 100%;
   padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
 }
 .sh-card__fav .boton-favorito svg {
   width: 20px;

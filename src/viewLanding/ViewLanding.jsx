@@ -76,7 +76,7 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
           alt
         />
 
-        <ShopTheLook productos={landingData.productosPopulares} cargando={loading} />
+        <ShopTheLook />
 
         <SubscribeSection />
 

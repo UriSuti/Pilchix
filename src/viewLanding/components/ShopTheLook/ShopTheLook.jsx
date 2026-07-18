@@ -1,15 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { slugify } from "../../../utils/slugify";
+import { getImagenPortada } from "../../../utils/producto";
+import { getLooks } from "../../../services/looks";
 import "./ShopTheLook.css";
-
-// fotos editoriales (decorativas, del front). En serio, cada marca sube la suya.
-const LOOK_IMAGES = [
-  "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1100&q=80",
-  "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1100&q=80",
-  "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1100&q=80",
-  "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1100&q=80",
-];
 
 const IconPrev = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,26 +23,41 @@ const formatPrice = (value) =>
     maximumFractionDigits: 0,
   }).format(Number(value || 0));
 
-function ShopTheLook({ productos = [], cargando }) {
-  // arma un "look" por marca: sus productos + una foto editorial
-  const looks = useMemo(() => {
-    const byBrand = new Map();
-    productos.forEach((p) => {
-      const m = p.marca || "Pilchix";
-      if (!byBrand.has(m)) byBrand.set(m, []);
-      byBrand.get(m).push(p);
-    });
-    const out = [];
-    let i = 0;
-    for (const [marca, prods] of byBrand) {
-      out.push({ marca, img: LOOK_IMAGES[i % LOOK_IMAGES.length], productos: prods.slice(0, 3) });
-      i += 1;
-      if (out.length >= 4) break;
-    }
-    return out;
-  }, [productos]);
-
+function ShopTheLook() {
+  const [looks, setLooks] = useState([]);
+  const [cargando, setCargando] = useState(true);
   const [actual, setActual] = useState(0);
+
+  useEffect(() => {
+    let activo = true;
+    getLooks().then(({ data }) => {
+      if (!activo) return;
+      const norm = (data ?? [])
+        .map((l) => ({
+          id: l.id_look,
+          titulo: l.titulo,
+          img: l.imagen,
+          imgHover: l.imagen_hover || null,
+          marca: l.Marca?.nombre || "Pilchix",
+          productos: (l.Look_Producto ?? [])
+            .map((lp) => lp.Producto)
+            .filter(Boolean)
+            .map((p) => ({
+              id_producto: p.id_producto,
+              nombre: p.nombre,
+              precio: p.precio,
+              marca: p.Marca?.nombre,
+              imagen: getImagenPortada(p.Imagen)?.imagen || null,
+            })),
+        }))
+        .filter((l) => l.img && l.productos.length > 0);
+      setLooks(norm);
+      setCargando(false);
+    });
+    return () => {
+      activo = false;
+    };
+  }, []);
 
   // avance automático (se reinicia con cada cambio)
   useEffect(() => {
@@ -57,17 +66,8 @@ function ShopTheLook({ productos = [], cargando }) {
     return () => clearTimeout(id);
   }, [actual, looks.length]);
 
-  if (cargando) {
-    return (
-      <section className="lp-section lp-section--alt" id="look">
-        <div className="lp-wrap">
-          <p className="lp-empty">Cargando looks...</p>
-        </div>
-      </section>
-    );
-  }
-
-  if (looks.length === 0) return null;
+  // sin looks cargados, la sección no se muestra (nada de fotos falsas)
+  if (cargando || looks.length === 0) return null;
 
   const idx = Math.min(actual, looks.length - 1);
   const look = looks[idx];
@@ -95,9 +95,21 @@ function ShopTheLook({ productos = [], cargando }) {
         </div>
 
         <div className="look">
-          <Link className="look__foto" to={`/${slugify(look.marca)}`}>
-            <img key={look.marca} src={look.img} alt={`Look de ${look.marca}`} />
-            <span className="look__tag">El look de {look.marca}</span>
+          <Link
+            className={`look__foto ${look.imgHover ? "has-hover" : ""}`}
+            to={`/${slugify(look.marca)}`}
+          >
+            <img key={look.id} src={look.img} alt={look.titulo || `Look de ${look.marca}`} />
+            {look.imgHover && (
+              <img
+                className="look__foto-hover"
+                key={`${look.id}-h`}
+                src={look.imgHover}
+                alt=""
+                aria-hidden="true"
+              />
+            )}
+            <span className="look__tag">{look.titulo || `El look de ${look.marca}`}</span>
           </Link>
 
           <div className="look__panel">
@@ -117,7 +129,7 @@ function ShopTheLook({ productos = [], cargando }) {
                       )}
                     </div>
                     <div className="look__info">
-                      <p className="look__marca">{p.marca}</p>
+                      <p className="look__marca">{p.marca || look.marca}</p>
                       <p className="look__nombre">{p.nombre}</p>
                     </div>
                     <span className="look__precio">{formatPrice(p.precio)}</span>
