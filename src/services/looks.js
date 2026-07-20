@@ -38,6 +38,20 @@ export async function crearLook({ imagen, imagenHover, titulo, productos }) {
   }
 }
 
+export async function actualizarLook(idLook, { imagen, imagenHover, titulo, productos }) {
+  try {
+    const formData = new FormData();
+    if (imagen) formData.append("imagen", imagen); // solo si se reemplaza
+    if (imagenHover) formData.append("imagen_hover", imagenHover);
+    formData.append("titulo", titulo ?? "");
+    formData.append("productos", JSON.stringify(productos ?? []));
+    await apiFetchForm(`/looks/${idLook}`, { method: "PUT", formData, token: tk() });
+    return { error: null };
+  } catch (err) {
+    return { error: err.message || "No se pudo actualizar el look" };
+  }
+}
+
 export async function setProductosLook(idLook, productos) {
   try {
     await apiFetch(`/looks/${idLook}/productos`, {

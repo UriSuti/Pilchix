@@ -1,3 +1,26 @@
+/* header del form (título + cancelar edición) */
+.look-form-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.look-form-head h2 {
+  margin: 0;
+}
+.look-cancelar {
+  border: none;
+  background: transparent;
+  color: #5f6368;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.look-cancelar:hover {
+  color: #123d59;
+  text-decoration: underline;
+}
+
 /* dos slots de foto (principal + hover) */
 .look-fotos {
   display: grid;
@@ -143,12 +166,32 @@
   height: 100%;
   object-fit: cover;
 }
+.look-item.is-editing {
+  border-color: #123d59;
+  box-shadow: 0 0 0 1px #123d59 inset;
+}
 .look-item__body {
   display: flex;
   flex-direction: column;
   gap: 2px;
   margin-right: auto;
   min-width: 0;
+}
+.look-item__acciones {
+  display: flex;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+.look-item__edit {
+  border: none;
+  background: transparent;
+  color: #123d59;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.look-item__edit:hover {
+  text-decoration: underline;
 }
 .look-item__body strong {
   color: #123d59;

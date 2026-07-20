@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useToast } from "../../context/ToastContext.jsx";
 import { getProductosDeMarca } from "../services/catalogo";
-import { getMisLooks, crearLook, borrarLook } from "../../services/looks";
+import { getMisLooks, crearLook, actualizarLook, borrarLook } from "../../services/looks";
 import { getImagenPortada } from "../../utils/producto";
 import "../AgregarProducto/AgregarProducto.css";
 import "./Looks.css";
@@ -14,8 +14,9 @@ function Looks() {
   const [cargando, setCargando] = useState(true);
 
   // form
-  const [imagen, setImagen] = useState(null); // { file, preview }
-  const [imagenHover, setImagenHover] = useState(null); // 2da foto (efecto hover), opcional
+  const [editandoId, setEditandoId] = useState(null); // null = crear · id = editar
+  const [imagen, setImagen] = useState(null); // { file, preview } (nueva) | { url } (existente)
+  const [imagenHover, setImagenHover] = useState(null);
   const [titulo, setTitulo] = useState("");
   const [seleccionados, setSeleccionados] = useState([]); // ids de producto
   const [guardando, setGuardando] = useState(false);
@@ -40,40 +41,57 @@ function Looks() {
     setSeleccionados((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
   const limpiarForm = () => {
+    setEditandoId(null);
     setImagen(null);
     setImagenHover(null);
     setTitulo("");
     setSeleccionados([]);
   };
 
-  const publicar = async (e) => {
+  const empezarEdicion = (l) => {
+    setEditandoId(l.id_look);
+    setTitulo(l.titulo || "");
+    setImagen(l.imagen ? { url: l.imagen } : null);
+    setImagenHover(l.imagen_hover ? { url: l.imagen_hover } : null);
+    setSeleccionados((l.Look_Producto ?? []).map((lp) => lp.Producto?.id_producto).filter(Boolean));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const guardar = async (e) => {
     e.preventDefault();
-    if (!imagen) { mostrarToast("Subí una foto para el look", "error"); return; }
+    if (!imagen) { mostrarToast("Subí una foto principal para el look", "error"); return; }
     if (seleccionados.length === 0) { mostrarToast("Elegí al menos un producto del look", "error"); return; }
 
     setGuardando(true);
-    const { error } = await crearLook({
+    // en edición solo se manda la foto si se cambió (tiene .file); si es {url} se conserva
+    const payload = {
       imagen: imagen.file,
       imagenHover: imagenHover?.file,
       titulo: titulo.trim(),
       productos: seleccionados,
-    });
+    };
+    const { error } = editandoId
+      ? await actualizarLook(editandoId, payload)
+      : await crearLook(payload);
     setGuardando(false);
     if (error) { mostrarToast(error, "error"); return; }
 
-    mostrarToast("Look publicado", "exito");
+    mostrarToast(editandoId ? "Look actualizado" : "Look publicado", "exito");
     limpiarForm();
     cargar();
   };
 
   const eliminar = async (idLook) => {
     if (!window.confirm("¿Borrar este look?")) return;
+    if (editandoId === idLook) limpiarForm();
     const previos = looks;
     setLooks((prev) => prev.filter((l) => l.id_look !== idLook));
     const { error } = await borrarLook(idLook);
     if (error) { setLooks(previos); mostrarToast(error, "error"); }
     else mostrarToast("Look borrado", "info");
   };
+
+  const fotoSrc = (img) => img?.preview || img?.url || null;
 
   return (
     <div className="ap">
@@ -87,10 +105,17 @@ function Looks() {
       </header>
 
       <div className="ap__grid">
-        {/* columna izquierda: crear look */}
+        {/* columna izquierda: crear / editar look */}
         <section className="ap__col">
-          <form className="ap__card" onSubmit={publicar}>
-            <h2>Nuevo look</h2>
+          <form className="ap__card" onSubmit={guardar}>
+            <div className="look-form-head">
+              <h2>{editandoId ? "Editar look" : "Nuevo look"}</h2>
+              {editandoId && (
+                <button type="button" className="look-cancelar" onClick={limpiarForm}>
+                  Cancelar edición
+                </button>
+              )}
+            </div>
 
             <label className="ap__field"><span>Título (opcional)</span>
               <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ej: Look urbano otoño" />
@@ -102,7 +127,7 @@ function Looks() {
                 <div className="look-foto-slot">
                   {imagen ? (
                     <div className="look-preview">
-                      <img src={imagen.preview} alt="" />
+                      <img src={fotoSrc(imagen)} alt="" />
                       <button type="button" onClick={() => setImagen(null)}>✕</button>
                     </div>
                   ) : (
@@ -117,7 +142,7 @@ function Looks() {
                 <div className="look-foto-slot">
                   {imagenHover ? (
                     <div className="look-preview">
-                      <img src={imagenHover.preview} alt="" />
+                      <img src={fotoSrc(imagenHover)} alt="" />
                       <button type="button" onClick={() => setImagenHover(null)}>✕</button>
                     </div>
                   ) : (
@@ -129,6 +154,11 @@ function Looks() {
                   <small className="look-foto-hint">Al pasar el cursor (opcional)</small>
                 </div>
               </div>
+              {editandoId && (
+                <small className="look-foto-hint" style={{ textAlign: "left", marginTop: 6 }}>
+                  Dejá las fotos como están para conservarlas, o tocá ✕ y subí otra para reemplazar.
+                </small>
+              )}
             </div>
 
             <div className="ap__field">
@@ -160,7 +190,7 @@ function Looks() {
             </div>
 
             <button type="submit" className="ap__btn-pri" disabled={guardando} style={{ width: "100%" }}>
-              {guardando ? "Publicando…" : "Publicar look"}
+              {guardando ? "Guardando…" : editandoId ? "Guardar cambios" : "Publicar look"}
             </button>
           </form>
         </section>
@@ -176,7 +206,10 @@ function Looks() {
             ) : (
               <div className="look-list">
                 {looks.map((l) => (
-                  <article className="look-item" key={l.id_look}>
+                  <article
+                    className={`look-item ${editandoId === l.id_look ? "is-editing" : ""}`}
+                    key={l.id_look}
+                  >
                     <div className="look-item__img">
                       <img src={l.imagen} alt={l.titulo || "Look"} />
                     </div>
@@ -184,9 +217,14 @@ function Looks() {
                       <strong>{l.titulo || "Sin título"}</strong>
                       <span>{l.Look_Producto?.length ?? 0} productos</span>
                     </div>
-                    <button type="button" className="look-item__del" onClick={() => eliminar(l.id_look)}>
-                      Borrar
-                    </button>
+                    <div className="look-item__acciones">
+                      <button type="button" className="look-item__edit" onClick={() => empezarEdicion(l)}>
+                        Editar
+                      </button>
+                      <button type="button" className="look-item__del" onClick={() => eliminar(l.id_look)}>
+                        Borrar
+                      </button>
+                    </div>
                   </article>
                 ))}
               </div>
