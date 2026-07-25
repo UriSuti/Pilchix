@@ -14,6 +14,16 @@ export async function getLooks() {
   }
 }
 
+// looks de una marca puntual (para su viewLocal)
+export async function getLooksDeMarca(idMarca) {
+  try {
+    const data = await apiFetch(`/looks/marca/${idMarca}`);
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message };
+  }
+}
+
 // ---- back-office (marca) ----
 export async function getMisLooks() {
   try {

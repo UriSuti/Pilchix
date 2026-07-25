@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { slugify } from "../../../utils/slugify";
 import { getImagenPortada } from "../../../utils/producto";
-import { getLooks } from "../../../services/looks";
+import { getLooks, getLooksDeMarca } from "../../../services/looks";
 import "./ShopTheLook.css";
 
 const IconPrev = () => (
@@ -23,14 +23,15 @@ const formatPrice = (value) =>
     maximumFractionDigits: 0,
   }).format(Number(value || 0));
 
-function ShopTheLook() {
+function ShopTheLook({ idMarca }) {
   const [looks, setLooks] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [actual, setActual] = useState(0);
 
   useEffect(() => {
     let activo = true;
-    getLooks().then(({ data }) => {
+    const pedir = idMarca ? getLooksDeMarca(idMarca) : getLooks();
+    pedir.then(({ data }) => {
       if (!activo) return;
       const norm = (data ?? [])
         .map((l) => ({
@@ -57,7 +58,7 @@ function ShopTheLook() {
     return () => {
       activo = false;
     };
-  }, []);
+  }, [idMarca]);
 
   // avance automático (se reinicia con cada cambio)
   useEffect(() => {
@@ -75,11 +76,11 @@ function ShopTheLook() {
   const ir = (i) => setActual((i + looks.length) % looks.length);
 
   return (
-    <section className="lp-section lp-section--alt" id="look">
-      <div className="lp-wrap">
-        <div className="lp-head">
+    <section className="stl stl--alt" id="look">
+      <div className="stl__wrap">
+        <div className="stl__head">
           <div>
-            <p className="lp-eyebrow">Inspirate</p>
+            <p className="stl__eyebrow">Inspirate</p>
             <h2>Shop the look</h2>
           </div>
           {looks.length > 1 && (
