@@ -8,6 +8,15 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
 import { slugify } from "../../utils/slugify.js";
 import "./Header.css";
+import { useNotificaciones } from "../../hooks/useNotificaciones.js";
+
+function textoNotificacion(n) {
+  const marca = n.Marca?.nombre ?? "Una marca";
+  const producto = n.Producto?.nombre ?? "un producto";
+  if (n.tipo === "nuevo_producto") return `${marca} sumó: ${producto}`;
+  if (n.tipo === "oferta") return `${marca} puso en oferta: ${producto}`;
+  return `${marca}: ${producto}`;
+}
 
 const IconSearch = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,6 +56,33 @@ const IconClose = () => (
 
 function Header({ idUsuario = null, teal = false }) {
   const navigate = useNavigate();
+  const { notificaciones, noLeidas, cargarLista, marcasLeidas } = useNotificaciones();
+  const [notifAbierto, setNotifAbierto] = useState(false);
+  const notifRef = useRef(null);
+  
+  const abrirNotificaciones = async () => {
+    const abrir = !notifAbierto;
+    setNotifAbierto(abrir);
+    if (abrir) {
+      await cargarLista();
+      await marcasLeidas();
+    }
+  };
+
+  const irANotificacion = (n) => {
+    setNotifAbierto(false);
+    if (n.Producto?.nombre) navigate(`/producto/${slugify(n.Producto.nombre)}`)
+  };
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifAbierto(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const [scrolled, setScrolled] = useState(false);
 
@@ -167,9 +203,38 @@ function Header({ idUsuario = null, teal = false }) {
             </span>
           )}
         </button>
-        <button className="site-header__action" type="button" aria-label="Notificaciones" title="Notificaciones">
-          <IconBell />
-        </button>
+        <div className="site-header__notif" ref={notifRef}>
+          <button
+            className="site-header__action site-header__action--notif"
+            type="button"
+            aria-label="Notificaciones"
+            title="Notificaciones"
+            onClick={abrirNotificaciones}
+          >
+            <IconBell />
+            {noLeidas > 0 && <span className="site-header__badge">{noLeidas}</span>}
+          </button>
+
+          {notifAbierto && (
+            <div className="site-header__notif-menu">
+              <p className="site-header__notif-titulo">Notificaciones</p>
+              {notificaciones.length === 0 ? (
+                <p className="site-header__notif-vacio">No tenés notificaciones</p>
+              ) : (
+                notificaciones.map((n) => (
+                  <div
+                    key={n.id_notificacion}
+                    className={`notif-item ${n.leida ? "" : "notif-item--nueva"}`}
+                    onClick={() => irANotificacion(n)}
+                  >
+                    {n.Marca?.logo && <img src={n.Marca.logo} alt="" className="notif-item__logo" />}
+                    <span className="notif-item__texto">{textoNotificacion(n)}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
         <div className="site-header__perfil" ref={perfilRef}>
           <button
             className="site-header__action site-header__action--profile"
