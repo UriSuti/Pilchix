@@ -5,6 +5,7 @@ import {
   getCategorias, crearProducto, setCategoriasProducto, subirImagenesProducto,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
+import { obtenerColorPromedio } from "../../utils/colorImagen";
 import "./AgregarProducto.css";
 
 function AgregarProducto() {
@@ -37,12 +38,21 @@ function AgregarProducto() {
   const toggleCategoria = (id) =>
     setCatSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
-  const handleImagenes = (e) => {
+  const handleImagenes = async (e) => {
     const files = Array.from(e.target.files);
+    e.target.value = "";
     setImagenes((prev) => [
       ...prev,
       ...files.map((file) => ({ file, preview: URL.createObjectURL(file), color: "", esPortada: false })),
     ]);
+    // sugiere un color por defecto tomado de la primera foto, si todavía no hay colores cargados
+    if (files[0] && colores.length === 0) {
+      const colorSugerido = await obtenerColorPromedio(files[0]);
+      if (colorSugerido) {
+        setColorTemp(colorSugerido);
+        setColores((prev) => (prev.length === 0 ? [colorSugerido] : prev));
+      }
+    }
   };
   const quitarImagen = (i) => setImagenes((prev) => prev.filter((_, idx) => idx !== i));
   const setColorImagen = (i, color) =>
@@ -53,6 +63,7 @@ function AgregarProducto() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.nombre.trim()) { mostrarToast("Poné un nombre al producto", "error"); return; }
+    if (!colores.length) { mostrarToast("Agregá al menos un color al producto", "error"); return; }
     setGuardando(true);
     try {
       // 1) crear el producto
@@ -130,6 +141,9 @@ function AgregarProducto() {
 
           <div className="ap__card">
             <h2>Colores</h2>
+            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
+              Obligatorio: al subir una foto se sugiere un color, pero podés agregar los que quieras.
+            </p>
             <div className="ap__color-add">
               <input type="color" value={colorTemp} onChange={(e) => setColorTemp(e.target.value)} />
               <button type="button" onClick={agregarColor}>Agregar color</button>
@@ -141,6 +155,7 @@ function AgregarProducto() {
                   <i>✕</i>
                 </span>
               ))}
+              {!colores.length && <span style={{ color: "#c0392b", fontSize: 13 }}>Sin colores todavía</span>}
             </div>
           </div>
         </section>

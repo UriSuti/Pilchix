@@ -86,3 +86,9 @@
   border-radius: 8px; padding: 10px 18px; font-weight: 600; cursor: pointer;
 }
 .ap__btn-danger:hover { background: #c0392b; color: #fff; }
+
+.ap__img-upload { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+.ap__img-upload .ap__dropzone { margin-bottom: 0; padding: 10px 16px; flex: 1; }
+.ap__img-preview { border-radius: 8px; background: #f1f3f4; flex-shrink: 0; object-fit: cover; }
+.ap__img-preview--logo { width: 64px; height: 64px; border-radius: 50%; }
+.ap__img-preview--fachada { width: 120px; height: 64px; }

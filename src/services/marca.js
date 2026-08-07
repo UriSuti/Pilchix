@@ -1,4 +1,4 @@
-import { apiFetch, tokenStore } from "./api";
+import { apiFetch, apiFetchForm, tokenStore } from "./api";
 
 const tk = () => tokenStore.getMarca();
 
@@ -17,5 +17,27 @@ export async function actualizarPerfilMarca(campos) {
     return { error: null };
   } catch (err) {
     return { error: err.message || "No se pudo guardar" };
+  }
+}
+
+export async function subirLogoMarca(file) {
+  try {
+    const formData = new FormData();
+    formData.append("logo", file);
+    const data = await apiFetchForm("/marca/perfil/logo", { formData, token: tk() });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || "No se pudo subir el logo" };
+  }
+}
+
+export async function subirFachadaMarca(file) {
+  try {
+    const formData = new FormData();
+    formData.append("fachada", file);
+    const data = await apiFetchForm("/marca/perfil/fachada", { formData, token: tk() });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || "No se pudo subir la foto de portada" };
   }
 }

@@ -7,6 +7,7 @@ import {
   marcarPortada, actualizarColorImagen,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
+import { obtenerColorPromedio } from "../../utils/colorImagen";
 import "../AgregarProducto/AgregarProducto.css";
 
 function EditarProducto() {
@@ -63,12 +64,20 @@ function EditarProducto() {
   const toggleCategoria = (id) =>
     setCatSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
-  const handleImagenesNuevas = (e) => {
+  const handleImagenesNuevas = async (e) => {
     const files = Array.from(e.target.files);
+    e.target.value = "";
     setImagenesNuevas((p) => [
       ...p,
       ...files.map((file) => ({ file, preview: URL.createObjectURL(file), color: "", esPortada: false })),
     ]);
+    if (files[0] && colores.length === 0) {
+      const colorSugerido = await obtenerColorPromedio(files[0]);
+      if (colorSugerido) {
+        setColorTemp(colorSugerido);
+        setColores((prev) => (prev.length === 0 ? [colorSugerido] : prev));
+      }
+    }
   };
   const quitarImagenNueva = (i) => setImagenesNuevas((prev) => prev.filter((_, idx) => idx !== i));
 
@@ -119,6 +128,7 @@ function EditarProducto() {
   const handleGuardar = async (e) => {
     e.preventDefault();
     if (!form.nombre.trim()) { mostrarToast("Poné un nombre", "error"); return; }
+    if (!colores.length) { mostrarToast("Agregá al menos un color al producto", "error"); return; }
     setGuardando(true);
     try {
       const { error } = await actualizarProducto(idProducto, {
@@ -202,6 +212,9 @@ function EditarProducto() {
 
           <div className="ap__card">
             <h2>Colores</h2>
+            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
+              Obligatorio: al subir una foto se sugiere un color, pero podés agregar los que quieras.
+            </p>
             <div className="ap__color-add">
               <input type="color" value={colorTemp} onChange={(e) => setColorTemp(e.target.value)} />
               <button type="button" onClick={agregarColor}>Agregar color</button>
@@ -211,6 +224,7 @@ function EditarProducto() {
                 <span key={c} className="ap__color-chip" style={{ background: c }}
                   onClick={() => quitarColor(c)} title="Quitar"><i>✕</i></span>
               ))}
+              {!colores.length && <span style={{ color: "#c0392b", fontSize: 13 }}>Sin colores todavía</span>}
             </div>
           </div>
         </section>
