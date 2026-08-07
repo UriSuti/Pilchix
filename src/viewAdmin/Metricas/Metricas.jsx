@@ -14,6 +14,7 @@ const RANGOS = [
   { label: "90 días", valor: 90 },
   { label: "Todo", valor: 3650 },
 ];
+const esPreset = (dias) => RANGOS.some((r) => r.valor === dias);
 const METRICAS = [
   { key: "ventas", label: "Ventas" },
   { key: "visualizaciones", label: "Visualizaciones" },
@@ -50,6 +51,19 @@ function Metricas() {
               {r.label}
             </button>
           ))}
+          <div className="met__rango-custom">
+            <input
+              type="number"
+              min="1"
+              max="3650"
+              placeholder="Días"
+              value={esPreset(dias) ? "" : dias}
+              onChange={(e) => {
+                const n = Number(e.target.value);
+                if (n >= 1) setDias(n);
+              }}
+            />
+          </div>
         </div>
       </header>
 

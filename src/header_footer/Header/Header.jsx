@@ -56,16 +56,18 @@ const IconClose = () => (
 
 function Header({ idUsuario = null, teal = false }) {
   const navigate = useNavigate();
-  const { notificaciones, noLeidas, cargarLista, marcasLeidas } = useNotificaciones();
+  const { notificaciones, noLeidas, cargarLista, marcarLeidas } = useNotificaciones();
   const [notifAbierto, setNotifAbierto] = useState(false);
   const notifRef = useRef(null);
   
   const abrirNotificaciones = async () => {
+    console.log("abriendo notificaciones");
     const abrir = !notifAbierto;
     setNotifAbierto(abrir);
     if (abrir) {
+      console.log("marcando leidas...")
       await cargarLista();
-      await marcasLeidas();
+      await marcarLeidas();
     }
   };
 
