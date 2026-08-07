@@ -47,3 +47,8 @@ export function agregarFavorito(idUsuario, idProducto) {
 export function quitarFavorito(idUsuario, idProducto) {
   return comoQuery(apiFetch(`/favoritos/${idProducto}`, { method: "DELETE", token: token() }));
 }
+
+/* ---------- COMPRAS ---------- */
+export function getComprasUsuario() {
+  return comoQuery(apiFetch("/compras", { token: token() }));
+}
