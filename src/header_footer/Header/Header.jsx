@@ -9,6 +9,7 @@ import { useToast } from "../../context/ToastContext.jsx";
 import { slugify } from "../../utils/slugify.js";
 import "./Header.css";
 import { useNotificaciones } from "../../hooks/useNotificaciones.js";
+import EasterEgg from "../../components/EasterEgg/EasterEgg.jsx";
 
 function textoNotificacion(n) {
   const marca = n.Marca?.nombre ?? "Una marca";
@@ -54,11 +55,14 @@ const IconClose = () => (
   </svg>
 );
 
+const PALABRAS_SECRETAS = ["prime", "condón", "condon", "forro"]; // poné las que quieras
+
 function Header({ idUsuario = null, teal = false }) {
   const navigate = useNavigate();
   const { notificaciones, noLeidas, cargarLista, marcarLeidas } = useNotificaciones();
   const [notifAbierto, setNotifAbierto] = useState(false);
   const notifRef = useRef(null);
+  const [eggActivo, setEggActivo] = useState(false);
   
   const abrirNotificaciones = async () => {
     console.log("abriendo notificaciones");
@@ -108,11 +112,18 @@ function Header({ idUsuario = null, teal = false }) {
     buscarProductos,
   } = useLandingSearch(idUsuario);
 
+  useEffect(() => {
+    const q = textoBusqueda.trim().toLowerCase();
+    const hayPalabra = q && PALABRAS_SECRETAS.some((p) => q.includes(p));
+    setEggActivo(hayPalabra);   // true si está la palabra, false si no
+  }, [textoBusqueda]);
+
   // Al apretar Enter: si lo buscado coincide con una marca, va directo a su local.
   const handleBuscar = (e) => {
     e.preventDefault();
     const q = textoBusqueda.trim().toLowerCase();
     if (!q) return;
+
     const marca =
       marcasBusqueda.find((m) => m.nombre?.toLowerCase() === q) ||
       marcasBusqueda.find((m) => m.nombre?.toLowerCase().startsWith(q)) ||
@@ -162,128 +173,132 @@ function Header({ idUsuario = null, teal = false }) {
     .join(" ");
 
   return (
-    <header className={headerClass}>
-      <a className="site-header__brand" onClick={() => navigate("/")}>
-        Pilchix
-      </a>
+    <>
+      <header className={headerClass}>
+        <a className="site-header__brand" onClick={() => navigate("/")}>
+          Pilchix
+        </a>
 
-      <div className="site-header__search-wrapper" ref={searchWrapperRef}>
-        <form className="site-header__search" onSubmit={handleBuscar}>
-          <span className="site-header__search-icon" aria-hidden="true">
-            <IconSearch />
-          </span>
-          <input
-            type="search"
-            value={textoBusqueda}
-            onChange={(e) => setTextoBusqueda(e.target.value)}
-            placeholder="Buscá prendas, marcas y categorías"
-            aria-label="Buscar productos"
-          />
-          {textoBusqueda && (
-            <button
-              className="site-header__search-clear"
-              type="button"
-              aria-label="Limpiar búsqueda"
-              onClick={() => setTextoBusqueda("")}
-            >
-              <IconClose />
-            </button>
-          )}
-        </form>
-
-        {textoBusqueda.trim() && (
-          <SearchBar resultados={resultadosBusqueda} marcas={marcasBusqueda} categorias={categoriasBusqueda} textoBusqueda={textoBusqueda} cargando={cargando} />
-        )}
-      </div>
-
-      <div className="site-header__actions" aria-label="Acciones">
-        <button className="site-header__action site-header__action--carrito" type="button" aria-label="Carrito" title="Carrito" onClick={() => navigate('/carrito')}>
-          <IconCart />
-          {cantidadCarrito > 0 && (
-            <span className="site-header__badge" key={cantidadCarrito}>
-              {cantidadCarrito > 99 ? "99+" : cantidadCarrito}
+        <div className="site-header__search-wrapper" ref={searchWrapperRef}>
+          <form className="site-header__search" onSubmit={handleBuscar}>
+            <span className="site-header__search-icon" aria-hidden="true">
+              <IconSearch />
             </span>
-          )}
-        </button>
-        <div className="site-header__notif" ref={notifRef}>
-          <button
-            className="site-header__action site-header__action--notif"
-            type="button"
-            aria-label="Notificaciones"
-            title="Notificaciones"
-            onClick={abrirNotificaciones}
-          >
-            <IconBell />
-            {noLeidas > 0 && <span className="site-header__badge">{noLeidas}</span>}
-          </button>
+            <input
+              type="search"
+              value={textoBusqueda}
+              onChange={(e) => setTextoBusqueda(e.target.value)}
+              placeholder="Buscá prendas, marcas y categorías"
+              aria-label="Buscar productos"
+            />
+            {textoBusqueda && (
+              <button
+                className="site-header__search-clear"
+                type="button"
+                aria-label="Limpiar búsqueda"
+                onClick={() => setTextoBusqueda("")}
+              >
+                <IconClose />
+              </button>
+            )}
+          </form>
 
-          {notifAbierto && (
-            <div className="site-header__notif-menu">
-              <p className="site-header__notif-titulo">Notificaciones</p>
-              {notificaciones.length === 0 ? (
-                <p className="site-header__notif-vacio">No tenés notificaciones</p>
-              ) : (
-                notificaciones.map((n) => (
-                  <div
-                    key={n.id_notificacion}
-                    className={`notif-item ${n.leida ? "" : "notif-item--nueva"}`}
-                    onClick={() => irANotificacion(n)}
-                  >
-                    {n.Marca?.logo && <img src={n.Marca.logo} alt="" className="notif-item__logo" />}
-                    <span className="notif-item__texto">{textoNotificacion(n)}</span>
-                  </div>
-                ))
-              )}
-            </div>
+          {textoBusqueda.trim() && (
+            <SearchBar resultados={resultadosBusqueda} marcas={marcasBusqueda} categorias={categoriasBusqueda} textoBusqueda={textoBusqueda} cargando={cargando} />
           )}
         </div>
-        <div className="site-header__perfil" ref={perfilRef}>
-          <button
-            className="site-header__action site-header__action--profile"
-            type="button"
-            aria-label="Perfil"
-            title="Perfil"
-            onClick={() =>
-              estaLogueado ? setMenuPerfilAbierto((v) => !v) : navigate("/login")
-            }
-          >{!estaLogueado ? (
-              <IconUser />
-            ) : usuario.foto_perfil ? (
-              <img src={usuario.foto_perfil} alt="Perfil" className="site-header__avatar" />
-            ) : (
-              <span className="site-header__avatar-inicial">
-                {usuario.nombre?.charAt(0).toUpperCase()}
+
+        <div className="site-header__actions" aria-label="Acciones">
+          <button className="site-header__action site-header__action--carrito" type="button" aria-label="Carrito" title="Carrito" onClick={() => navigate('/carrito')}>
+            <IconCart />
+            {cantidadCarrito > 0 && (
+              <span className="site-header__badge" key={cantidadCarrito}>
+                {cantidadCarrito > 99 ? "99+" : cantidadCarrito}
               </span>
             )}
           </button>
+          <div className="site-header__notif" ref={notifRef}>
+            <button
+              className="site-header__action site-header__action--notif"
+              type="button"
+              aria-label="Notificaciones"
+              title="Notificaciones"
+              onClick={abrirNotificaciones}
+            >
+              <IconBell />
+              {noLeidas > 0 && <span className="site-header__badge">{noLeidas}</span>}
+            </button>
 
-          {estaLogueado && menuPerfilAbierto && (
-            <div className="site-header__perfil-menu">
-              <p className="site-header__perfil-nombre">Hola, {usuario.nombre}</p>
-              <button
-                type="button"
-                className="site-header__perfil-link"
-                onClick={() => { setMenuPerfilAbierto(false); navigate("/perfil"); }}
-              >
-                Mi perfil
-              </button>
-              <button
-                type="button"
-                className="site-header__logout"
-                onClick={() => {
-                  logout();
-                  setMenuPerfilAbierto(false);
-                  mostrarToast("Cerraste sesión", "info");
-                  navigate("/");
-                }}
-              >
-                Cerrar sesión
-              </button>
-            </div>
-          )}
+            {notifAbierto && (
+              <div className="site-header__notif-menu">
+                <p className="site-header__notif-titulo">Notificaciones</p>
+                {notificaciones.length === 0 ? (
+                  <p className="site-header__notif-vacio">No tenés notificaciones</p>
+                ) : (
+                  notificaciones.map((n) => (
+                    <div
+                      key={n.id_notificacion}
+                      className={`notif-item ${n.leida ? "" : "notif-item--nueva"}`}
+                      onClick={() => irANotificacion(n)}
+                    >
+                      {n.Marca?.logo && <img src={n.Marca.logo} alt="" className="notif-item__logo" />}
+                      <span className="notif-item__texto">{textoNotificacion(n)}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          <div className="site-header__perfil" ref={perfilRef}>
+            <button
+              className="site-header__action site-header__action--profile"
+              type="button"
+              aria-label="Perfil"
+              title="Perfil"
+              onClick={() =>
+                estaLogueado ? setMenuPerfilAbierto((v) => !v) : navigate("/login")
+              }
+            >{!estaLogueado ? (
+                <IconUser />
+              ) : usuario.foto_perfil ? (
+                <img src={usuario.foto_perfil} alt="Perfil" className="site-header__avatar" />
+              ) : (
+                <span className="site-header__avatar-inicial">
+                  {usuario.nombre?.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </button>
+
+            {estaLogueado && menuPerfilAbierto && (
+              <div className="site-header__perfil-menu">
+                <p className="site-header__perfil-nombre">Hola, {usuario.nombre}</p>
+                <button
+                  type="button"
+                  className="site-header__perfil-link"
+                  onClick={() => { setMenuPerfilAbierto(false); navigate("/perfil"); }}
+                >
+                  Mi perfil
+                </button>
+                <button
+                  type="button"
+                  className="site-header__logout"
+                  onClick={() => {
+                    logout();
+                    setMenuPerfilAbierto(false);
+                    mostrarToast("Cerraste sesión", "info");
+                    navigate("/");
+                  }}
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      
+      <EasterEgg activo={eggActivo} onClose={() => setEggActivo(false)} />
+    </>
   );
 }
 
