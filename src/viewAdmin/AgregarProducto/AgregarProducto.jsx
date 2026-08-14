@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
-  getCategorias, crearProducto, setCategoriasProducto, subirImagenesProducto,
+  getCategorias, getEtiquetas, crearProducto, setCategoriasProducto, setEtiquetasProducto,
+  subirImagenesProducto,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import { obtenerColorPromedio } from "../../utils/colorImagen";
@@ -20,11 +21,14 @@ function AgregarProducto() {
   const [colorTemp, setColorTemp] = useState("#123d59");
   const [categorias, setCategorias] = useState([]);
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
+  const [etiquetas, setEtiquetas] = useState([]);
+  const [etiSeleccionadas, setEtiSeleccionadas] = useState([]);
   const [imagenes, setImagenes] = useState([]);      // { file, preview, color, esPortada }[]
   const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     getCategorias().then(({ data }) => setCategorias(data ?? []));
+    getEtiquetas().then(({ data }) => setEtiquetas(data ?? []));
   }, []);
 
   const setCampo = (campo) => (e) =>
@@ -38,6 +42,9 @@ function AgregarProducto() {
   const toggleCategoria = (id) =>
     setCatSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
+  const toggleEtiqueta = (id) =>
+    setEtiSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
   const handleImagenes = async (e) => {
     const files = Array.from(e.target.files);
     e.target.value = "";
@@ -45,7 +52,7 @@ function AgregarProducto() {
       ...prev,
       ...files.map((file) => ({ file, preview: URL.createObjectURL(file), color: "", esPortada: false })),
     ]);
-    // sugiere un color por defecto tomado de la primera foto, si todavía no hay colores cargados
+    // sugiere un color por defecto tomado de la primera foto, si todavÃ­a no hay colores cargados
     if (files[0] && colores.length === 0) {
       const colorSugerido = await obtenerColorPromedio(files[0]);
       if (colorSugerido) {
@@ -78,13 +85,19 @@ function AgregarProducto() {
       });
       if (error) { mostrarToast(error, "error"); return; }
 
-      // 2) categorías
+      // 2) categori­as
       if (catSeleccionadas.length) {
         const { error: errorCat } = await setCategoriasProducto(idProducto, catSeleccionadas);
         if (errorCat) mostrarToast(errorCat, "error");
       }
 
-      // 3) imágenes: el backend las sube a Storage y las guarda en la tabla Imagen
+      // 2.1) etiquetas (ocasion/estilo: noche, boliche, elegante, etc.)
+      if (etiSeleccionadas.length) {
+        const { error: errorEti } = await setEtiquetasProducto(idProducto, etiSeleccionadas);
+        if (errorEti) mostrarToast(errorEti, "error");
+      }
+
+      // 3) imagenes: el backend las sube a Storage y las guarda en la tabla Imagen
       if (imagenes.length) {
         const { error: errImg } = await subirImagenesProducto(
           idProducto,
@@ -124,7 +137,7 @@ function AgregarProducto() {
             <h2>Información general</h2>
             <label className="ap__field"><span>Nombre</span>
               <input value={form.nombre} onChange={setCampo("nombre")} required /></label>
-            <label className="ap__field"><span>Descripción</span>
+            <label className="ap__field"><span>Descripcion</span>
               <textarea rows={4} value={form.descripcion} onChange={setCampo("descripcion")} /></label>
             <div className="ap__row">
               <label className="ap__field"><span>Precio</span>
@@ -142,7 +155,7 @@ function AgregarProducto() {
           <div className="ap__card">
             <h2>Colores</h2>
             <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
-              Obligatorio: al subir una foto se sugiere un color, pero podés agregar los que quieras.
+              Obligatorio: al subir una foto se sugiere un color, pero podes agregar los que quieras.
             </p>
             <div className="ap__color-add">
               <input type="color" value={colorTemp} onChange={(e) => setColorTemp(e.target.value)} />
@@ -152,28 +165,28 @@ function AgregarProducto() {
               {colores.map((c) => (
                 <span key={c} className="ap__color-chip" style={{ background: c }}
                   onClick={() => quitarColor(c)} title="Quitar">
-                  <i>✕</i>
+                  <i>x</i>
                 </span>
               ))}
-              {!colores.length && <span style={{ color: "#c0392b", fontSize: 13 }}>Sin colores todavía</span>}
+              {!colores.length && <span style={{ color: "#c0392b", fontSize: 13 }}>Sin colores todavi­a</span>}
             </div>
           </div>
         </section>
 
-        {/* columna derecha: imágenes, categorías, estado */}
+        {/* columna derecha: imagenes, categori­as, etiquetas, estado */}
         <section className="ap__col">
           <div className="ap__card">
-            <h2>Imágenes</h2>
+            <h2>Imagenes</h2>
             <label className="ap__dropzone">
               <input type="file" accept="image/*" multiple hidden onChange={handleImagenes} />
-              <span>+ Subir imágenes</span>
+              <span>+ Subir imagenes</span>
             </label>
             <div className="ap__previews">
               {imagenes.map((img, i) => (
                 <div key={i} className="ap__preview">
                   <div className="ap__preview-img">
                     <img src={img.preview} alt="" />
-                    <button type="button" onClick={() => quitarImagen(i)}>✕</button>
+                    <button type="button" onClick={() => quitarImagen(i)}>x</button>
                   </div>
                   <div className="ap__preview-colores">
                     <button
@@ -182,7 +195,7 @@ function AgregarProducto() {
                       title="Sin color"
                       onClick={() => setColorImagen(i, "")}
                     >
-                      <i>✕</i>
+                      <i>x</i>
                     </button>
                     {colores.map((c) => (
                       <button
@@ -200,7 +213,7 @@ function AgregarProducto() {
                     className={`ap__preview-portada ${img.esPortada ? "is-on" : ""}`}
                     onClick={() => marcarPortadaImagen(i)}
                   >
-                    ★ Portada
+                    Portada
                   </button>
                 </div>
               ))}
@@ -208,7 +221,7 @@ function AgregarProducto() {
           </div>
 
           <div className="ap__card">
-            <h2>Categorías</h2>
+            <h2>Categorí­as</h2>
             <div className="ap__cats">
               {categorias.map((c) => (
                 <label key={c.id_categoria} className="ap__cat">
@@ -218,6 +231,27 @@ function AgregarProducto() {
                   {c.nombre}
                 </label>
               ))}
+            </div>
+          </div>
+
+          <div className="ap__card">
+            <h2>Etiquetas</h2>
+            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
+              Ocasión o estilo de la prenda (noche, boliche, elegante...). Ayuda a que la
+              recomendamos con más precisión en búsquedas y en el asistente de outfits.
+            </p>
+            <div className="ap__cats">
+              {etiquetas.map((e) => (
+                <label key={e.id_etiqueta} className="ap__cat">
+                  <input type="checkbox"
+                    checked={etiSeleccionadas.includes(e.id_etiqueta)}
+                    onChange={() => toggleEtiqueta(e.id_etiqueta)} />
+                  {e.nombre}
+                </label>
+              ))}
+              {!etiquetas.length && (
+                <span style={{ color: "#5f6368", fontSize: 13 }}>Todavía no hay etiquetas cargadas.</span>
+              )}
             </div>
           </div>
 

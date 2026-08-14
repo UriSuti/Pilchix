@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
-  getCategorias, getProductoPorId, actualizarProducto,
-  actualizarCategoriasProducto, subirImagenesProducto, borrarImagen, borrarProducto,
-  marcarPortada, actualizarColorImagen,
+  getCategorias, getEtiquetas, getProductoPorId, actualizarProducto,
+  actualizarCategoriasProducto, actualizarEtiquetasProducto, subirImagenesProducto,
+  borrarImagen, borrarProducto, marcarPortada, actualizarColorImagen,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import { obtenerColorPromedio } from "../../utils/colorImagen";
@@ -21,6 +21,8 @@ function EditarProducto() {
   const [colorTemp, setColorTemp] = useState("#123d59");
   const [categorias, setCategorias] = useState([]);
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
+  const [etiquetas, setEtiquetas] = useState([]);
+  const [etiSeleccionadas, setEtiSeleccionadas] = useState([]);
   const [imagenesExistentes, setImagenesExistentes] = useState([]); // {id_imagen, imagen, color, es_portada}
   const [imagenesNuevas, setImagenesNuevas] = useState([]);          // { file, preview, color, esPortada }[]
   const [portada, setPortada] = useState(null);                     // { tipo: 'existente'|'nueva', ref }
@@ -30,11 +32,13 @@ function EditarProducto() {
   // precarga
   useEffect(() => {
     async function cargar() {
-      const [{ data: cats }, { data: prod, error }] = await Promise.all([
+      const [{ data: cats }, { data: etis }, { data: prod, error }] = await Promise.all([
         getCategorias(),
+        getEtiquetas(),
         getProductoPorId(idProducto),
       ]);
       setCategorias(cats ?? []);
+      setEtiquetas(etis ?? []);
       if (error || !prod) { mostrarToast("No se encontró el producto", "error"); navigate("/admin/catalogo"); return; }
 
       setForm({
@@ -47,6 +51,7 @@ function EditarProducto() {
       setTalles(prod.guia_talles ?? []);
       setColores(prod.colores ?? []);
       setCatSeleccionadas((prod.Producto_Categoria ?? []).map((c) => c.id_categoria));
+      setEtiSeleccionadas((prod.Producto_Etiqueta ?? []).map((e) => e.id_etiqueta));
       const imgs = prod.Imagen ?? [];
       setImagenesExistentes(imgs);
       const portadaExistente = imgs.find((img) => img.es_portada);
@@ -63,6 +68,9 @@ function EditarProducto() {
   const quitarColor = (c) => setColores(colores.filter((x) => x !== c));
   const toggleCategoria = (id) =>
     setCatSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  const toggleEtiqueta = (id) =>
+    setEtiSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
   const handleImagenesNuevas = async (e) => {
     const files = Array.from(e.target.files);
@@ -144,6 +152,9 @@ function EditarProducto() {
 
       const { error: errorCat } = await actualizarCategoriasProducto(idProducto, catSeleccionadas);
       if (errorCat) mostrarToast(errorCat, "error");
+
+      const { error: errorEti } = await actualizarEtiquetasProducto(idProducto, etiSeleccionadas);
+      if (errorEti) mostrarToast(errorEti, "error");
 
       if (imagenesNuevas.length) {
         const { data: insertadas, error: errImg } = await subirImagenesProducto(
@@ -325,6 +336,27 @@ function EditarProducto() {
                   {c.nombre}
                 </label>
               ))}
+            </div>
+          </div>
+
+          <div className="ap__card">
+            <h2>Etiquetas</h2>
+            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
+              Ocasión o estilo de la prenda (noche, boliche, elegante...). Ayuda a que la
+              recomendamos con más precisión en búsquedas y en el asistente de outfits.
+            </p>
+            <div className="ap__cats">
+              {etiquetas.map((e) => (
+                <label key={e.id_etiqueta} className="ap__cat">
+                  <input type="checkbox"
+                    checked={etiSeleccionadas.includes(e.id_etiqueta)}
+                    onChange={() => toggleEtiqueta(e.id_etiqueta)} />
+                  {e.nombre}
+                </label>
+              ))}
+              {!etiquetas.length && (
+                <span style={{ color: "#5f6368", fontSize: 13 }}>Todavía no hay etiquetas cargadas.</span>
+              )}
             </div>
           </div>
 

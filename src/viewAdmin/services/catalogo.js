@@ -13,6 +13,15 @@ export async function getCategorias() {
   }
 }
 
+export async function getEtiquetas() {
+  try {
+    const data = await apiFetch("/catalogo/etiquetas", { token: token() });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message };
+  }
+}
+
 export async function getProductosDeMarca() {
   try {
     const data = await apiFetch("/catalogo/productos", { token: token() });
@@ -86,6 +95,33 @@ export async function actualizarCategoriasProducto(idProducto, idsCategorias) {
     return { error: null };
   } catch (err) {
     return { error: err.message || "No se pudieron actualizar las categorías" };
+  }
+}
+
+export async function setEtiquetasProducto(idProducto, idsEtiquetas) {
+  if (!idsEtiquetas.length) return { error: null };
+  try {
+    await apiFetch(`/catalogo/productos/${idProducto}/etiquetas`, {
+      method: "POST",
+      body: { idsEtiquetas },
+      token: token(),
+    });
+    return { error: null };
+  } catch (err) {
+    return { error: err.message || "No se pudieron guardar las etiquetas" };
+  }
+}
+
+export async function actualizarEtiquetasProducto(idProducto, idsEtiquetas) {
+  try {
+    await apiFetch(`/catalogo/productos/${idProducto}/etiquetas`, {
+      method: "PUT",
+      body: { idsEtiquetas },
+      token: token(),
+    });
+    return { error: null };
+  } catch (err) {
+    return { error: err.message || "No se pudieron actualizar las etiquetas" };
   }
 }
 
