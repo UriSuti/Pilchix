@@ -107,7 +107,8 @@
 }
 
 @media (max-width: 600px) {
+  /* ancho fijo por card (vw), NO % — con el track width:max-content el % se dispara */
   .sh-card {
-    flex-basis: 60%;
+    flex: 0 0 74vw;
   }
 }

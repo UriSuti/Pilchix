@@ -55,7 +55,7 @@ const PAGO_BANNERS = {
 }
 
 function CartPage() {
-  const { estaLogueado, idUsuario } = useAuth()
+  const { estaLogueado, idUsuario, cargando: cargandoAuth } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [items, setItems] = useState([])
@@ -73,6 +73,7 @@ function CartPage() {
   }, [idUsuario])
 
   useEffect(() => {
+    if (cargandoAuth) return // esperar a que se restaure la sesión (evita rebote a /login al refrescar)
     if (!estaLogueado) { navigate('/login'); return }
 
     if (estadoPago === 'aprobado' && !confirmadoRef.current) {
@@ -85,7 +86,7 @@ function CartPage() {
     }
 
     cargar()
-  }, [estaLogueado, cargar, navigate, estadoPago, searchParams])
+  }, [cargandoAuth, estaLogueado, cargar, navigate, estadoPago, searchParams])
 
   const handleRemove = (item) => {
     setItems((prev) => prev.filter((i) => i.id_detalle !== item.id_detalle))
