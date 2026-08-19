@@ -81,6 +81,30 @@
 .ap__cat { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #444; }
 .ap__switch { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #444; }
 
+.ap__cats-block { display: flex; flex-direction: column; gap: 16px; }
+.ap__picker { display: flex; flex-direction: column; gap: 10px; }
+.ap__picker-search {
+  border: 1px solid #d4d7da; border-radius: 8px; padding: 9px 11px; font-size: 14px; font-family: inherit;
+}
+.ap__picker-search:focus { outline: none; border-color: #123d59; }
+.ap__picker-hint { margin: -2px 0 0; font-size: 12px; color: #5f6368; }
+.ap__picker-empty { font-size: 13px; color: #5f6368; }
+.ap__picker-add { display: flex; gap: 10px; }
+.ap__picker-add input {
+  flex: 1; min-width: 0; height: 38px; padding: 0 12px;
+  border: 1px solid #d4d7da; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
+}
+.ap__picker-add input:focus { outline: none; border-color: #123d59; }
+.ap__picker-add button {
+  background: #f1f3f4; border: none; border-radius: 8px; padding: 0 14px; cursor: pointer; font-weight: 600; color: #123d59;
+}
+.ap__picker-add button:hover { background: #e6e9ea; }
+.ap__picker-add button:disabled { opacity: .6; cursor: default; }
+
+.ap__subcats { display: flex; flex-direction: column; gap: 16px; margin-top: 4px; }
+.ap__subcat-group { border-top: 1px solid #e8eaed; padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.ap__subcat-group h3 { font-size: 13px; margin: 0; color: #1a1a1a; }
+
 .ap__btn-danger {
   background: #fff; color: #c0392b; border: 1px solid #c0392b;
   border-radius: 8px; padding: 10px 18px; font-weight: 600; cursor: pointer;

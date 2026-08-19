@@ -13,12 +13,48 @@ export async function getCategorias() {
   }
 }
 
+export async function getSubcategorias(idCategoria) {
+  try {
+    const query = idCategoria ? `?id_categoria=${idCategoria}` : "";
+    const data = await apiFetch(`/catalogo/subcategorias${query}`, { token: token() });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message };
+  }
+}
+
+export async function crearSubcategoria(nombre, idCategoria) {
+  try {
+    const data = await apiFetch("/catalogo/subcategorias", {
+      method: "POST",
+      body: { nombre, id_categoria: idCategoria },
+      token: token(),
+    });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || "No se pudo crear la subcategoría" };
+  }
+}
+
 export async function getEtiquetas() {
   try {
     const data = await apiFetch("/catalogo/etiquetas", { token: token() });
     return { data, error: null };
   } catch (err) {
     return { data: null, error: err.message };
+  }
+}
+
+export async function crearEtiqueta(nombre) {
+  try {
+    const data = await apiFetch("/catalogo/etiquetas", {
+      method: "POST",
+      body: { nombre },
+      token: token(),
+    });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || "No se pudo crear la etiqueta" };
   }
 }
 
@@ -95,6 +131,33 @@ export async function actualizarCategoriasProducto(idProducto, idsCategorias) {
     return { error: null };
   } catch (err) {
     return { error: err.message || "No se pudieron actualizar las categorías" };
+  }
+}
+
+export async function setSubcategoriasProducto(idProducto, idsSubcategorias) {
+  if (!idsSubcategorias.length) return { error: null };
+  try {
+    await apiFetch(`/catalogo/productos/${idProducto}/subcategorias`, {
+      method: "POST",
+      body: { idsSubcategorias },
+      token: token(),
+    });
+    return { error: null };
+  } catch (err) {
+    return { error: err.message || "No se pudieron guardar las subcategorías" };
+  }
+}
+
+export async function actualizarSubcategoriasProducto(idProducto, idsSubcategorias) {
+  try {
+    await apiFetch(`/catalogo/productos/${idProducto}/subcategorias`, {
+      method: "PUT",
+      body: { idsSubcategorias },
+      token: token(),
+    });
+    return { error: null };
+  } catch (err) {
+    return { error: err.message || "No se pudieron actualizar las subcategorías" };
   }
 }
 

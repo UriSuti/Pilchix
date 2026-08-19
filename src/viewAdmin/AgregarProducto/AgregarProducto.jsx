@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
-  getCategorias, getEtiquetas, crearProducto, setCategoriasProducto, setEtiquetasProducto,
-  subirImagenesProducto,
+  getCategorias, getEtiquetas, crearProducto, setCategoriasProducto, setSubcategoriasProducto,
+  setEtiquetasProducto, subirImagenesProducto,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
+import CategoriasSubcategoriasPicker from "../components/CategoriasSubcategoriasPicker/CategoriasSubcategoriasPicker";
+import EtiquetasPicker from "../components/EtiquetasPicker/EtiquetasPicker";
 import { obtenerColorPromedio } from "../../utils/colorImagen";
 import "./AgregarProducto.css";
 
@@ -21,6 +23,7 @@ function AgregarProducto() {
   const [colorTemp, setColorTemp] = useState("#123d59");
   const [categorias, setCategorias] = useState([]);
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
+  const [subSeleccionadas, setSubSeleccionadas] = useState([]);
   const [etiquetas, setEtiquetas] = useState([]);
   const [etiSeleccionadas, setEtiSeleccionadas] = useState([]);
   const [imagenes, setImagenes] = useState([]);      // { file, preview, color, esPortada }[]
@@ -41,6 +44,9 @@ function AgregarProducto() {
 
   const toggleCategoria = (id) =>
     setCatSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const toggleSubcategoria = (id) =>
+    setSubSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
   const toggleEtiqueta = (id) =>
     setEtiSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -89,6 +95,12 @@ function AgregarProducto() {
       if (catSeleccionadas.length) {
         const { error: errorCat } = await setCategoriasProducto(idProducto, catSeleccionadas);
         if (errorCat) mostrarToast(errorCat, "error");
+      }
+
+      // 2.05) subcategorías
+      if (subSeleccionadas.length) {
+        const { error: errorSub } = await setSubcategoriasProducto(idProducto, subSeleccionadas);
+        if (errorSub) mostrarToast(errorSub, "error");
       }
 
       // 2.1) etiquetas (ocasion/estilo: noche, boliche, elegante, etc.)
@@ -221,17 +233,15 @@ function AgregarProducto() {
           </div>
 
           <div className="ap__card">
-            <h2>Categorí­as</h2>
-            <div className="ap__cats">
-              {categorias.map((c) => (
-                <label key={c.id_categoria} className="ap__cat">
-                  <input type="checkbox"
-                    checked={catSeleccionadas.includes(c.id_categoria)}
-                    onChange={() => toggleCategoria(c.id_categoria)} />
-                  {c.nombre}
-                </label>
-              ))}
-            </div>
+            <h2>Categorí­as y subcategorías</h2>
+            <CategoriasSubcategoriasPicker
+              categorias={categorias}
+              catSeleccionadas={catSeleccionadas}
+              onToggleCategoria={toggleCategoria}
+              subSeleccionadas={subSeleccionadas}
+              onToggleSubcategoria={toggleSubcategoria}
+              onError={(msg) => mostrarToast(msg, "error")}
+            />
           </div>
 
           <div className="ap__card">
@@ -240,19 +250,13 @@ function AgregarProducto() {
               Ocasión o estilo de la prenda (noche, boliche, elegante...). Ayuda a que la
               recomendamos con más precisión en búsquedas y en el asistente de outfits.
             </p>
-            <div className="ap__cats">
-              {etiquetas.map((e) => (
-                <label key={e.id_etiqueta} className="ap__cat">
-                  <input type="checkbox"
-                    checked={etiSeleccionadas.includes(e.id_etiqueta)}
-                    onChange={() => toggleEtiqueta(e.id_etiqueta)} />
-                  {e.nombre}
-                </label>
-              ))}
-              {!etiquetas.length && (
-                <span style={{ color: "#5f6368", fontSize: 13 }}>Todavía no hay etiquetas cargadas.</span>
-              )}
-            </div>
+            <EtiquetasPicker
+              etiquetas={etiquetas}
+              seleccionadas={etiSeleccionadas}
+              onToggle={toggleEtiqueta}
+              onEtiquetaCreada={(e) => setEtiquetas((prev) => [...prev, e])}
+              onError={(msg) => mostrarToast(msg, "error")}
+            />
           </div>
 
           <div className="ap__card">
