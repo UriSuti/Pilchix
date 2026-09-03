@@ -78,6 +78,10 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
+/* sin esto, los nombres largos (nowrap) ensanchan su columna y descuadran las fotos */
+.pdp-rel__grid > * {
+  min-width: 0;
+}
 
 @media (max-width: 900px) {
   .pdp {

@@ -20,7 +20,9 @@
       "Bash(curl -s --ssl-no-revoke -X DELETE https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?id_producto=eq.34 -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Prefer: return=representation')",
       "Bash(curl -s --ssl-no-revoke https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Producto?id_producto=eq.34 -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN')",
       "Bash(curl -s --ssl-no-revoke 'https://ezbdtbgjkfgelrbfzjid.supabase.co/rest/v1/Imagen?select=id_imagen&order=id_imagen' -H 'apikey: sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN' -H 'Authorization: Bearer sb_publishable_Dmw63ySW2jp_QEvclXwkIg_8p4KRCTN')",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(cd \"C:\\\\Users\\\\49090825\\\\Downloads\\\\PilchixBackend\" && ls -la)",
+      "Read(//c/Users/49090825/Downloads/PilchixBackend/**)"
     ]
   }
 }

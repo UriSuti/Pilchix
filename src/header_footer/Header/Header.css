@@ -151,19 +151,36 @@
 }
 
 @media (max-width: 760px) {
+  /* dos filas: [marca ... iconos] arriba, buscador full-width abajo */
   .site-header {
-    grid-template-columns: auto 1fr auto;  /* 👈 corregido, no 1fr */
-    padding: 14px 12px;
-    gap: 10px;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand actions"
+      "search search";
+    column-gap: 12px;
+    row-gap: 12px;
+    padding: 12px 16px;
   }
-
   .site-header__brand {
-    font-size: 1.65rem;
+    grid-area: brand;
+    font-size: 1.5rem;
+    align-self: center;
   }
-
   .site-header__actions {
+    grid-area: actions;
     justify-content: flex-end;
   }
+  .site-header__search-wrapper {
+    grid-area: search;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .site-header { padding: 12px 12px; }
+  .site-header__actions { gap: 6px; }
+  .site-header__action { width: 36px; height: 36px; }
 }
 
 .site-header__search input::-webkit-search-cancel-button {
@@ -301,3 +318,36 @@
   align-items: center;
   justify-content: center;
 }
+
+.site-header__notif { position: relative; }
+.site-header__action--notif { position: relative; }
+
+.site-header__notif-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 300px;
+  max-height: 380px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.14);
+  padding: 8px;
+  z-index: 60;
+}
+.site-header__notif-titulo {
+  font-size: 13px; font-weight: 700; color: #333;
+  padding: 6px 8px; margin: 0 0 4px;
+}
+.site-header__notif-vacio {
+  font-size: 13px; color: #999; text-align: center; padding: 24px 0; margin: 0;
+}
+.notif-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 8px; border-radius: 8px; cursor: pointer;
+}
+.notif-item:hover { background: #f5f5f5; }
+.notif-item--nueva { background: #eef4f8; }
+.notif-item__logo { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+.notif-item__texto { font-size: 13px; color: #333; line-height: 1.3; }

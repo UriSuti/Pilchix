@@ -1,0 +1,42 @@
+.mis-compras { display: flex; flex-direction: column; gap: 20px; }
+
+.compra-ticket {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.compra-ticket__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f8fa;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eef0f2;
+}
+.compra-ticket__fecha { font-size: 13px; color: #666; }
+.compra-ticket__total { font-size: 15px; font-weight: 700; color: #123d59; }
+
+.compra-ticket__items { display: flex; flex-direction: column; }
+
+.compra-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.compra-item:hover { background: #f7f8fa; }
+.compra-item:not(:last-child) { border-bottom: 1px solid #f4f5f6; }
+
+.compra-item__img, .compra-item__ph {
+  width: 52px; height: 52px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
+}
+.compra-item__ph {
+  display: flex; align-items: center; justify-content: center;
+  background: #f0f0f0; color: #123d59; font-weight: 700; font-size: 20px;
+}
+.compra-item__info { flex: 1; }
+.compra-item__info h4 { margin: 0; font-size: 14px; color: #1a1a1a; }
+.compra-item__info span { font-size: 12px; color: #888; }
+.compra-item__precio { font-size: 14px; color: #333; }

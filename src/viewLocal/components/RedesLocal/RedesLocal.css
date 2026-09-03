@@ -1,0 +1,62 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Poppins:wght@400;500;600;700;800&display=swap");
+
+.redeslocal {
+  background: #f3f5f6;
+  padding: 56px 24px 64px;
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+}
+.redeslocal__wrap {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.redeslocal__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #5d6b73;
+}
+.redeslocal__titulo {
+  margin: 8px 0 0;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  color: #0f172a;
+}
+.redeslocal__sub {
+  margin: 10px 0 26px;
+  color: #5d6b73;
+  font-size: 1rem;
+}
+.redeslocal__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.redeslocal__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 22px;
+  border-radius: 99px;
+  background: #0f172a;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+.redeslocal__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(12, 44, 66, 0.22);
+}
+/* Instagram con su degradé característico */
+.redeslocal__btn--ig {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+.redeslocal__btn--ig:hover {
+  opacity: 0.94;
+}

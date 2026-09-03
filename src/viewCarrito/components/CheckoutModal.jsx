@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
+import { apiFetch } from "../../services/api"
 import './CheckoutModal.css'
 
 initMercadoPago('APP_USR-3c9b2f24-c077-4438-b40b-7970f37d0eb7')
@@ -17,20 +18,16 @@ function CheckoutModal({ items, onClose }) {
       currency_id: 'ARS',
     }))
 
-    fetch('/api/create-preference', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: mpItems }),
+    // dentro del useEffect, reemplazá el fetch por:
+    apiFetch("/pagos/create-preference", {
+      method: "POST",
+      body: { items: mpItems },
     })
-      .then((r) => r.json())
       .then((data) => {
-        if (data.preferenceId) {
-          setPreferenceId(data.preferenceId)
-        } else {
-          setError(data.error ?? 'Error al crear la preferencia de pago')
-        }
+        if (data.preferenceId) setPreferenceId(data.preferenceId);
+        else setError("Error al crear la preferencia de pago");
       })
-      .catch(() => setError('No se pudo conectar con el servidor. ¿Está corriendo el backend?'))
+      .catch((err) => setError(err.message || "No se pudo conectar con el servidor"));
   }, [])
 
   return (

@@ -155,6 +155,10 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 22px;
 }
+/* sin esto, los nombres largos (nowrap) ensanchan su columna y descuadran las fotos */
+.catgrid > * {
+  min-width: 0;
+}
 
 @media (max-width: 980px) {
   .catlayout {

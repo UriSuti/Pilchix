@@ -20,6 +20,7 @@ import Metricas from './viewAdmin/Metricas/Metricas.jsx'
 import Configuracion from './viewAdmin/Configuracion/Configuracion.jsx'
 import RegistroMarca from './viewAdmin/Login/RegistroMarca.jsx'
 import EditarProducto from './viewAdmin/EditarProducto/EditarProducto.jsx'
+import Looks from './viewAdmin/Looks/Looks.jsx'
 import SoloInvitados from './components/SoloInvitados.jsx'
 import SoloInvitadosMarca from './components/SoloInvitadosMarca.jsx'
 
@@ -38,12 +39,13 @@ function App() {
       <Route path="/registro" element={<SoloInvitados><Registro /></SoloInvitados>} />
       <Route path="/carrito" element={<CartPage />} />
       <Route path="/admin/login" element={<SoloInvitadosMarca><LoginMarca /></SoloInvitadosMarca>} />
-      <Route path="/admin/registro" element={<SoloInvitadosMarca><RegistroMarca /></SoloInvitadosMarca>} />
+      <Route path="/admin/registro" element={<RegistroMarca />} />
       <Route path="/admin" element={<LayoutAdmin />}>
         <Route index element={<Dashboard />} />
         <Route path="catalogo" element={<Catalogo />} />
         <Route path="catalogo/nuevo" element={<AgregarProducto />} />
         <Route path="catalogo/editar/:idProducto" element={<EditarProducto />} />
+        <Route path="looks" element={<Looks />} />
         <Route path="metricas" element={<Metricas />} />
         <Route path="configuracion" element={<Configuracion />} />
       </Route>

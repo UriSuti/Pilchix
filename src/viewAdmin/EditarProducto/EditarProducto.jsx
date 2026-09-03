@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
-  getCategorias, getProductoPorId, actualizarProducto,
-  actualizarCategoriasProducto, subirImagenesProducto, borrarImagen, borrarProducto,
-  marcarPortada, actualizarColorImagen,
+  getCategorias, getEtiquetas, getProductoPorId, actualizarProducto,
+  actualizarCategoriasProducto, actualizarSubcategoriasProducto, actualizarEtiquetasProducto,
+  subirImagenesProducto, borrarImagen, borrarProducto, marcarPortada, actualizarColorImagen,
   getDescuentoProducto, setDescuentoProducto, quitarDescuentoProducto,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
+import CategoriasSubcategoriasPicker from "../components/CategoriasSubcategoriasPicker/CategoriasSubcategoriasPicker";
+import EtiquetasPicker from "../components/EtiquetasPicker/EtiquetasPicker";
+import { obtenerColorPromedio } from "../../utils/colorImagen";
 import "../AgregarProducto/AgregarProducto.css";
 
 const formatPrecio = (v) =>
@@ -27,6 +30,9 @@ function EditarProducto() {
   const [colorTemp, setColorTemp] = useState("#123d59");
   const [categorias, setCategorias] = useState([]);
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
+  const [subSeleccionadas, setSubSeleccionadas] = useState([]);
+  const [etiquetas, setEtiquetas] = useState([]);
+  const [etiSeleccionadas, setEtiSeleccionadas] = useState([]);
   const [imagenesExistentes, setImagenesExistentes] = useState([]); // {id_imagen, imagen, color, es_portada}
   const [imagenesNuevas, setImagenesNuevas] = useState([]);          // { file, preview, color, esPortada }[]
   const [portada, setPortada] = useState(null);                     // { tipo: 'existente'|'nueva', ref }
@@ -41,12 +47,14 @@ function EditarProducto() {
   // precarga
   useEffect(() => {
     async function cargar() {
-      const [{ data: cats }, { data: prod, error }, { data: desc }] = await Promise.all([
+      const [{ data: cats }, { data: etis }, { data: prod, error }, { data: desc }] = await Promise.all([
         getCategorias(),
+        getEtiquetas(),
         getProductoPorId(idProducto),
         getDescuentoProducto(idProducto),
       ]);
       setCategorias(cats ?? []);
+      setEtiquetas(etis ?? []);
       if (error || !prod) { mostrarToast("No se encontró el producto", "error"); navigate("/admin/catalogo"); return; }
 
       setForm({
@@ -59,6 +67,8 @@ function EditarProducto() {
       setTalles(prod.guia_talles ?? []);
       setColores(prod.colores ?? []);
       setCatSeleccionadas((prod.Producto_Categoria ?? []).map((c) => c.id_categoria));
+      setSubSeleccionadas((prod.Producto_Subcategoria ?? []).map((s) => s.id_subcategoria));
+      setEtiSeleccionadas((prod.Producto_Etiqueta ?? []).map((e) => e.id_etiqueta));
       const imgs = prod.Imagen ?? [];
       setImagenesExistentes(imgs);
       const portadaExistente = imgs.find((img) => img.es_portada);
@@ -77,12 +87,26 @@ function EditarProducto() {
   const toggleCategoria = (id) =>
     setCatSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
-  const handleImagenesNuevas = (e) => {
+  const toggleSubcategoria = (id) =>
+    setSubSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  const toggleEtiqueta = (id) =>
+    setEtiSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  const handleImagenesNuevas = async (e) => {
     const files = Array.from(e.target.files);
+    e.target.value = "";
     setImagenesNuevas((p) => [
       ...p,
       ...files.map((file) => ({ file, preview: URL.createObjectURL(file), color: "", esPortada: false })),
     ]);
+    if (files[0] && colores.length === 0) {
+      const colorSugerido = await obtenerColorPromedio(files[0]);
+      if (colorSugerido) {
+        setColorTemp(colorSugerido);
+        setColores((prev) => (prev.length === 0 ? [colorSugerido] : prev));
+      }
+    }
   };
   const quitarImagenNueva = (i) => setImagenesNuevas((prev) => prev.filter((_, idx) => idx !== i));
 
@@ -133,6 +157,7 @@ function EditarProducto() {
   const handleGuardar = async (e) => {
     e.preventDefault();
     if (!form.nombre.trim()) { mostrarToast("Poné un nombre", "error"); return; }
+    if (!colores.length) { mostrarToast("Agregá al menos un color al producto", "error"); return; }
     setGuardando(true);
     try {
       const { error } = await actualizarProducto(idProducto, {
@@ -148,6 +173,12 @@ function EditarProducto() {
 
       const { error: errorCat } = await actualizarCategoriasProducto(idProducto, catSeleccionadas);
       if (errorCat) mostrarToast(errorCat, "error");
+
+      const { error: errorSub } = await actualizarSubcategoriasProducto(idProducto, subSeleccionadas);
+      if (errorSub) mostrarToast(errorSub, "error");
+
+      const { error: errorEti } = await actualizarEtiquetasProducto(idProducto, etiSeleccionadas);
+      if (errorEti) mostrarToast(errorEti, "error");
 
       if (imagenesNuevas.length) {
         const { data: insertadas, error: errImg } = await subirImagenesProducto(
@@ -282,6 +313,9 @@ function EditarProducto() {
 
           <div className="ap__card">
             <h2>Colores</h2>
+            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
+              Obligatorio: al subir una foto se sugiere un color, pero podés agregar los que quieras.
+            </p>
             <div className="ap__color-add">
               <input type="color" value={colorTemp} onChange={(e) => setColorTemp(e.target.value)} />
               <button type="button" onClick={agregarColor}>Agregar color</button>
@@ -291,6 +325,7 @@ function EditarProducto() {
                 <span key={c} className="ap__color-chip" style={{ background: c }}
                   onClick={() => quitarColor(c)} title="Quitar"><i>✕</i></span>
               ))}
+              {!colores.length && <span style={{ color: "#c0392b", fontSize: 13 }}>Sin colores todavía</span>}
             </div>
           </div>
         </section>
@@ -381,17 +416,30 @@ function EditarProducto() {
           </div>
 
           <div className="ap__card">
-            <h2>Categorías</h2>
-            <div className="ap__cats">
-              {categorias.map((c) => (
-                <label key={c.id_categoria} className="ap__cat">
-                  <input type="checkbox"
-                    checked={catSeleccionadas.includes(c.id_categoria)}
-                    onChange={() => toggleCategoria(c.id_categoria)} />
-                  {c.nombre}
-                </label>
-              ))}
-            </div>
+            <h2>Categorías y subcategorías</h2>
+            <CategoriasSubcategoriasPicker
+              categorias={categorias}
+              catSeleccionadas={catSeleccionadas}
+              onToggleCategoria={toggleCategoria}
+              subSeleccionadas={subSeleccionadas}
+              onToggleSubcategoria={toggleSubcategoria}
+              onError={(msg) => mostrarToast(msg, "error")}
+            />
+          </div>
+
+          <div className="ap__card">
+            <h2>Etiquetas</h2>
+            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
+              Ocasión o estilo de la prenda (noche, boliche, elegante...). Ayuda a que la
+              recomendamos con más precisión en búsquedas y en el asistente de outfits.
+            </p>
+            <EtiquetasPicker
+              etiquetas={etiquetas}
+              seleccionadas={etiSeleccionadas}
+              onToggle={toggleEtiqueta}
+              onEtiquetaCreada={(e) => setEtiquetas((prev) => [...prev, e])}
+              onError={(msg) => mostrarToast(msg, "error")}
+            />
           </div>
 
           <div className="ap__card">

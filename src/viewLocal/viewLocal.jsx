@@ -12,6 +12,8 @@ import { useLandingSearch } from '../hooks/useLandingSearch'
 import { slugify } from '../utils/slugify.js'
 import ViewLocalSkeleton from "../components/skeletons/ViewLocalSkeleton.jsx";
 import BotonSuscribirse from "./components/BotonSuscribirse/BotonSuscribirse.jsx";
+import ShopTheLook from "../viewLanding/components/ShopTheLook/ShopTheLook.jsx";
+import RedesLocal from "./components/RedesLocal/RedesLocal.jsx";
 
 function ViewLocal() {
   const { storeSlug } = useParams()
@@ -91,6 +93,13 @@ function ViewLocal() {
               <SeccionPrendasLocal productos={productosFiltrados} />
             )}
           </main>
+
+          {/* Shop the Look de esta marca (no muestra nada si no cargó looks) */}
+          <ShopTheLook idMarca={marca.id_marca} />
+
+          {/* Redes de la marca (no muestra nada si no cargó ninguna) */}
+          <RedesLocal marca={marca} />
+
           <div className="spacer-footer" />
           <footer><Footer /></footer>
         </div>

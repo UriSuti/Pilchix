@@ -13,10 +13,10 @@ export const authApi = {
       body: { email, password },
     }),
 
-  registrarMarca: (nombre, email, password) =>
+  registrarMarca: (nombre, email, password, extra = {}) =>
     apiFetch("/auth/marca/registro", {
       method: "POST",
-      body: { nombre, email, password },
+      body: { nombre, email, password, ...extra },
     }),
 
   loginMarca: (email, password) =>

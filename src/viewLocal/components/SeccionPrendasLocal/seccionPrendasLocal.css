@@ -34,16 +34,18 @@
 @media (max-width: 640px) {
   .grid-productos {
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px 16px;
+    gap: 20px 14px;
     padding: 0 16px;
   }
 }
 
+/* en celu chico seguimos con 2 columnas (no 1) para no hacer la página eterna */
 @media (max-width: 400px) {
   .seccion-prendas-local {
     padding: 16px 0 30px;
   }
   .grid-productos {
-    grid-template-columns: 1fr;
+    gap: 18px 12px;
+    padding: 0 12px;
   }
 }

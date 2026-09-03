@@ -2,8 +2,10 @@ import { useEffect, useRef } from "react";
 
 /**
  * Mueve una fila (marquee) de forma continua y la acelera según la velocidad
- * del scroll, desacelerando suave hasta volver al ritmo de reposo.
- * El track debe contener el contenido DUPLICADO para un loop sin saltos.
+ * del scroll, desacelerando suave hasta volver al ritmo de reposo. Al pasar
+ * el mouse por encima frena a ~15% (sigue vivo, pero se puede clickear sin
+ * perseguir la tarjeta). El track debe contener el contenido DUPLICADO para
+ * un loop sin saltos.
  *
  * También se puede arrastrar con el mouse/touch (pointer events): mientras se
  * arrastra, el offset lo maneja el puntero directamente; al soltar, sigue con
@@ -24,6 +26,7 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
     let lastY = window.scrollY;
     let lastT = null;
     let raf = 0;
+    let hover = false; // al pasar el cursor desacelera (no frena seco), para clickear fácil
     const dir = direccion === "derecha" ? "derecha" : "izquierda";
     // conversión de "px arrastrados en pantalla" a "delta de offset": ver onPointerMove
     const screenToOffset = dir === "izquierda" ? -1 : 1;
@@ -47,6 +50,8 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
       lastY = window.scrollY;
       boost = Math.min(boost + Math.abs(dy) * 5, 1400); // el scroll inyecta velocidad
     };
+    const onEnter = () => { hover = true; };
+    const onLeave = () => { hover = false; };
 
     const wrap = () => {
       if (!half) return;
@@ -66,7 +71,8 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
         if (Math.abs(momentum) < 4) momentum = 0;
       } else {
         const base = 45; // px/s de reposo
-        offset += (base + boost) * dt;
+        const factor = hover ? 0.15 : 1; // al hover baja a ~15%: sigue vivo pero clickeable
+        offset += (base + boost) * factor * dt;
         boost *= Math.pow(0.9, dt * 60); // el extra decae suave
         if (boost < 0.4) boost = 0;
       }
@@ -127,9 +133,14 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
       }
     };
 
+    // el hover se escucha en el área visible (el contenedor .showroom)
+    const zonaHover = track.parentElement || track;
+
     measure();
     window.addEventListener("resize", measure, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
+    zonaHover.addEventListener("mouseenter", onEnter);
+    zonaHover.addEventListener("mouseleave", onLeave);
     track.addEventListener("pointerdown", onPointerDown);
     track.addEventListener("pointermove", onPointerMove);
     track.addEventListener("pointerup", endDrag);
@@ -141,6 +152,8 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", onScroll);
+      zonaHover.removeEventListener("mouseenter", onEnter);
+      zonaHover.removeEventListener("mouseleave", onLeave);
       track.removeEventListener("pointerdown", onPointerDown);
       track.removeEventListener("pointermove", onPointerMove);
       track.removeEventListener("pointerup", endDrag);

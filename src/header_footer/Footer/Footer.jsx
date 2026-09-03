@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
 import "./Footer.css";
 
@@ -79,7 +80,7 @@ function Footer() {
         {/* Unite a Pilchix */}
         <div className="site-footer__col">
           <h4>Unite a Pilchix</h4>
-          <a href="#" onClick={proximamente}>Registrá tu local</a>
+          <Link to="/admin/registro">Registrá tu local</Link>
           <a href="#" onClick={proximamente}>Vender en Pilchix</a>
           <a href="#" onClick={proximamente}>Programa de afiliados</a>
         </div>
