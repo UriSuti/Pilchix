@@ -1,20 +1,78 @@
 .showroom {
+  position: relative;
   overflow: hidden;
+  padding-top: 22px;
+}
+
+/* la barra de la percha */
+.showroom__rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #cfd8dd, #aab6bd);
+  box-shadow: 0 1px 2px rgba(12, 44, 66, 0.15);
 }
 
 .showroom__track {
   display: flex;
+  align-items: flex-start;
   gap: 18px;
   width: max-content;
-  padding-inline: 24px;
+  padding: 6px 24px 0;
   will-change: transform;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+.showroom__track.is-dragging {
+  cursor: grabbing;
+}
+.showroom__track.is-dragging .sh-hanger {
+  animation-play-state: paused;
+}
+
+/* --- percha: colgador + leve balanceo, como si fuera ropa colgada --- */
+.sh-hanger {
+  flex: 0 0 230px;
+  transform-origin: top center;
+  animation: sh-sway 4.5s ease-in-out infinite;
+  animation-delay: calc(var(--sh-i, 0) * -0.53s);
+}
+@keyframes sh-sway {
+  0%, 100% { transform: rotate(-1.1deg); }
+  50% { transform: rotate(1.1deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sh-hanger {
+    animation: none;
+  }
+}
+
+.sh-hanger__icon {
+  display: block;
+  width: 34px;
+  height: 21px;
+  margin: 0 auto -3px;
+  fill: none;
+  stroke: var(--lp-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 
 .sh-card {
-  flex: 0 0 230px;
-  cursor: pointer;
+  display: block;
+  cursor: grab;
   text-decoration: none;
   color: inherit;
+  -webkit-user-drag: none;
+}
+.showroom__track.is-dragging .sh-card {
+  cursor: grabbing;
 }
 
 .sh-card__img {
@@ -30,6 +88,9 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.6s var(--lp-ease);
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none; /* el drag lo maneja el track/card, la img no debe interceptar el puntero */
 }
 .sh-card:hover .sh-card__img img {
   transform: scale(1.07);
@@ -101,7 +162,7 @@
 }
 
 @media (max-width: 600px) {
-  .sh-card {
+  .sh-hanger {
     flex-basis: 60%;
   }
 }
