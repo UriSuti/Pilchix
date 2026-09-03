@@ -10,11 +10,17 @@
 .ap__card h2 { font-size: 14px; margin: 0 0 14px; color: #1a1a1a; }
 
 .ap__field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; font-size: 13px; color: #444; }
-.ap__field input, .ap__field textarea {
+.ap__field input, .ap__field textarea, .ap__field select {
   border: 1px solid #d4d7da; border-radius: 8px; padding: 9px 11px; font-size: 14px; font-family: inherit;
 }
-.ap__field input:focus, .ap__field textarea:focus { outline: none; border-color: #123d59; }
+.ap__field input:focus, .ap__field textarea:focus, .ap__field select:focus { outline: none; border-color: #123d59; }
 .ap__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.ap__oferta-activa { margin: 0 0 14px; font-size: 13px; color: #1a1a1a; background: #f1f3f4; border-radius: 8px; padding: 10px 12px; }
+.ap__oferta-activa--off { color: #666; }
+.ap__oferta-preview { margin: -4px 0 14px; font-size: 13px; color: #1a1a1a; }
+.ap__oferta-preview-tachado { color: #999; text-decoration: line-through; }
+.ap__oferta-acciones { display: flex; gap: 10px; }
 
 .ap__talles { display: flex; flex-wrap: wrap; gap: 8px; }
 .ap__talle { min-width: 48px; height: 40px; padding: 0 10px; border: 1px solid #d4d7da; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; }

@@ -9,6 +9,14 @@ const formatPrecio = (v) =>
   new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 })
     .format(Number(v || 0));
 
+const hoy = () => new Date().toISOString().split("T")[0];
+
+const getOfertaActiva = (producto) => {
+  const descuento = producto.Descuento?.[0];
+  if (!descuento || descuento.fecha_fin < hoy()) return null;
+  return descuento;
+};
+
 function Catalogo() {
   const navigate = useNavigate();
   const { idMarca } = useMarcaAuth();
@@ -37,6 +45,7 @@ function Catalogo() {
         <div className="catalogo__grid">
           {productos.map((p) => {
             const portada = getImagenPortada(p.Imagen);
+            const oferta = getOfertaActiva(p);
             return (
             <article key={p.id_producto} className="prod-card">
               <div className="prod-card__img">
@@ -48,11 +57,21 @@ function Catalogo() {
                 <span className={`prod-card__estado ${p.estado ? "is-activo" : "is-inactivo"}`}>
                   {p.estado ? "Activo" : "Inactivo"}
                 </span>
+                {oferta ? <span className="prod-card__oferta">-{oferta.porcentaje}%</span> : null}
               </div>
               <div className="prod-card__body">
                 <h3>{p.nombre}</h3>
                 <div className="prod-card__meta">
-                  <strong>{formatPrecio(p.precio)}</strong>
+                  <span className="prod-card__precio">
+                    {oferta ? (
+                      <>
+                        <strong>{formatPrecio(oferta.precio_final)}</strong>
+                        <em>{formatPrecio(p.precio)}</em>
+                      </>
+                    ) : (
+                      <strong>{formatPrecio(p.precio)}</strong>
+                    )}
+                  </span>
                   <span>Stock: {p.stock ?? 0}</span>
                 </div>
               </div>

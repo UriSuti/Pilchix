@@ -40,10 +40,17 @@
 }
 .prod-card__estado.is-activo { background: #e3f5ec; color: #1e7e4f; }
 .prod-card__estado.is-inactivo { background: #f1f3f4; color: #888; }
+.prod-card__oferta {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  background: #c0392b; color: #fff;
+}
 .prod-card__body { padding: 12px 14px; flex: 1; }
 .prod-card__body h3 { font-size: 14px; margin: 0 0 8px; color: #1a1a1a; }
 .prod-card__meta { display: flex; justify-content: space-between; align-items: center; }
+.prod-card__precio { display: flex; align-items: baseline; gap: 6px; }
 .prod-card__meta strong { font-size: 15px; color: #123d59; }
+.prod-card__precio em { font-size: 12px; font-style: normal; color: #999; text-decoration: line-through; }
 .prod-card__meta span { font-size: 12px; color: #888; }
 .prod-card__acciones {
   padding: 10px 14px; border-top: 1px solid #f1f3f4;

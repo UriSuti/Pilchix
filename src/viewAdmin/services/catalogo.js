@@ -62,6 +62,37 @@ export async function borrarProducto(idProducto) {
   }
 }
 
+export async function getDescuentoProducto(idProducto) {
+  try {
+    const data = await apiFetch(`/catalogo/productos/${idProducto}/descuento`, { token: token() });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message };
+  }
+}
+
+export async function setDescuentoProducto(idProducto, { porcentaje, dias }) {
+  try {
+    const data = await apiFetch(`/catalogo/productos/${idProducto}/descuento`, {
+      method: "PUT",
+      body: { porcentaje, dias },
+      token: token(),
+    });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || "No se pudo activar la oferta" };
+  }
+}
+
+export async function quitarDescuentoProducto(idProducto) {
+  try {
+    await apiFetch(`/catalogo/productos/${idProducto}/descuento`, { method: "DELETE", token: token() });
+    return { error: null };
+  } catch (err) {
+    return { error: err.message || "No se pudo quitar la oferta" };
+  }
+}
+
 export async function setCategoriasProducto(idProducto, idsCategorias) {
   if (!idsCategorias.length) return { error: null };
   try {

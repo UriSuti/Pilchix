@@ -5,9 +5,16 @@ import {
   getCategorias, getProductoPorId, actualizarProducto,
   actualizarCategoriasProducto, subirImagenesProducto, borrarImagen, borrarProducto,
   marcarPortada, actualizarColorImagen,
+  getDescuentoProducto, setDescuentoProducto, quitarDescuentoProducto,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import "../AgregarProducto/AgregarProducto.css";
+
+const formatPrecio = (v) =>
+  new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 })
+    .format(Number(v || 0));
+
+const DIAS_OFERTA_OPCIONES = [7, 15, 30, 60];
 
 function EditarProducto() {
   const navigate = useNavigate();
@@ -26,12 +33,18 @@ function EditarProducto() {
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
 
+  const [descuento, setDescuento] = useState(null); // { id_descuento, porcentaje, precio_final, fecha_fin, ... } | null
+  const [porcentajeOferta, setPorcentajeOferta] = useState(20);
+  const [diasOferta, setDiasOferta] = useState(30);
+  const [guardandoOferta, setGuardandoOferta] = useState(false);
+
   // precarga
   useEffect(() => {
     async function cargar() {
-      const [{ data: cats }, { data: prod, error }] = await Promise.all([
+      const [{ data: cats }, { data: prod, error }, { data: desc }] = await Promise.all([
         getCategorias(),
         getProductoPorId(idProducto),
+        getDescuentoProducto(idProducto),
       ]);
       setCategorias(cats ?? []);
       if (error || !prod) { mostrarToast("No se encontró el producto", "error"); navigate("/admin/catalogo"); return; }
@@ -50,6 +63,7 @@ function EditarProducto() {
       setImagenesExistentes(imgs);
       const portadaExistente = imgs.find((img) => img.es_portada);
       if (portadaExistente) setPortada({ tipo: "existente", ref: portadaExistente.id_imagen });
+      if (desc) { setDescuento(desc); setPorcentajeOferta(desc.porcentaje); }
       setCargando(false);
     }
     cargar();
@@ -156,6 +170,29 @@ function EditarProducto() {
     }
   };
 
+  const handleActivarOferta = async () => {
+    const porcentaje = Number(porcentajeOferta);
+    if (!Number.isFinite(porcentaje) || porcentaje <= 0 || porcentaje >= 100) {
+      mostrarToast("El porcentaje tiene que estar entre 1 y 99", "error");
+      return;
+    }
+    setGuardandoOferta(true);
+    const { data, error } = await setDescuentoProducto(idProducto, { porcentaje, dias: diasOferta });
+    setGuardandoOferta(false);
+    if (error) { mostrarToast(error, "error"); return; }
+    setDescuento(data);
+    mostrarToast("Oferta activada", "exito");
+  };
+
+  const handleQuitarOferta = async () => {
+    setGuardandoOferta(true);
+    const { error } = await quitarDescuentoProducto(idProducto);
+    setGuardandoOferta(false);
+    if (error) { mostrarToast(error, "error"); return; }
+    setDescuento(null);
+    mostrarToast("Oferta eliminada", "info");
+  };
+
   const handleBorrarProducto = async () => {
     if (!window.confirm("¿Seguro que querés borrar este producto? No se puede deshacer.")) return;
     const { error } = await borrarProducto(idProducto);
@@ -192,6 +229,49 @@ function EditarProducto() {
                 <input type="number" min="0" value={form.precio} onChange={setCampo("precio")} /></label>
               <label className="ap__field"><span>Stock</span>
                 <input type="number" min="0" value={form.stock} onChange={setCampo("stock")} /></label>
+            </div>
+          </div>
+
+          <div className="ap__card">
+            <h2>Precio promocional</h2>
+            {descuento ? (
+              <p className="ap__oferta-activa">
+                Oferta activa: <strong>-{descuento.porcentaje}%</strong> · precio final{" "}
+                <strong>{formatPrecio(descuento.precio_final)}</strong> · vence el{" "}
+                {new Date(`${descuento.fecha_fin}T00:00:00`).toLocaleDateString("es-AR")}
+              </p>
+            ) : (
+              <p className="ap__oferta-activa ap__oferta-activa--off">Este producto no tiene ninguna oferta activa.</p>
+            )}
+            <div className="ap__row">
+              <label className="ap__field"><span>Descuento (%)</span>
+                <input
+                  type="number" min="1" max="99" value={porcentajeOferta}
+                  onChange={(e) => setPorcentajeOferta(e.target.value)}
+                /></label>
+              <label className="ap__field"><span>Duración</span>
+                <select value={diasOferta} onChange={(e) => setDiasOferta(Number(e.target.value))}>
+                  {DIAS_OFERTA_OPCIONES.map((d) => (
+                    <option key={d} value={d}>{d} días</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            {form.precio && porcentajeOferta > 0 && porcentajeOferta < 100 ? (
+              <p className="ap__oferta-preview">
+                Precio con oferta: <strong>{formatPrecio(form.precio * (1 - porcentajeOferta / 100))}</strong>
+                {" "}<span className="ap__oferta-preview-tachado">{formatPrecio(form.precio)}</span>
+              </p>
+            ) : null}
+            <div className="ap__oferta-acciones">
+              <button type="button" className="ap__btn-pri" disabled={guardandoOferta} onClick={handleActivarOferta}>
+                {guardandoOferta ? "Guardando..." : descuento ? "Actualizar oferta" : "Activar oferta"}
+              </button>
+              {descuento ? (
+                <button type="button" className="ap__btn-sec" disabled={guardandoOferta} onClick={handleQuitarOferta}>
+                  Quitar oferta
+                </button>
+              ) : null}
             </div>
           </div>
 

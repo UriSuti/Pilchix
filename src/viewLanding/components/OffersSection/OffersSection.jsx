@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import "./OffersSection.css";
 import { slugify } from "../../../utils/slugify";
+import { useReveal } from "../../../hooks/useReveal";
+import { useDragScroll } from "../../hooks/useDragScroll";
 
 const formatPrice = (value) =>
   new Intl.NumberFormat("es-AR", {
@@ -23,12 +25,15 @@ const IconArrowRight = () => (
 );
 
 function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS" }) {
-  const lista = descuentos.slice(0, 2);
+  const lista = descuentos.slice(0, 8);
+  const [headRef, headVisible] = useReveal();
+  const [gridRef, gridVisible] = useReveal();
+  const dragRef = useDragScroll();
 
   return (
     <section className="lp-section" id="ofertas">
       <div className="lp-wrap">
-        <div className="lp-head">
+        <div className={`lp-head lp-reveal ${headVisible ? "is-visible" : ""}`} ref={headRef}>
           <div>
             <p className="lp-eyebrow">No te las quedes mirando</p>
             <h2>{titulo}</h2>
@@ -38,8 +43,8 @@ function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS
         {cargando ? (
           <p className="lp-empty">Cargando ofertas...</p>
         ) : lista.length === 0 ? (
-          <div className="offers">
-            <div className="offer offer--teaser offer--static">
+          <div className={`offers ${gridVisible ? "is-visible" : ""}`} ref={gridRef}>
+            <div className="offer offer--teaser offer--static" style={{ "--lp-i": 0 }}>
               <div className="offer__body">
                 <span className="offer__tag offer__tag--ghost"><IconBolt /> Muy pronto</span>
                 <h3>Las próximas ofertas ya se están cocinando</h3>
@@ -47,7 +52,7 @@ function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS
               </div>
             </div>
 
-            <Link className="offer offer--cta" to="/locales">
+            <Link className="offer offer--cta" to="/locales" style={{ "--lp-i": 1 }}>
               <div className="offer__body">
                 <span className="offer__tag">Mientras tanto</span>
                 <h3>Explorá el catálogo completo</h3>
@@ -58,13 +63,19 @@ function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS
             </Link>
           </div>
         ) : (
-          <div className="offers">
-            {lista.map((descuento) => {
+          <div
+            className={`offers offers--slider ${gridVisible ? "is-visible" : ""}`}
+            ref={(node) => {
+              gridRef.current = node;
+              dragRef.current = node;
+            }}
+          >
+            {lista.map((descuento, i) => {
               const nombre = descuento.producto;
               const contenido = (
                 <>
                   {descuento.imagen ? (
-                    <img src={descuento.imagen} alt={nombre || descuento.marca} />
+                    <img src={descuento.imagen} alt={nombre || descuento.marca} draggable={false} />
                   ) : (
                     <div className="offer__placeholder" />
                   )}
@@ -83,11 +94,17 @@ function OffersSection({ descuentos = [], cargando, titulo = "OFERTAS DESTACADAS
 
               // solo enlazamos si hay nombre de producto (evita rutas /producto/ vacías)
               return nombre ? (
-                <Link key={descuento.id_descuento} className="offer" to={`/producto/${slugify(nombre)}`}>
+                <Link
+                  key={descuento.id_descuento}
+                  className="offer"
+                  to={`/producto/${slugify(nombre)}`}
+                  style={{ "--lp-i": i }}
+                  draggable={false}
+                >
                   {contenido}
                 </Link>
               ) : (
-                <div key={descuento.id_descuento} className="offer offer--static">
+                <div key={descuento.id_descuento} className="offer offer--static" style={{ "--lp-i": i }}>
                   {contenido}
                 </div>
               );
