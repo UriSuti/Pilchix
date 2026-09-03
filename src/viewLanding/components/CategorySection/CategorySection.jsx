@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { slugify } from "../../../utils/slugify";
+import { useReveal } from "../../../hooks/useReveal";
 import "./CategorySection.css";
 
 function CategorySection({ categorias = [], cargando }) {
   const lista = categorias.slice(0, 6);
   const [activa, setActiva] = useState(0);
   const navigate = useNavigate();
+  const [headRef, headVisible] = useReveal();
+  const [gridRef, gridVisible] = useReveal();
 
   // si la categoría ya está activa (imagen grande) -> entra a la página;
   // si no, primero la selecciona/expande.
@@ -18,7 +21,7 @@ function CategorySection({ categorias = [], cargando }) {
   return (
     <section className="lp-section" id="categorias">
       <div className="lp-wrap">
-        <div className="lp-head">
+        <div className={`lp-head lp-reveal ${headVisible ? "is-visible" : ""}`} ref={headRef}>
           <div>
             <p className="lp-eyebrow">Explorá por estilo</p>
             <h2>Categorías</h2>
@@ -35,16 +38,17 @@ function CategorySection({ categorias = [], cargando }) {
         ) : lista.length === 0 ? (
           <p className="lp-empty">No hay categorías para mostrar.</p>
         ) : (
-          <div className="catacc">
+          <div className={`catacc ${gridVisible ? "is-visible" : ""}`} ref={gridRef}>
             {lista.map((categoria, i) => (
               <article
                 key={categoria.id_categoria}
                 className={`catp ${i === activa ? "is-active" : ""}`}
-                style={
-                  categoria.imagen_categoria
+                style={{
+                  "--lp-i": i,
+                  ...(categoria.imagen_categoria
                     ? { backgroundImage: `url(${categoria.imagen_categoria})` }
-                    : undefined
-                }
+                    : null),
+                }}
                 onClick={() => manejarClick(i, categoria)}
               >
                 {!categoria.imagen_categoria && (

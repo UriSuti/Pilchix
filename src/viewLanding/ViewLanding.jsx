@@ -50,17 +50,6 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
       <main className="landing-content">
         {dataError ? <div className="lp-alert">{dataError}</div> : null}
 
-        <CategorySection categorias={landingData.categorias} cargando={loading} />
-
-        <FeaturedStoresSection
-          local={local}
-          setLocal={setLocal}
-          marcas={landingData.marcas}
-          marcasPopulares={landingData.marcasPopulares}
-          productos={landingData.productosPopulares}
-          cargando={loading}
-        />
-
         <OffersSection
           descuentos={landingData.descuentos}
           cargando={loading}
@@ -74,6 +63,17 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
           titulo={LANDING_SECTION_TITLES.recommendations}
           eyebrow="Pensado para vos"
           alt
+        />
+
+        <CategorySection categorias={landingData.categorias} cargando={loading} />
+
+        <FeaturedStoresSection
+          local={local}
+          setLocal={setLocal}
+          marcas={landingData.marcas}
+          marcasPopulares={landingData.marcasPopulares}
+          productos={landingData.productosPopulares}
+          cargando={loading}
         />
 
         <ShopTheLook productos={landingData.productosPopulares} cargando={loading} />

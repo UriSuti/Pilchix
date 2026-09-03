@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./FeaturedStoresSection.css";
 import { slugify } from "../../../utils/slugify";
 import { getImagenMarca } from "../../services/landing";
+import { useReveal } from "../../../hooks/useReveal";
 
 function inicial(nombre = "") {
   return nombre.trim().slice(0, 1).toUpperCase();
@@ -12,6 +13,8 @@ function FeaturedStoresSection({ marcas = [], marcasPopulares = [], productos = 
   const locales = (marcasPopulares.length > 0 ? marcasPopulares : marcas).slice(0, 6);
   const [activa, setActiva] = useState(0);
   const [fachadas, setFachadas] = useState({}); // cache id_marca -> url
+  const [headRef, headVisible] = useReveal();
+  const [spotRef, spotVisible] = useReveal();
 
   const marcaActiva = locales[activa];
 
@@ -63,7 +66,7 @@ function FeaturedStoresSection({ marcas = [], marcasPopulares = [], productos = 
   return (
     <section className="lp-section lp-section--alt" id="locales">
       <div className="lp-wrap">
-        <div className="lp-head">
+        <div className={`lp-head lp-reveal ${headVisible ? "is-visible" : ""}`} ref={headRef}>
           <div>
             <p className="lp-eyebrow">Los que están rompiendo</p>
             <h2>Locales destacados</h2>
@@ -73,12 +76,13 @@ function FeaturedStoresSection({ marcas = [], marcasPopulares = [], productos = 
           </Link>
         </div>
 
-        <div className="spotlight">
+        <div className={`spotlight ${spotVisible ? "is-visible" : ""}`} ref={spotRef}>
           <ul className="spot__list">
             {locales.map((marca, i) => (
               <li
                 key={marca.id_marca}
                 className={`spot__item ${i === activa ? "is-active" : ""}`}
+                style={{ "--lp-i": i }}
                 onMouseEnter={() => setActiva(i)}
                 onClick={() => setActiva(i)}
               >

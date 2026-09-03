@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import "./HeroLanding.css";
 
 const HERO_IMG =
@@ -51,12 +52,12 @@ function HeroLanding({ subtitle, title, description }) {
         <h1 className="hero__title">{title}</h1>
         <p className="hero__desc">{description}</p>
         <div className="hero__cta">
-          <a className="lp-btn lp-btn--primary" href="#locales">
+          <Link className="lp-btn lp-btn--primary" to="/locales">
             Explorar locales →
-          </a>
-          <a className="lp-btn lp-btn--ghost" href="#ofertas">
+          </Link>
+          <Link className="lp-btn lp-btn--ghost" to="/ofertas">
             Ver ofertas
-          </a>
+          </Link>
         </div>
       </div>
 

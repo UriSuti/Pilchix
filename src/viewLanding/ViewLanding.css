@@ -145,3 +145,23 @@
     margin-bottom: 26px;
   }
 }
+
+/* ============ SCROLL REVEAL ============ */
+/* utilitario compartido: aplicar .lp-reveal a un bloque, y togglear
+   .is-visible cuando useReveal() detecta que entró en viewport */
+.lp-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--lp-ease), transform 0.7s var(--lp-ease);
+}
+.lp-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal {
+    transform: none;
+    transition-duration: 0.25s;
+  }
+}

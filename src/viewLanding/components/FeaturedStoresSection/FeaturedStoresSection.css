@@ -23,7 +23,17 @@
   padding: 20px 8px;
   border-top: 1px solid var(--lp-line);
   cursor: pointer;
-  transition: padding 0.3s var(--lp-ease);
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    padding 0.3s var(--lp-ease),
+    opacity 0.55s var(--lp-ease) calc(var(--lp-i, 0) * 70ms),
+    transform 0.55s var(--lp-ease) calc(var(--lp-i, 0) * 70ms);
+}
+
+.spotlight.is-visible .spot__item {
+  opacity: 1;
+  transform: translateY(0);
 }
 .spot__item:last-child {
   border-bottom: 1px solid var(--lp-line);
@@ -92,6 +102,27 @@
   box-shadow: var(--lp-shadow-lg);
   display: block;
   background: #e3e9ed;
+  opacity: 0;
+  transform: scale(0.96) translateY(18px);
+  transition: opacity 0.7s var(--lp-ease) 0.18s, transform 0.7s var(--lp-ease) 0.18s;
+}
+
+.spotlight.is-visible .spot__stage {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spot__item {
+    transform: none;
+    transition-duration: 0.3s, 0.25s, 0.25s;
+    transition-delay: 0s, 0s, 0s;
+  }
+  .spot__stage {
+    transform: none;
+    transition-duration: 0.25s, 0.25s;
+    transition-delay: 0s, 0s;
+  }
 }
 
 /* animación de carga (shimmer) mientras se trae la fachada */

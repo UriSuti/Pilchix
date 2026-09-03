@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { useReveal } from "../../../hooks/useReveal";
 import "./SubscribeSection.css";
 
 const IconSparkle = () => (
@@ -10,11 +11,12 @@ const IconSparkle = () => (
 
 function SubscribeSection() {
   const { estaLogueado, usuario } = useAuth();
+  const [ref, visible] = useReveal();
 
   return (
     <section className="lp-section" id="suscribirse">
       <div className="lp-wrap">
-        <div className="subscribe">
+        <div className={`subscribe lp-reveal ${visible ? "is-visible" : ""}`} ref={ref}>
           {estaLogueado ? (
             <>
               <p className="subscribe__eyebrow">Ya sos parte</p>

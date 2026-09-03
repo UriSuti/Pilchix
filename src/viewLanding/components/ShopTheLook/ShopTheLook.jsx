@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { slugify } from "../../../utils/slugify";
+import { useReveal } from "../../../hooks/useReveal";
 import "./ShopTheLook.css";
 
 // fotos editoriales (decorativas, del front). En serio, cada marca sube la suya.
@@ -49,6 +50,8 @@ function ShopTheLook({ productos = [], cargando }) {
   }, [productos]);
 
   const [actual, setActual] = useState(0);
+  const [headRef, headVisible] = useReveal();
+  const [lookRef, lookVisible] = useReveal();
 
   // avance automático (se reinicia con cada cambio)
   useEffect(() => {
@@ -77,7 +80,7 @@ function ShopTheLook({ productos = [], cargando }) {
   return (
     <section className="lp-section lp-section--alt" id="look">
       <div className="lp-wrap">
-        <div className="lp-head">
+        <div className={`lp-head lp-reveal ${headVisible ? "is-visible" : ""}`} ref={headRef}>
           <div>
             <p className="lp-eyebrow">Inspirate</p>
             <h2>Shop the look</h2>
@@ -94,7 +97,7 @@ function ShopTheLook({ productos = [], cargando }) {
           )}
         </div>
 
-        <div className="look">
+        <div className={`look ${lookVisible ? "is-visible" : ""}`} ref={lookRef}>
           <Link className="look__foto" to={`/${slugify(look.marca)}`}>
             <img key={look.marca} src={look.img} alt={`Look de ${look.marca}`} />
             <span className="look__tag">El look de {look.marca}</span>
@@ -107,7 +110,7 @@ function ShopTheLook({ productos = [], cargando }) {
 
             <ol className="look__list">
               {look.productos.map((p, i) => (
-                <li key={p.id_producto ?? i}>
+                <li key={p.id_producto ?? i} style={{ "--lp-i": i }}>
                   <Link className="look__item" to={`/producto/${slugify(p.nombre || "")}`}>
                     <div className="look__thumb">
                       {p.imagen ? (

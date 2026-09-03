@@ -1,4 +1,5 @@
 import { useToast } from "../../../context/ToastContext";
+import { useReveal } from "../../../hooks/useReveal";
 import "./ComunidadPilchix.css";
 
 const IconThumbUp = () => (
@@ -30,11 +31,13 @@ const OPINIONES = [
 function ComunidadPilchix({ max }) {
   const { mostrarToast } = useToast();
   const opiniones = typeof max === "number" ? OPINIONES.slice(0, max) : OPINIONES;
+  const [headRef, headVisible] = useReveal();
+  const [gridRef, gridVisible] = useReveal();
 
   return (
     <section className="comu" id="comunidad">
       <div className="comu__wrap">
-        <div className="comu__head">
+        <div className={`comu__head comu__head--reveal ${headVisible ? "is-visible" : ""}`} ref={headRef}>
           <div>
             <p className="comu__eyebrow">Comunidad</p>
             <h2 className="comu__titulo">Una comunidad abierta, sin vueltas</h2>
@@ -49,9 +52,9 @@ function ComunidadPilchix({ max }) {
           la gente antes de comprar. Reseñas reales, sin filtros.
         </p>
 
-        <div className="comu__grid">
-          {opiniones.map((op) => (
-            <article className="op" key={op.nombre}>
+        <div className={`comu__grid ${gridVisible ? "is-visible" : ""}`} ref={gridRef}>
+          {opiniones.map((op, i) => (
+            <article className="op" key={op.nombre} style={{ "--lp-i": i }}>
               <div className="op__head">
                 <span className="op__avatar">{op.inicial}</span>
                 <div className="op__quien">
