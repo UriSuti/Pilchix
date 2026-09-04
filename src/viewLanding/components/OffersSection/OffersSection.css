@@ -4,42 +4,111 @@
   gap: 18px;
 }
 
-/* variante con ofertas reales: slider horizontal arrastrable en vez de grid fijo */
-.offers--slider {
+/* variante con ofertas reales: carrusel controlado por flechas y puntitos
+   (una prenda a la vez, sin arrastre libre) */
+.offers-carousel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  transition: opacity 0.6s var(--lp-ease);
+}
+.offers-carousel.is-visible {
+  opacity: 1;
+}
+
+.offers-viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--lp-radius);
+}
+
+.offers-track {
+  display: flex;
+  padding: 6px 0;
+  transition: transform 0.45s var(--lp-ease);
+}
+
+/* cada página del selector muestra hasta 3 prendas en fila */
+.offers-page {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
   display: flex;
   gap: 18px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  cursor: grab;
-  padding-bottom: 4px;
-  margin-bottom: -4px;
-  scrollbar-width: none;
-  user-select: none;
 }
-.offers--slider::-webkit-scrollbar {
-  display: none;
+.offers-page .offer {
+  flex: 1 1 0;
+  min-width: 0;
 }
-.offers--slider.is-dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
+.offers-page .offer img {
+  pointer-events: none;
 }
-.offers--slider .offer {
-  flex: 0 0 clamp(280px, 36vw, 440px);
-  scroll-snap-align: start;
-  cursor: grab;
-  -webkit-user-drag: none;
-  user-select: none;
+
+@media (max-width: 760px) {
+  .offers-page {
+    gap: 12px;
+  }
+  .offers-page .offer {
+    min-height: 220px;
+  }
+  .offers-page .offer__body {
+    padding: 16px;
+  }
 }
-.offers--slider.is-dragging .offer {
-  cursor: grabbing;
+
+.offers-nav {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--lp-navy);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s var(--lp-ease), box-shadow 0.2s var(--lp-ease);
 }
-.offers--slider .offer img {
-  -webkit-user-drag: none;
-  user-select: none;
-  pointer-events: none; /* el drag lo maneja el .offer entero, la img no debe interceptar el puntero */
+.offers-nav:hover {
+  transform: scale(1.08);
+  box-shadow: var(--lp-shadow-sm);
+}
+.offers-nav:active {
+  transform: scale(0.96);
+}
+
+.offers-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.offers-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--lp-navy);
+  opacity: 0.25;
+  cursor: pointer;
+  transition: opacity 0.2s var(--lp-ease), transform 0.2s var(--lp-ease);
+}
+.offers-dot:hover {
+  opacity: 0.55;
+}
+.offers-dot.is-active {
+  opacity: 1;
+  transform: scale(1.25);
+}
+
+@media (max-width: 760px) {
+  .offers-nav {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 .offer {
@@ -60,7 +129,8 @@
 .offer:hover {
   transform: translateY(-5px);
 }
-.offers.is-visible .offer {
+.offers.is-visible .offer,
+.offers-carousel.is-visible .offer {
   opacity: 1;
 }
 

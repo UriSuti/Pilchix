@@ -4,10 +4,11 @@
   padding-top: 22px;
 }
 
-/* la barra de la percha */
+/* la barra de la percha: alineada con el agujero del gancho (ver .sh-hanger__icon)
+   para que parezca que el tubo atraviesa la percha, en vez de flotar arriba */
 .showroom__rail {
   position: absolute;
-  top: 0;
+  top: 22px;
   left: 0;
   right: 0;
   height: 4px;
@@ -21,7 +22,7 @@
   align-items: flex-start;
   gap: 18px;
   width: max-content;
-  padding: 6px 24px 0;
+  padding: 0 24px 0;
   will-change: transform;
   cursor: grab;
   touch-action: pan-y;

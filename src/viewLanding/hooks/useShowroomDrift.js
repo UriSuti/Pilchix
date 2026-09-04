@@ -32,6 +32,7 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
     const screenToOffset = dir === "izquierda" ? -1 : 1;
 
     let dragging = false;
+    let pending = false; // pointerdown ocurrió pero todavía no se confirmó como arrastre
     let dragPointerId = null;
     let dragStartX = 0;
     let dragStartOffset = 0;
@@ -40,6 +41,7 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
     let lastDragT = 0;
     let velocity = 0; // delta de offset por segundo, con signo
     let momentum = 0;
+    const DRAG_THRESHOLD = 6; // px: por debajo de esto se trata como click, no arrastre
 
     const measure = () => {
       half = track.scrollWidth / 2;
@@ -86,24 +88,40 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
     const onPointerDown = (e) => {
       if (e.button !== undefined && e.button !== 0) return; // solo click primario
       if (e.target.closest(".sh-card__fav")) return; // no robarle el gesto al botón de favorito
-      dragging = true;
+      // no capturamos el puntero todavía: si lo hiciéramos acá, hasta un
+      // simple click quedaría "retargeteado" al track y nunca llegaría al
+      // <Link> de la tarjeta (el navegador no dispara su acción por defecto)
+      pending = true;
       dragDistance = 0;
-      momentum = 0;
-      boost = 0;
       dragPointerId = e.pointerId;
       dragStartX = e.clientX;
-      dragStartOffset = offset;
       lastDragX = e.clientX;
       lastDragT = performance.now();
       velocity = 0;
-      track.setPointerCapture?.(dragPointerId);
-      track.classList.add("is-dragging");
     };
 
     const onPointerMove = (e) => {
-      if (!dragging || e.pointerId !== dragPointerId) return;
+      if (e.pointerId !== dragPointerId || (!pending && !dragging)) return;
       const dxScreen = e.clientX - dragStartX;
       dragDistance = Math.max(dragDistance, Math.abs(dxScreen));
+
+      if (pending) {
+        if (dragDistance <= DRAG_THRESHOLD) return; // todavía puede ser un click
+        // se confirma el arrastre recién ahora: reiniciamos el origen en la
+        // posición actual para no pegar un salto al cruzar el umbral
+        pending = false;
+        dragging = true;
+        momentum = 0;
+        boost = 0;
+        dragStartX = e.clientX;
+        dragStartOffset = offset;
+        lastDragX = e.clientX;
+        lastDragT = performance.now();
+        track.setPointerCapture?.(dragPointerId);
+        track.classList.add("is-dragging");
+        return;
+      }
+
       offset = dragStartOffset + screenToOffset * dxScreen;
       wrap();
 
@@ -117,17 +135,20 @@ export function useShowroomDrift({ direccion = "izquierda", cantidad = 0 } = {})
     };
 
     const endDrag = (e) => {
-      if (!dragging || (e && e.pointerId !== dragPointerId)) return;
-      dragging = false;
-      track.classList.remove("is-dragging");
-      track.releasePointerCapture?.(dragPointerId);
-      momentum = Math.max(Math.min(velocity, 2200), -2200);
+      if (e && e.pointerId !== dragPointerId) return;
+      if (dragging) {
+        dragging = false;
+        track.classList.remove("is-dragging");
+        track.releasePointerCapture?.(dragPointerId);
+        momentum = Math.max(Math.min(velocity, 2200), -2200);
+      }
+      pending = false;
     };
 
     // si se arrastró más que unos px, se suprime el click que dispararía la
     // navegación al producto justo debajo del puntero
     const onClickCapture = (e) => {
-      if (dragDistance > 6) {
+      if (dragDistance > DRAG_THRESHOLD) {
         e.preventDefault();
         e.stopPropagation();
       }
