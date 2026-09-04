@@ -65,7 +65,7 @@ export const formatProductosPopulares = (productosData = []) =>
       categoria: producto.descripcion?.slice(0, 12) ?? "11km",
     }))
     .sort((a, b) => b.visualizaciones - a.visualizaciones)
-    .slice(0, 8);
+    .slice(0, 24);
 
 export const formatDescuentos = (descuentosData = []) =>
   descuentosData.map((descuento) => ({

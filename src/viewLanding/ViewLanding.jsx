@@ -19,7 +19,7 @@ function ViewLanding({ id_usuario, idUsuario: idUsuarioProp, local, setLocal }) 
 
   const { landingData, loading, error: dataError } = useLandingData(idUsuario);
 
-  const recomendaciones = landingData.productosPopulares.slice(0, 8);
+  const recomendaciones = landingData.productosPopulares.slice(0, 24);
 
   // si se llega con un hash (ej. #recomendados o #locales), scrollea ahí al cargar
   useEffect(() => {
