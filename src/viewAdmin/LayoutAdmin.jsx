@@ -9,6 +9,7 @@ const NAV = [
   { to: "/admin/looks", label: "Shop the Look" },
   { to: "/admin/metricas", label: "Métricas" },
   { to: "/admin/configuracion", label: "Configuración" },
+  { to: "/admin/categorias", label: "Categorias" },
 ];
 
 function LayoutAdmin() {

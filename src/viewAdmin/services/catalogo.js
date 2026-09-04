@@ -270,3 +270,14 @@ export async function borrarImagen(idImagen) {
     return { error: err.message || "No se pudo borrar la imagen" };
   }
 }
+
+export async function getCategoriasActivas() {
+  try {
+    const data = await apiFetch("/categorias-marca", { token: token() });
+    // filtramos las globales dejando solo las activas de la marca
+    const activas = new Set(data.activas ?? []);
+    return { data: (data.globales ?? []).filter((c) => activas.has(c.id_categoria)), error: null };
+  } catch (err) {
+    return { data: null, error: err.message };
+  }
+}

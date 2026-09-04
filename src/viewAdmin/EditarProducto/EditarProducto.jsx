@@ -5,7 +5,7 @@ import {
   getCategorias, getEtiquetas, getProductoPorId, actualizarProducto,
   actualizarCategoriasProducto, actualizarSubcategoriasProducto, actualizarEtiquetasProducto,
   subirImagenesProducto, borrarImagen, borrarProducto, marcarPortada, actualizarColorImagen,
-  getDescuentoProducto, setDescuentoProducto, quitarDescuentoProducto,
+  getDescuentoProducto, setDescuentoProducto, quitarDescuentoProducto, getCategoriasActivas,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import CategoriasSubcategoriasPicker from "../components/CategoriasSubcategoriasPicker/CategoriasSubcategoriasPicker";
@@ -48,7 +48,7 @@ function EditarProducto() {
   useEffect(() => {
     async function cargar() {
       const [{ data: cats }, { data: etis }, { data: prod, error }, { data: desc }] = await Promise.all([
-        getCategorias(),
+        getCategoriasActivas(),
         getEtiquetas(),
         getProductoPorId(idProducto),
         getDescuentoProducto(idProducto),
