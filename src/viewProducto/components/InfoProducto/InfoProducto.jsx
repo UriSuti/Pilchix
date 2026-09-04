@@ -8,6 +8,7 @@ import { agregarAlCarrito } from '../../../viewCarrito/services/cart'
 import SelectorColor from '../SelectorColor/SelectorColor.jsx'
 import SelectorTalle from '../SelectorTalle/SelectorTalle.jsx'
 import BotonFavorito from '../../../viewLocal/components/BotonFavorito/BotonFavorito.jsx'
+import ProbadorVirtualModal from '../ProbadorVirtualModal/ProbadorVirtualModal.jsx'
 
 function formatearPrecio(valor) {
   if (valor == null) return ''
@@ -62,6 +63,7 @@ function Acordeon({ items }) {
 
 function InfoProducto({ producto, loading, marca, selectedColor, selectedTalle, onColorChange, onTalleChange }) {
   const [agregando, setAgregando] = useState(false)
+  const [mostrarProbador, setMostrarProbador] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { estaLogueado, idUsuario } = useAuth()
@@ -109,6 +111,15 @@ function InfoProducto({ producto, loading, marca, selectedColor, selectedTalle, 
     }
   }
 
+  const handleProbadorVirtual = () => {
+    if (!estaLogueado) {
+      mostrarToast('Iniciá sesión para usar el probador virtual', 'info')
+      navigate('/login', { state: { from: location.pathname } })
+      return
+    }
+    setMostrarProbador(true)
+  }
+
   return (
     <section className="ipinfo">
       {marca?.nombre && (
@@ -147,6 +158,14 @@ function InfoProducto({ producto, loading, marca, selectedColor, selectedTalle, 
           <BotonFavorito idProducto={producto.id_producto} />
         </span>
       </div>
+
+      <button type="button" className="ipinfo__probador" onClick={handleProbadorVirtual}>
+        👗 Probador virtual: mirá cómo te queda
+      </button>
+
+      {mostrarProbador && (
+        <ProbadorVirtualModal producto={producto} onClose={() => setMostrarProbador(false)} />
+      )}
 
       <div className="ipinfo__trust">
         <div><IconStore />Retiro en el local</div>

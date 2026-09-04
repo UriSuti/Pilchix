@@ -115,6 +115,27 @@
   height: 22px;
 }
 
+/* probador virtual */
+.ipinfo__probador {
+  width: 100%;
+  margin-top: 12px;
+  border: 1.5px solid #e7ebee;
+  border-radius: 14px;
+  background: #fff;
+  color: #123d59;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.94rem;
+  letter-spacing: 0.02em;
+  padding: 15px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.ipinfo__probador:hover {
+  border-color: #123d59;
+  background: #f3f5f6;
+}
+
 /* confianza */
 .ipinfo__trust {
   display: grid;

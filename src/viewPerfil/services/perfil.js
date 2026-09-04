@@ -52,3 +52,8 @@ export function quitarFavorito(idUsuario, idProducto) {
 export function getComprasUsuario() {
   return comoQuery(apiFetch("/compras", { token: token() }));
 }
+
+/* ---------- PROBADOR VIRTUAL ---------- */
+export function getPruebasVirtuales() {
+  return comoQuery(apiFetch("/probador", { token: token() }));
+}

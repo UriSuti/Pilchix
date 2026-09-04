@@ -1,0 +1,231 @@
+.probador-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+  animation: probador-backdrop-in 0.2s ease;
+}
+
+@keyframes probador-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.probador-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: probador-modal-in 0.25s ease;
+}
+
+@keyframes probador-modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.probador-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  border-radius: 16px 16px 0 0;
+}
+
+.probador-modal__header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.probador-modal__close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.probador-modal__close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.probador-modal__body {
+  padding: 24px;
+  flex: 1;
+}
+
+.probador-modal__subtitulo {
+  margin: 0 0 20px;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+/* subir foto */
+.probador-upload__zona {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 20px;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.probador-upload__zona:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.probador-upload__icono {
+  font-size: 2rem;
+}
+
+.probador-upload__preview {
+  display: block;
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f3f4f6;
+}
+
+.probador-upload__acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.probador-upload__acciones .probador-btn-primary,
+.probador-upload__acciones .probador-btn-secondary {
+  flex: 1;
+  text-align: center;
+}
+
+/* loading */
+.probador-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.probador-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: probador-spin 0.8s linear infinite;
+}
+
+@keyframes probador-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* resultado */
+.probador-resultado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.probador-resultado img {
+  display: block;
+  width: 100%;
+  max-height: 460px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f3f4f6;
+}
+
+/* error */
+.probador-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* botones */
+.probador-btn-primary {
+  padding: 12px 28px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.probador-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.probador-btn-secondary {
+  display: inline-block;
+  padding: 10px 24px;
+  background: transparent;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.probador-btn-secondary:hover {
+  background: #f9fafb;
+}
+
+@media (max-width: 640px) {
+  .probador-modal {
+    max-height: 95vh;
+    border-radius: 12px 12px 0 0;
+    align-self: flex-end;
+    margin: 0;
+  }
+
+  .probador-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+}

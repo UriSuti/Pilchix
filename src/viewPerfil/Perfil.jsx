@@ -12,6 +12,7 @@ import EditarDatos from "./components/EditarDatos/EditarDatos.jsx";
 import Favoritos from "./components/Favoritos/Favoritos.jsx";
 import Suscripciones from "./components/Suscripciones/Suscripciones.jsx";
 import MisCompras from "./components/MisCompras/MisCompras.jsx";
+import MisPruebas from "./components/MisPruebas/MisPruebas.jsx";
 
 const IconUser = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -30,6 +31,12 @@ const IconStore = () => (
     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
     <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
     <path d="M2 7h20" />
+  </svg>
+);
+const IconProbador = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z" />
+    <circle cx="12" cy="13" r="4" />
   </svg>
 );
 const IconLogout = () => (
@@ -51,6 +58,7 @@ const TABS = [
   { id: "favoritos", label: "Favoritos", Icon: IconHeart },
   { id: "suscripciones", label: "Suscripciones", Icon: IconStore },
   { id: "miscompras", label: "Mis Compras", Icon: IconCompra },
+  { id: "probador", label: "Probador", Icon: IconProbador },
 ];
 
 function Perfil() {
@@ -135,6 +143,7 @@ function Perfil() {
                 {tabActiva === "favoritos" && <Favoritos />}
                 {tabActiva === "suscripciones" && <Suscripciones />}
                 {tabActiva === "miscompras" && <MisCompras />}
+                {tabActiva === "probador" && <MisPruebas />}
             </main>
         </div>
 
