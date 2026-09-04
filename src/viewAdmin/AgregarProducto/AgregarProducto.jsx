@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
   getCategorias, getEtiquetas, crearProducto, setCategoriasProducto, setSubcategoriasProducto,
-  setEtiquetasProducto, subirImagenesProducto,
+  setEtiquetasProducto, subirImagenesProducto, getCategoriasActivas,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import CategoriasSubcategoriasPicker from "../components/CategoriasSubcategoriasPicker/CategoriasSubcategoriasPicker";
@@ -30,7 +30,7 @@ function AgregarProducto() {
   const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
-    getCategorias().then(({ data }) => setCategorias(data ?? []));
+    getCategoriasActivas().then(({ data }) => setCategorias(data ?? []));
     getEtiquetas().then(({ data }) => setEtiquetas(data ?? []));
   }, []);
 
