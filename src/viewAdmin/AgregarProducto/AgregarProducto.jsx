@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
-  getCategorias, getEtiquetas, crearProducto, setCategoriasProducto, setSubcategoriasProducto,
+  getCategorias, getEtiquetas, getProductoPorId, crearProducto, setCategoriasProducto, setSubcategoriasProducto,
   setEtiquetasProducto, subirImagenesProducto, getCategoriasActivas,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
@@ -10,6 +10,7 @@ import CategoriasSubcategoriasPicker from "../components/CategoriasSubcategorias
 import EtiquetasPicker from "../components/EtiquetasPicker/EtiquetasPicker";
 import { obtenerColorPromedio } from "../../utils/colorImagen";
 import "./AgregarProducto.css";
+import { tallesSugeridos, colorMasCercano, generarDescripcion } from "../helpers/autocarga";
 
 function AgregarProducto() {
   const navigate = useNavigate();
@@ -29,10 +30,46 @@ function AgregarProducto() {
   const [imagenes, setImagenes] = useState([]);      // { file, preview, color, esPortada }[]
   const [guardando, setGuardando] = useState(false);
 
+  const [searchParams] = useSearchParams();
+  const idDuplicar = searchParams.get("duplicar");
+
+  useEffect(() => {
+    if (!idDuplicar) return;
+    (async () => {
+      const { data, error } = await getProductoPorId(idDuplicar);
+      if (error || !data) { mostrarToast("No se pudo cargar el producto a duplicar", "error"); return; }
+      setForm({
+        nombre: `${data.nombre} (copia)`,
+        descripcion: data.descripcion ?? "",
+        precio: data.precio ?? "",
+        stock: data.stock ?? "",
+        estado: data.estado ?? true,
+      });
+      setTalles(data.guia_talles ?? []);
+      setColores(data.colores ?? []);
+      setCatSeleccionadas((data.Producto_Categoria ?? []).map((c) => c.id_categoria));
+      setSubSeleccionadas((data.Producto_Subcategoria ?? []).map((s) => s.id_subcategoria));
+      setEtiSeleccionadas((data.Producto_Etiqueta ?? []).map((e) => e.id_etiqueta));
+      mostrarToast("Producto duplicado: cargá las imágenes", "info");
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idDuplicar]);
+
   useEffect(() => {
     getCategoriasActivas().then(({ data }) => setCategorias(data ?? []));
     getEtiquetas().then(({ data }) => setEtiquetas(data ?? []));
   }, []);
+
+  useEffect(() => {
+    if (idDuplicar) return;      // si duplicás, respetamos los talles copiados
+    if (talles.length) return;   // no pisa lo que ya cargaste a mano
+    const nombres = catSeleccionadas
+      .map((id) => categorias.find((c) => c.id_categoria === id)?.nombre)
+      .filter(Boolean);
+    const sugeridos = tallesSugeridos(nombres);
+    if (sugeridos) setTalles(sugeridos);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catSeleccionadas, categorias]);
 
   const setCampo = (campo) => (e) =>
     setForm({ ...form, [campo]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
@@ -54,20 +91,53 @@ function AgregarProducto() {
   const handleImagenes = async (e) => {
     const files = Array.from(e.target.files);
     e.target.value = "";
-    setImagenes((prev) => [
-      ...prev,
-      ...files.map((file) => ({ file, preview: URL.createObjectURL(file), color: "", esPortada: false })),
-    ]);
-    // sugiere un color por defecto tomado de la primera foto, si todavÃ­a no hay colores cargados
-    if (files[0] && colores.length === 0) {
-      const colorSugerido = await obtenerColorPromedio(files[0]);
-      if (colorSugerido) {
-        setColorTemp(colorSugerido);
-        setColores((prev) => (prev.length === 0 ? [colorSugerido] : prev));
+    if (!files.length) return;
+
+    let paleta = [...colores];
+    const nuevas = [];
+
+    for (const file of files) {
+      const promedio = await obtenerColorPromedio(file);
+      let color = "";
+      if (promedio) {
+        const cercano = colorMasCercano(promedio, paleta);
+        color = cercano ?? promedio;
+        if (!cercano) paleta = [...paleta, promedio];  // color nuevo → a la paleta
       }
+      nuevas.push({ file, preview: URL.createObjectURL(file), color, esPortada: false });
     }
+
+    if (paleta.length !== colores.length) setColores(paleta);
+
+    setImagenes((prev) => {
+      const todas = [...prev, ...nuevas];
+      if (todas.length && !todas.some((img) => img.esPortada)) {
+        todas[0] = { ...todas[0], esPortada: true };   // primera = portada
+      }
+      return todas;
+    });
   };
-  const quitarImagen = (i) => setImagenes((prev) => prev.filter((_, idx) => idx !== i));
+  const quitarImagen = (i) =>
+    setImagenes((prev) => {
+      const restantes = prev.filter((_, idx) => idx !== i);
+      if (restantes.length && !restantes.some((img) => img.esPortada)) {
+        restantes[0] = { ...restantes[0], esPortada: true };  // reasigna si borraste la portada
+      }
+      return restantes;
+    });
+  const autoDescripcion = () => {
+    if (!form.nombre.trim()) { mostrarToast("Poné primero el nombre", "error"); return; }
+    const nombresCat = catSeleccionadas
+      .map((id) => categorias.find((c) => c.id_categoria === id)?.nombre).filter(Boolean);
+    const nombresEti = etiSeleccionadas
+      .map((id) => etiquetas.find((e) => e.id_etiqueta === id)?.nombre).filter(Boolean);
+    setForm((f) => ({
+      ...f,
+      descripcion: generarDescripcion({
+        nombre: f.nombre.trim(), categorias: nombresCat, etiquetas: nombresEti, talles, colores,
+      }),
+    }));
+  };
   const setColorImagen = (i, color) =>
     setImagenes((prev) => prev.map((img, idx) => (idx === i ? { ...img, color } : img)));
   const marcarPortadaImagen = (i) =>
@@ -149,8 +219,13 @@ function AgregarProducto() {
             <h2>Información general</h2>
             <label className="ap__field"><span>Nombre</span>
               <input value={form.nombre} onChange={setCampo("nombre")} required /></label>
-            <label className="ap__field"><span>Descripcion</span>
-              <textarea rows={4} value={form.descripcion} onChange={setCampo("descripcion")} /></label>
+            <label className="ap__field">
+              <span className="ap__field-head">
+                Descripción
+                <button type="button" className="ap__link-btn" onClick={autoDescripcion}>Generar</button>
+              </span>
+              <textarea rows={4} value={form.descripcion} onChange={setCampo("descripcion")} />
+            </label>
             <div className="ap__row">
               <label className="ap__field"><span>Precio</span>
                 <input type="number" min="0" value={form.precio} onChange={setCampo("precio")} /></label>

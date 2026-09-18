@@ -79,6 +79,13 @@ function Catalogo() {
                 <button onClick={() => navigate(`/admin/catalogo/editar/${p.id_producto}`)}>
                   Editar
                 </button>
+                <button
+                  className="prod-card__duplicar"
+                  onClick={() => navigate(`/admin/catalogo/nuevo?duplicar=${p.id_producto}`)}
+                  title="Crear un producto nuevo con estos mismos datos"
+                >
+                  Duplicar
+                </button>
               </div>
             </article>
             );

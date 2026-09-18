@@ -60,3 +60,16 @@
   padding: 8px; font-size: 13px; cursor: pointer; color: #1a1a1a;
 }
 .prod-card__acciones button:hover { background: #e8eaed; }
+
+.prod-card__acciones { display: flex; gap: 8px; }
+.prod-card__acciones button { flex: 1; }
+
+.prod-card__duplicar {
+  background: transparent;
+  border: 1px solid #d5d9dd;
+  color: #5f6368;
+}
+.prod-card__duplicar:hover {
+  border-color: #123d59;
+  color: #123d59;
+}
