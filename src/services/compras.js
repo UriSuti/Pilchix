@@ -9,3 +9,9 @@ export function confirmarCompra({ idPagoMp, token }) {
     token,
   });
 }
+
+// TEMPORAL: registra la compra con el carrito actual al hacer click en pagar,
+// antes del redirect a Mercado Pago (el backend no verifica el pago).
+export function registrarCompraAlPagar({ token }) {
+  return apiFetch("/compras/registrar-al-pagar", { method: "POST", token });
+}

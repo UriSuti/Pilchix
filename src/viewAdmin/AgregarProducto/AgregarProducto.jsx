@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
-  getCategorias, getEtiquetas, getProductoPorId, crearProducto, setCategoriasProducto, setSubcategoriasProducto,
-  setEtiquetasProducto, subirImagenesProducto, getCategoriasActivas,
+  getProductoPorId, crearProducto, setCategoriasProducto, setSubcategoriasProducto,
+  subirImagenesProducto, getModuloCategorias,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import CategoriasSubcategoriasPicker from "../components/CategoriasSubcategoriasPicker/CategoriasSubcategoriasPicker";
-import EtiquetasPicker from "../components/EtiquetasPicker/EtiquetasPicker";
 import { obtenerColorPromedio } from "../../utils/colorImagen";
 import "./AgregarProducto.css";
 import { tallesSugeridos, colorMasCercano, generarDescripcion } from "../helpers/autocarga";
@@ -22,11 +21,10 @@ function AgregarProducto() {
   const [talles, setTalles] = useState([]);
   const [colores, setColores] = useState([]);
   const [colorTemp, setColorTemp] = useState("#123d59");
-  const [categorias, setCategorias] = useState([]);
+  const [modulo, setModulo] = useState({ globales: [], activas: [], subcategorias: [] });
+  const categorias = modulo.globales;
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
   const [subSeleccionadas, setSubSeleccionadas] = useState([]);
-  const [etiquetas, setEtiquetas] = useState([]);
-  const [etiSeleccionadas, setEtiSeleccionadas] = useState([]);
   const [imagenes, setImagenes] = useState([]);      // { file, preview, color, esPortada }[]
   const [guardando, setGuardando] = useState(false);
 
@@ -49,15 +47,17 @@ function AgregarProducto() {
       setColores(data.colores ?? []);
       setCatSeleccionadas((data.Producto_Categoria ?? []).map((c) => c.id_categoria));
       setSubSeleccionadas((data.Producto_Subcategoria ?? []).map((s) => s.id_subcategoria));
-      setEtiSeleccionadas((data.Producto_Etiqueta ?? []).map((e) => e.id_etiqueta));
       mostrarToast("Producto duplicado: cargá las imágenes", "info");
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idDuplicar]);
 
   useEffect(() => {
-    getCategoriasActivas().then(({ data }) => setCategorias(data ?? []));
-    getEtiquetas().then(({ data }) => setEtiquetas(data ?? []));
+    getModuloCategorias().then(({ data, error }) => {
+      if (error) { mostrarToast(error, "error"); return; }
+      setModulo(data);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -84,9 +84,6 @@ function AgregarProducto() {
 
   const toggleSubcategoria = (id) =>
     setSubSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-
-  const toggleEtiqueta = (id) =>
-    setEtiSeleccionadas((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
   const handleImagenes = async (e) => {
     const files = Array.from(e.target.files);
@@ -129,12 +126,10 @@ function AgregarProducto() {
     if (!form.nombre.trim()) { mostrarToast("Poné primero el nombre", "error"); return; }
     const nombresCat = catSeleccionadas
       .map((id) => categorias.find((c) => c.id_categoria === id)?.nombre).filter(Boolean);
-    const nombresEti = etiSeleccionadas
-      .map((id) => etiquetas.find((e) => e.id_etiqueta === id)?.nombre).filter(Boolean);
     setForm((f) => ({
       ...f,
       descripcion: generarDescripcion({
-        nombre: f.nombre.trim(), categorias: nombresCat, etiquetas: nombresEti, talles, colores,
+        nombre: f.nombre.trim(), categorias: nombresCat, talles, colores,
       }),
     }));
   };
@@ -173,11 +168,6 @@ function AgregarProducto() {
         if (errorSub) mostrarToast(errorSub, "error");
       }
 
-      // 2.1) etiquetas (ocasion/estilo: noche, boliche, elegante, etc.)
-      if (etiSeleccionadas.length) {
-        const { error: errorEti } = await setEtiquetasProducto(idProducto, etiSeleccionadas);
-        if (errorEti) mostrarToast(errorEti, "error");
-      }
 
       // 3) imagenes: el backend las sube a Storage y las guarda en la tabla Imagen
       if (imagenes.length) {
@@ -260,7 +250,7 @@ function AgregarProducto() {
           </div>
         </section>
 
-        {/* columna derecha: imagenes, categori­as, etiquetas, estado */}
+        {/* columna derecha: imagenes, categori­as, estado */}
         <section className="ap__col">
           <div className="ap__card">
             <h2>Imagenes</h2>
@@ -310,7 +300,8 @@ function AgregarProducto() {
           <div className="ap__card">
             <h2>Categorí­as y subcategorías</h2>
             <CategoriasSubcategoriasPicker
-              categorias={categorias}
+              modulo={modulo}
+              onModuloChange={setModulo}
               catSeleccionadas={catSeleccionadas}
               onToggleCategoria={toggleCategoria}
               subSeleccionadas={subSeleccionadas}
@@ -319,20 +310,6 @@ function AgregarProducto() {
             />
           </div>
 
-          <div className="ap__card">
-            <h2>Etiquetas</h2>
-            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
-              Ocasión o estilo de la prenda (noche, boliche, elegante...). Ayuda a que la
-              recomendamos con más precisión en búsquedas y en el asistente de outfits.
-            </p>
-            <EtiquetasPicker
-              etiquetas={etiquetas}
-              seleccionadas={etiSeleccionadas}
-              onToggle={toggleEtiqueta}
-              onEtiquetaCreada={(e) => setEtiquetas((prev) => [...prev, e])}
-              onError={(msg) => mostrarToast(msg, "error")}
-            />
-          </div>
 
           <div className="ap__card">
             <h2>Estado</h2>

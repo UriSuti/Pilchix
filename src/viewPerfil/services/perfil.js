@@ -57,3 +57,6 @@ export function getComprasUsuario() {
 export function getPruebasVirtuales() {
   return comoQuery(apiFetch("/probador", { token: token() }));
 }
+export function borrarPruebaVirtual(idPrueba) {
+  return comoQuery(apiFetch(`/probador/pruebas/${idPrueba}`, { method: "DELETE", token: token() }));
+}

@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid,
 } from "recharts";
 import { useMarcaAuth } from "../../context/MarcaAuthContext";
 import { useMetricas } from "../hooks/useMetricas";
+import { useVentas } from "../hooks/useVentas";
 import { usePaginaCargando } from "../../context/NavLoadingContext";
 import "./Metricas.css";
 
@@ -29,10 +31,15 @@ function Metricas() {
   const { idMarca } = useMarcaAuth();
   const [dias, setDias] = useState(30);
   const [metrica, setMetrica] = useState("ventas");
-  const { serie, categorias, tabla, cargando } = useMetricas(idMarca, dias);
+  const { serie, categorias, tabla, cargando: cargandoMetricas } = useMetricas(idMarca, dias);
+  const { resumen, error: errorVentas, cargando: cargandoVentas } = useVentas();
+  const cargando = cargandoMetricas || cargandoVentas;
 
   usePaginaCargando(cargando);
   if (cargando) return null;
+
+  const totalVendido = resumen.cobrado + resumen.porCobrar;
+  const pctCobrado = totalVendido > 0 ? (resumen.cobrado / totalVendido) * 100 : 0;
 
   return (
     <div className="met">
@@ -66,6 +73,40 @@ function Metricas() {
           </div>
         </div>
       </header>
+
+      {/* Cashflow: no depende del rango, es el acumulado de todas las ventas */}
+      <div className="met__card">
+        <div className="met__card-head">
+          <h2>Cashflow</h2>
+          <Link to="/admin/ventas" className="met__link">Ver ventas →</Link>
+        </div>
+        {errorVentas ? (
+          <p className="met__vacio">No se pudo cargar el cashflow: {errorVentas}</p>
+        ) : (
+          <>
+            <div className="met__cash">
+              <div className="met__cash-item">
+                <span>Cobrado</span>
+                <strong className="met__cash-cobrado">{formatARS(resumen.cobrado)}</strong>
+              </div>
+              <div className="met__cash-item">
+                <span>Por cobrar</span>
+                <strong className="met__cash-pendiente">{formatARS(resumen.porCobrar)}</strong>
+              </div>
+              <div className="met__cash-item">
+                <span>Total vendido</span>
+                <strong>{formatARS(totalVendido)}</strong>
+                <small>{formatNum(resumen.cantidadVentas)} {resumen.cantidadVentas === 1 ? "venta" : "ventas"}</small>
+              </div>
+            </div>
+            {totalVendido > 0 && (
+              <div className="met__cash-barra" title={`${pctCobrado.toFixed(0)}% cobrado`}>
+                <div style={{ width: `${pctCobrado}%` }} />
+              </div>
+            )}
+          </>
+        )}
+      </div>
 
       {/* Tendencia */}
       <div className="met__card">

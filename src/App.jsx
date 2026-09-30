@@ -24,6 +24,7 @@ import Looks from './viewAdmin/Looks/Looks.jsx'
 import SoloInvitados from './components/SoloInvitados.jsx'
 import SoloInvitadosMarca from './components/SoloInvitadosMarca.jsx'
 import Categorias from './viewAdmin/Categorias/Categorias.jsx'
+import Ventas from './viewAdmin/Ventas/Ventas.jsx'
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path="catalogo/nuevo" element={<AgregarProducto />} />
         <Route path="catalogo/editar/:idProducto" element={<EditarProducto />} />
         <Route path="looks" element={<Looks />} />
+        <Route path="ventas" element={<Ventas />} />
         <Route path="metricas" element={<Metricas />} />
         <Route path="configuracion" element={<Configuracion />} />
         <Route path="categorias" element={<Categorias />} />

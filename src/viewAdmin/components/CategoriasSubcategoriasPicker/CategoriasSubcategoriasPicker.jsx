@@ -1,57 +1,63 @@
-import { useEffect, useState } from "react";
-import { getSubcategorias, crearSubcategoria } from "../../services/catalogo";
+import { categoriasApi } from "../../services/categorias";
+import { getModuloCategorias } from "../../services/catalogo";
 import BuscablePicker from "../BuscablePicker/BuscablePicker";
 
 // selector de categorías (con buscador, muestra máximo 5 a la vez) + subcategorías
-// por cada categoría elegida, con opción de crear subcategorías nuevas al vuelo.
+// por cada categoría elegida. Las categorías son globales (comunes a todas las marcas);
+// las subcategorías son propias de la marca y se pueden crear al vuelo.
+// `modulo` es { globales, activas, subcategorias } (ver getModuloCategorias).
 function CategoriasSubcategoriasPicker({
-  categorias,
+  modulo,
+  onModuloChange,
   catSeleccionadas,
   onToggleCategoria,
   subSeleccionadas,
   onToggleSubcategoria,
   onError,
 }) {
-  const [subcategoriasPorCategoria, setSubcategoriasPorCategoria] = useState({});
+  const { globales, activas, subcategorias } = modulo;
+  const subsDe = (idCategoria) => subcategorias.filter((s) => s.id_categoria === idCategoria); // JEJE ME ENCONTRASTE XD
 
-  // trae las subcategorías de cada categoría seleccionada que todavía no se pidieron
-  useEffect(() => {
-    catSeleccionadas.forEach((idCategoria) => {
-      if (subcategoriasPorCategoria[idCategoria] !== undefined) return;
-      getSubcategorias(idCategoria).then(({ data, error }) => {
-        if (error) { onError?.(error); return; }
-        setSubcategoriasPorCategoria((prev) => ({ ...prev, [idCategoria]: data ?? [] }));
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catSeleccionadas]);
-
-  const handleToggleCategoria = (idCategoria) => {
+  const handleToggleCategoria = async (idCategoria) => {
     const estabaSeleccionada = catSeleccionadas.includes(idCategoria);
     if (estabaSeleccionada) {
       // si se saca la categoría, se sacan también las subcategorías que dependían de ella
-      const subsDeEstaCategoria = (subcategoriasPorCategoria[idCategoria] ?? []).map((s) => s.id_subcategoria);
-      subsDeEstaCategoria.forEach((idSub) => {
-        if (subSeleccionadas.includes(idSub)) onToggleSubcategoria(idSub);
+      subsDe(idCategoria).forEach(({ id_subcategoria }) => {
+        if (subSeleccionadas.includes(id_subcategoria)) onToggleSubcategoria(id_subcategoria);
       });
+    } else if (!activas.includes(idCategoria)) {
+      // usar una categoría global en un producto la activa para la marca
+      try {
+        await categoriasApi.activar(idCategoria);
+        onModuloChange({ ...modulo, activas: [...activas, idCategoria] });
+      } catch (err) {
+        onError?.(err.message);
+        return;
+      }
     }
     onToggleCategoria(idCategoria);
   };
 
   const handleCrearSubcategoria = (idCategoria) => async (nombre) => {
-    const { data, error } = await crearSubcategoria(nombre, idCategoria);
+    try {
+      await categoriasApi.crearSub(idCategoria, nombre);
+    } catch (err) {
+      return { data: null, error: err.message || "No se pudo crear la subcategoría" };
+    }
+    // recargamos el módulo para tener la subcategoría con su id
+    const { data, error } = await getModuloCategorias();
     if (error) return { data: null, error };
-    setSubcategoriasPorCategoria((prev) => ({
-      ...prev,
-      [idCategoria]: [...(prev[idCategoria] ?? []), data],
-    }));
-    return { data, error: null };
+    onModuloChange(data);
+    const creada = data.subcategorias.find(
+      (s) => s.id_categoria === idCategoria && s.nombre.trim().toLowerCase() === nombre.trim().toLowerCase()
+    );
+    return creada ? { data: creada, error: null } : { data: null, error: "No se encontró la subcategoría creada" };
   };
 
   return (
     <div className="ap__cats-block">
       <BuscablePicker
-        items={categorias}
+        items={globales}
         idKey="id_categoria"
         seleccionados={catSeleccionadas}
         onToggle={handleToggleCategoria}
@@ -63,20 +69,19 @@ function CategoriasSubcategoriasPicker({
       {catSeleccionadas.length > 0 && (
         <div className="ap__subcats">
           {catSeleccionadas.map((idCategoria) => {
-            const categoria = categorias.find((c) => c.id_categoria === idCategoria);
-            const subs = subcategoriasPorCategoria[idCategoria] ?? [];
+            const categoria = globales.find((c) => c.id_categoria === idCategoria);
             return (
               <div key={idCategoria} className="ap__subcat-group">
                 <h3>Subcategorías de {categoria?.nombre ?? "..."}</h3>
                 <BuscablePicker
-                  items={subs}
+                  items={subsDe(idCategoria)}
                   idKey="id_subcategoria"
                   seleccionados={subSeleccionadas}
                   onToggle={onToggleSubcategoria}
                   placeholder="Buscar subcategoría..."
-                  vacioTexto="Todavía no hay subcategorías para esta categoría."
+                  vacioTexto="Tu marca todavía no tiene subcategorías para esta categoría."
                   onCrear={handleCrearSubcategoria(idCategoria)}
-                  crearPlaceholder="Nueva subcategoría"
+                  crearPlaceholder="Nueva subcategoría de tu marca"
                   onError={onError}
                 />
               </div>

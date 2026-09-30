@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
 import {
-  getCategorias, getEtiquetas, getProductoPorId, actualizarProducto,
-  actualizarCategoriasProducto, actualizarSubcategoriasProducto, actualizarEtiquetasProducto,
+  getProductoPorId, actualizarProducto,
+  actualizarCategoriasProducto, actualizarSubcategoriasProducto,
   subirImagenesProducto, borrarImagen, borrarProducto, marcarPortada, actualizarColorImagen,
-  getDescuentoProducto, setDescuentoProducto, quitarDescuentoProducto, getCategoriasActivas,
+  getDescuentoProducto, setDescuentoProducto, quitarDescuentoProducto, getModuloCategorias,
 } from "../services/catalogo";
 import TallesPicker from "../components/TallesPicker/TallesPicker";
 import CategoriasSubcategoriasPicker from "../components/CategoriasSubcategoriasPicker/CategoriasSubcategoriasPicker";
-import EtiquetasPicker from "../components/EtiquetasPicker/EtiquetasPicker";
 import { obtenerColorPromedio } from "../../utils/colorImagen";
 import "../AgregarProducto/AgregarProducto.css";
 
@@ -28,11 +27,9 @@ function EditarProducto() {
   const [talles, setTalles] = useState([]);
   const [colores, setColores] = useState([]);
   const [colorTemp, setColorTemp] = useState("#123d59");
-  const [categorias, setCategorias] = useState([]);
+  const [modulo, setModulo] = useState({ globales: [], activas: [], subcategorias: [] });
   const [catSeleccionadas, setCatSeleccionadas] = useState([]);
   const [subSeleccionadas, setSubSeleccionadas] = useState([]);
-  const [etiquetas, setEtiquetas] = useState([]);
-  const [etiSeleccionadas, setEtiSeleccionadas] = useState([]);
   const [imagenesExistentes, setImagenesExistentes] = useState([]); // {id_imagen, imagen, color, es_portada}
   const [imagenesNuevas, setImagenesNuevas] = useState([]);          // { file, preview, color, esPortada }[]
   const [portada, setPortada] = useState(null);                     // { tipo: 'existente'|'nueva', ref }
@@ -43,18 +40,17 @@ function EditarProducto() {
   const [porcentajeOferta, setPorcentajeOferta] = useState(20);
   const [diasOferta, setDiasOferta] = useState(30);
   const [guardandoOferta, setGuardandoOferta] = useState(false);
+  const [guardandoCats, setGuardandoCats] = useState(false);
 
   // precarga
   useEffect(() => {
     async function cargar() {
-      const [{ data: cats }, { data: etis }, { data: prod, error }, { data: desc }] = await Promise.all([
-        getCategoriasActivas(),
-        getEtiquetas(),
+      const [{ data: mod }, { data: prod, error }, { data: desc }] = await Promise.all([
+        getModuloCategorias(),
         getProductoPorId(idProducto),
         getDescuentoProducto(idProducto),
       ]);
-      setCategorias(cats ?? []);
-      setEtiquetas(etis ?? []);
+      if (mod) setModulo(mod);
       if (error || !prod) { mostrarToast("No se encontró el producto", "error"); navigate("/admin/catalogo"); return; }
 
       setForm({
@@ -68,7 +64,6 @@ function EditarProducto() {
       setColores(prod.colores ?? []);
       setCatSeleccionadas((prod.Producto_Categoria ?? []).map((c) => c.id_categoria));
       setSubSeleccionadas((prod.Producto_Subcategoria ?? []).map((s) => s.id_subcategoria));
-      setEtiSeleccionadas((prod.Producto_Etiqueta ?? []).map((e) => e.id_etiqueta));
       const imgs = prod.Imagen ?? [];
       setImagenesExistentes(imgs);
       const portadaExistente = imgs.find((img) => img.es_portada);
@@ -89,9 +84,6 @@ function EditarProducto() {
 
   const toggleSubcategoria = (id) =>
     setSubSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
-
-  const toggleEtiqueta = (id) =>
-    setEtiSeleccionadas((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
   const handleImagenesNuevas = async (e) => {
     const files = Array.from(e.target.files);
@@ -177,8 +169,6 @@ function EditarProducto() {
       const { error: errorSub } = await actualizarSubcategoriasProducto(idProducto, subSeleccionadas);
       if (errorSub) mostrarToast(errorSub, "error");
 
-      const { error: errorEti } = await actualizarEtiquetasProducto(idProducto, etiSeleccionadas);
-      if (errorEti) mostrarToast(errorEti, "error");
 
       if (imagenesNuevas.length) {
         const { data: insertadas, error: errImg } = await subirImagenesProducto(
@@ -199,6 +189,18 @@ function EditarProducto() {
     } finally {
       setGuardando(false);
     }
+  };
+
+  // guarda solo categorías y subcategorías, sin tocar el resto del producto
+  const handleGuardarCategorias = async () => {
+    setGuardandoCats(true);
+    const { error: errorCat } = await actualizarCategoriasProducto(idProducto, catSeleccionadas);
+    const { error: errorSub } = errorCat
+      ? { error: null }
+      : await actualizarSubcategoriasProducto(idProducto, subSeleccionadas);
+    setGuardandoCats(false);
+    if (errorCat || errorSub) { mostrarToast(errorCat || errorSub, "error"); return; }
+    mostrarToast("Categorías guardadas", "exito");
   };
 
   const handleActivarOferta = async () => {
@@ -418,29 +420,21 @@ function EditarProducto() {
           <div className="ap__card">
             <h2>Categorías y subcategorías</h2>
             <CategoriasSubcategoriasPicker
-              categorias={categorias}
+              modulo={modulo}
+              onModuloChange={setModulo}
               catSeleccionadas={catSeleccionadas}
               onToggleCategoria={toggleCategoria}
               subSeleccionadas={subSeleccionadas}
               onToggleSubcategoria={toggleSubcategoria}
               onError={(msg) => mostrarToast(msg, "error")}
             />
+            <div className="ap__card-acciones">
+              <button type="button" className="ap__btn-pri" disabled={guardandoCats} onClick={handleGuardarCategorias}>
+                {guardandoCats ? "Guardando..." : "Guardar categorías"}
+              </button>
+            </div>
           </div>
 
-          <div className="ap__card">
-            <h2>Etiquetas</h2>
-            <p style={{ color: "#5f6368", fontSize: 12, margin: "-8px 0 12px" }}>
-              Ocasión o estilo de la prenda (noche, boliche, elegante...). Ayuda a que la
-              recomendamos con más precisión en búsquedas y en el asistente de outfits.
-            </p>
-            <EtiquetasPicker
-              etiquetas={etiquetas}
-              seleccionadas={etiSeleccionadas}
-              onToggle={toggleEtiqueta}
-              onEtiquetaCreada={(e) => setEtiquetas((prev) => [...prev, e])}
-              onError={(msg) => mostrarToast(msg, "error")}
-            />
-          </div>
 
           <div className="ap__card">
             <h2>Estado</h2>

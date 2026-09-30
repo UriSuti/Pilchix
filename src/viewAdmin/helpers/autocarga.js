@@ -48,16 +48,10 @@ export function colorMasCercano(hex, paleta, umbral = 60) {
 }
 
 /* ---------- DESCRIPCIÓN AUTOGENERADA ---------- */
-function listar(arr) {
-  if (arr.length === 1) return arr[0];
-  return arr.slice(0, -1).join(", ") + " y " + arr[arr.length - 1];
-}
-
-export function generarDescripcion({ nombre, categorias = [], etiquetas = [], talles = [], colores = [] }) {
+export function generarDescripcion({ nombre, categorias = [], talles = [], colores = [] }) {
   const partes = [];
   const cat = categorias[0];
   partes.push(cat ? `${nombre}: ${cat.toLowerCase()} de nuestra colección.` : `${nombre}, de nuestra colección.`);
-  if (etiquetas.length) partes.push(`Ideal para ${listar(etiquetas.map((e) => e.toLowerCase()))}.`);
   if (talles.length) {
     partes.push(talles.length > 1
       ? `Disponible en talles ${talles.join(", ")}.`

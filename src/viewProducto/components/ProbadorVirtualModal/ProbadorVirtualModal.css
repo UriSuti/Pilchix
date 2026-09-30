@@ -229,3 +229,17 @@
     padding: 0;
   }
 }
+
+/* guardar la foto subida en el perfil */
+.probador-upload__guardar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+.probador-upload__acciones { flex-wrap: wrap; }
+.probador-upload__acciones .probador-btn-secondary,
+.probador-upload__acciones .probador-btn-primary { padding-left: 14px; padding-right: 14px; }

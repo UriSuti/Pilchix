@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
-import { apiFetch } from "../../services/api"
+import { apiFetch, tokenStore } from "../../services/api"
+import { registrarCompraAlPagar } from "../../services/compras"
 import './CheckoutModal.css'
 
 initMercadoPago('APP_USR-3c9b2f24-c077-4438-b40b-7970f37d0eb7')
 
 function CheckoutModal({ items, onClose }) {
-  const [preferenceId, setPreferenceId] = useState(null)
+  const [listo, setListo] = useState(false)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
+  // Al hacer click en el botón de Mercado Pago: se crea la preferencia y, antes
+  // del redirect, se registra la compra. Devolver el preferenceId dispara el redirect.
+  const handleSubmit = async () => {
     const mpItems = items.map((item) => ({
       id: String(item.id),
       title: item.nombre,
@@ -18,17 +21,23 @@ function CheckoutModal({ items, onClose }) {
       currency_id: 'ARS',
     }))
 
-    // dentro del useEffect, reemplazá el fetch por:
-    apiFetch("/pagos/create-preference", {
-      method: "POST",
-      body: { items: mpItems },
-    })
-      .then((data) => {
-        if (data.preferenceId) setPreferenceId(data.preferenceId);
-        else setError("Error al crear la preferencia de pago");
+    try {
+      const { preferenceId } = await apiFetch("/pagos/create-preference", {
+        method: "POST",
+        body: { items: mpItems },
       })
-      .catch((err) => setError(err.message || "No se pudo conectar con el servidor"));
-  }, [])
+      if (!preferenceId) throw new Error("Error al crear la preferencia de pago")
+
+      // TEMPORAL: la compra se da por exitosa y se guarda acá, sin esperar a que MP apruebe el pago
+      await registrarCompraAlPagar({ token: tokenStore.getUsuario() })
+        .catch((e) => console.error('No se pudo registrar la compra', e?.message ?? e))
+
+      return preferenceId
+    } catch (err) {
+      setError(err.message || "No se pudo conectar con el servidor")
+      throw err
+    }
+  }
 
   return (
     <div className="checkout-backdrop" onClick={onClose}>
@@ -47,22 +56,26 @@ function CheckoutModal({ items, onClose }) {
             </div>
           )}
 
-          {!error && !preferenceId && (
+          {!error && !listo && (
             <div className="checkout-loading">
               <div className="checkout-spinner" />
               <p>Preparando el pago...</p>
             </div>
           )}
 
-          {preferenceId && (
+          {!error && (
             <>
               <Wallet
-                initialization={{ preferenceId }}
+                onSubmit={handleSubmit}
+                onReady={() => setListo(true)}
+                onError={() => setError("No se pudo cargar Mercado Pago")}
                 customization={{ texts: { valueProp: 'smart_option' } }}
               />
-              <button className="checkout-btn-secondary" onClick={onClose} style={{ marginTop: 16, width: '100%' }}>
-                Cancelar
-              </button>
+              {listo && (
+                <button className="checkout-btn-secondary" onClick={onClose} style={{ marginTop: 16, width: '100%' }}>
+                  Cancelar
+                </button>
+              )}
             </>
           )}
         </div>

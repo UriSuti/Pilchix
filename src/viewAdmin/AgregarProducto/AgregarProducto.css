@@ -21,6 +21,7 @@
 .ap__oferta-preview { margin: -4px 0 14px; font-size: 13px; color: #1a1a1a; }
 .ap__oferta-preview-tachado { color: #999; text-decoration: line-through; }
 .ap__oferta-acciones { display: flex; gap: 10px; }
+.ap__card-acciones { display: flex; gap: 10px; margin-top: 14px; }
 
 .ap__talles { display: flex; flex-wrap: wrap; gap: 8px; }
 .ap__talle { min-width: 48px; height: 40px; padding: 0 10px; border: 1px solid #d4d7da; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; }

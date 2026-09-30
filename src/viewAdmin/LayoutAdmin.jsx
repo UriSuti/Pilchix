@@ -7,6 +7,7 @@ const NAV = [
   { to: "/admin/catalogo", label: "Catálogo", end: true },
   { to: "/admin/catalogo/nuevo", label: "Agregar producto" },
   { to: "/admin/looks", label: "Shop the Look" },
+  { to: "/admin/ventas", label: "Ventas" },
   { to: "/admin/metricas", label: "Métricas" },
   { to: "/admin/configuracion", label: "Configuración" },
   { to: "/admin/categorias", label: "Categorias" },

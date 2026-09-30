@@ -4,60 +4,6 @@ function token() {
   return tokenStore.getMarca();
 }
 
-export async function getCategorias() {
-  try {
-    const data = await apiFetch("/catalogo/categorias", { token: token() });
-    return { data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message };
-  }
-}
-
-export async function getSubcategorias(idCategoria) {
-  try {
-    const query = idCategoria ? `?id_categoria=${idCategoria}` : "";
-    const data = await apiFetch(`/catalogo/subcategorias${query}`, { token: token() });
-    return { data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message };
-  }
-}
-
-export async function crearSubcategoria(nombre, idCategoria) {
-  try {
-    const data = await apiFetch("/catalogo/subcategorias", {
-      method: "POST",
-      body: { nombre, id_categoria: idCategoria },
-      token: token(),
-    });
-    return { data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message || "No se pudo crear la subcategoría" };
-  }
-}
-
-export async function getEtiquetas() {
-  try {
-    const data = await apiFetch("/catalogo/etiquetas", { token: token() });
-    return { data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message };
-  }
-}
-
-export async function crearEtiqueta(nombre) {
-  try {
-    const data = await apiFetch("/catalogo/etiquetas", {
-      method: "POST",
-      body: { nombre },
-      token: token(),
-    });
-    return { data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message || "No se pudo crear la etiqueta" };
-  }
-}
-
 export async function getProductosDeMarca() {
   try {
     const data = await apiFetch("/catalogo/productos", { token: token() });
@@ -192,33 +138,6 @@ export async function actualizarSubcategoriasProducto(idProducto, idsSubcategori
   }
 }
 
-export async function setEtiquetasProducto(idProducto, idsEtiquetas) {
-  if (!idsEtiquetas.length) return { error: null };
-  try {
-    await apiFetch(`/catalogo/productos/${idProducto}/etiquetas`, {
-      method: "POST",
-      body: { idsEtiquetas },
-      token: token(),
-    });
-    return { error: null };
-  } catch (err) {
-    return { error: err.message || "No se pudieron guardar las etiquetas" };
-  }
-}
-
-export async function actualizarEtiquetasProducto(idProducto, idsEtiquetas) {
-  try {
-    await apiFetch(`/catalogo/productos/${idProducto}/etiquetas`, {
-      method: "PUT",
-      body: { idsEtiquetas },
-      token: token(),
-    });
-    return { error: null };
-  } catch (err) {
-    return { error: err.message || "No se pudieron actualizar las etiquetas" };
-  }
-}
-
 // imagenes: [{ file, color, esPortada }]
 export async function subirImagenesProducto(idProducto, imagenes) {
   if (!imagenes.length) return { data: [], error: null };
@@ -271,12 +190,18 @@ export async function borrarImagen(idImagen) {
   }
 }
 
-export async function getCategoriasActivas() {
+// categorías globales (comunes a todas las marcas) + las activas y las subcategorías propias de la marca
+export async function getModuloCategorias() {
   try {
     const data = await apiFetch("/categorias-marca", { token: token() });
-    // filtramos las globales dejando solo las activas de la marca
-    const activas = new Set(data.activas ?? []);
-    return { data: (data.globales ?? []).filter((c) => activas.has(c.id_categoria)), error: null };
+    return {
+      data: {
+        globales: data.globales ?? [],
+        activas: data.activas ?? [],
+        subcategorias: data.subcategorias ?? [],
+      },
+      error: null,
+    };
   } catch (err) {
     return { data: null, error: err.message };
   }

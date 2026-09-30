@@ -1,0 +1,47 @@
+.ven__head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.ven__head h1 { font-size: 22px; margin: 0; color: #1a1a1a; }
+.ven__head p { margin: 4px 0 0; color: #888; font-size: 13px; }
+
+.ven__filtros { display: flex; gap: 6px; }
+.ven__filtro {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+  padding: 7px 14px; font-size: 13px; cursor: pointer; color: #5f6368;
+}
+.ven__filtro.is-on { background: #123d59; color: #fff; border-color: #123d59; }
+
+.ven__card { background: #fff; border: 1px solid #e8eaed; border-radius: 12px; padding: 20px; }
+.ven__vacio { color: #999; font-size: 14px; text-align: center; padding: 40px 0; margin: 0; }
+
+.ven__tabla-wrap { overflow-x: auto; }
+.ven__tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ven__tabla th {
+  text-align: left; padding: 10px; color: #888; font-weight: 600;
+  border-bottom: 1px solid #eef0f2; font-size: 12px; text-transform: uppercase;
+}
+.ven__tabla td { padding: 10px; border-bottom: 1px solid #f4f5f6; color: #333; white-space: nowrap; }
+.ven__num { text-align: right !important; font-variant-numeric: tabular-nums; }
+.ven__monto { color: #123d59; font-weight: 600; }
+
+.ven__fila { cursor: pointer; }
+.ven__fila:hover td { background: #fafbfc; }
+.ven__toggle { margin-left: 8px; font-size: 9px; color: #999; }
+
+.ven__estado {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+}
+.ven__estado--por_cobrar { background: #fff4e0; color: #9a5b00; }
+.ven__estado--cobrado { background: #e6f4ea; color: #1e7b3a; }
+.ven__cobro { margin-left: 6px; font-size: 12px; color: #888; }
+
+.ven__detalle td { background: #fafbfc; padding: 4px 10px 12px; }
+.ven__detalle ul { list-style: none; margin: 0; padding: 0; max-width: 520px; }
+.ven__detalle li {
+  display: flex; justify-content: space-between; gap: 16px;
+  padding: 6px 0; font-size: 13px; color: #555; border-bottom: 1px dashed #eceef0;
+}
+.ven__detalle li:last-child { border-bottom: none; }
+.ven__color {
+  display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+  margin-left: 8px; vertical-align: middle; border: 1px solid #ddd;
+}
