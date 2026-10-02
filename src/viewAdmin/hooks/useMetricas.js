@@ -1,29 +1,20 @@
-import { useState, useEffect } from "react";
-import { getMetricasData } from "../services/dashboard";
-import { serieTemporal, ventasPorCategoria, tablaProductos } from "../helpers/dashboardCalc";
+import { useEffect, useState } from "react";
+import { getMetricas } from "../services/dashboard";
 
-export function useMetricas(idMarca, dias) {
-  const [datos, setDatos] = useState({ serie: [], categorias: [], tabla: [] });
+export function useMetricas(dias) {
+  const [data, setData] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!idMarca) { setCargando(false); return; }
     let activo = true;
-    async function cargar() {
-      setCargando(true);
-      const { data, error } = await getMetricasData(idMarca, dias);
-      if (!activo) return;
-      const productos = error ? [] : data ?? [];
-      setDatos({
-        serie: serieTemporal(productos),
-        categorias: ventasPorCategoria(productos),
-        tabla: tablaProductos(productos),
-      });
-      setCargando(false);
-    }
-    cargar();
+    setCargando(true);
+    getMetricas(dias)
+      .then((d) => { if (activo) { setData(d); setError(null); } })
+      .catch((e) => { if (activo) setError(e.message); })
+      .finally(() => { if (activo) setCargando(false); });
     return () => { activo = false; };
-  }, [idMarca, dias]);
+  }, [dias]);
 
-  return { ...datos, cargando };
+  return { data, cargando, error };
 }

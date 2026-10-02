@@ -21,3 +21,7 @@ export function getDashboardData(idMarca, dias = 30) {
 export function getMetricasData(idMarca, dias = 30) {
   return comoQuery(apiFetch(`/catalogo/metricas?dias=${dias}`, { token: token() }));
 }
+
+export function getMetricas(dias) {
+  return apiFetch(`/catalogo/metricas?dias=${dias}`, { token: tokenStore.getMarca() });
+}
