@@ -2,8 +2,12 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 const TOKEN_KEY = "pilchix_token";
 const TOKEN_MARCA_KEY = "pilchix_token_marca";
+const TOKEN_ADMIN_KEY = "pilchix_token_admin";
 
 export const tokenStore = {
+  getAdmin: () => localStorage.getItem(TOKEN_ADMIN_KEY),
+  setAdmin: (t) => localStorage.setItem(TOKEN_ADMIN_KEY, t),
+  clearAdmin: () => localStorage.removeItem(TOKEN_ADMIN_KEY),
   getUsuario: () => localStorage.getItem(TOKEN_KEY),
   setUsuario: (t) => localStorage.setItem(TOKEN_KEY, t),
   clearUsuario: () => localStorage.removeItem(TOKEN_KEY),

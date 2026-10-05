@@ -25,6 +25,10 @@ import SoloInvitados from './components/SoloInvitados.jsx'
 import SoloInvitadosMarca from './components/SoloInvitadosMarca.jsx'
 import Categorias from './viewAdmin/Categorias/Categorias.jsx'
 import Ventas from './viewAdmin/Ventas/Ventas.jsx'
+import LoginSuperadmin from './viewSuperadmin/LoginSuperadmin.jsx'
+import LayoutSuperadmin from './viewSuperadmin/LayoutSuperadmin.jsx'
+import Pendientes from './viewSuperadmin/Pendientes/Pendientes.jsx'
+import Historial from './viewSuperadmin/Historial/Historial.jsx'
 
 function App() {
   return (
@@ -52,6 +56,11 @@ function App() {
         <Route path="metricas" element={<Metricas />} />
         <Route path="configuracion" element={<Configuracion />} />
         <Route path="categorias" element={<Categorias />} />
+      </Route>
+      <Route path="/superadmin/login" element={<LoginSuperadmin />} />
+      <Route path="/superadmin" element={<LayoutSuperadmin />}>
+        <Route index element={<Pendientes />} />
+        <Route path="historial" element={<Historial />} />
       </Route>
     </Routes>
   )

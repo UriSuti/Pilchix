@@ -1,0 +1,81 @@
+/* Panel de administración de Pilchix. Reusa las clases .ven* de viewAdmin/Ventas */
+@import "../viewAdmin/Ventas/Ventas.css";
+
+.login-marca--super { background: #1a1a1a; }
+
+.sa { padding-bottom: 80px; }
+
+.sa-btn {
+  background: #123d59; color: #fff; border: 1px solid #123d59; border-radius: 8px;
+  padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.sa-btn:disabled { opacity: 0.6; cursor: default; }
+.sa-btn--sec { background: #fff; color: #5f6368; border-color: #e0e0e0; }
+.sa-btn--sec:hover:not(:disabled) { background: #f1f3f4; }
+.sa-btn--chico { padding: 6px 12px; font-size: 12px; }
+
+.sa__local { display: flex; align-items: center; gap: 10px; }
+.sa__local img, .sa__local-ph {
+  width: 32px; height: 32px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
+}
+.sa__local-ph {
+  display: grid; place-items: center; background: #eef2f5; color: #123d59;
+  font-weight: 700; text-transform: uppercase;
+}
+.sa__local strong { display: block; color: #1a1a1a; }
+.sa__local small { color: #999; font-size: 12px; }
+
+.sa__barra { margin-bottom: 12px; }
+.sa__barra select {
+  border: 1px solid #e0e0e0; border-radius: 8px; padding: 7px 10px;
+  font-size: 13px; color: #333; background: #fff;
+}
+.sa__check { width: 32px; }
+.sa__check input { cursor: pointer; accent-color: #123d59; }
+
+.sa__marcas { white-space: normal !important; }
+.sa__marcas span { display: block; }
+.sa__nota { white-space: normal !important; max-width: 240px; color: #666 !important; }
+
+.sa__pie {
+  position: fixed; bottom: 20px; left: calc(240px + 36px); right: 36px; max-width: 1128px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  background: #fff; border: 1px solid #e8eaed; border-radius: 12px;
+  padding: 12px 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); font-size: 14px; color: #333;
+}
+.sa__pie strong { color: #123d59; }
+.sa__pie div { display: flex; gap: 8px; }
+
+.sa-modal {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4);
+  display: grid; place-items: center; z-index: 50; padding: 16px;
+}
+.sa-modal__card {
+  width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto;
+  background: #fff; border-radius: 12px; padding: 24px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.sa-modal__card h2 { margin: 0; font-size: 18px; color: #1a1a1a; }
+.sa-modal__total { margin: 0; font-size: 28px; font-weight: 700; color: #123d59; font-variant-numeric: tabular-nums; }
+.sa-modal__sub { margin: -8px 0 0; font-size: 13px; color: #888; }
+.sa-modal__desglose {
+  list-style: none; margin: 0; padding: 10px 12px; background: #fafbfc;
+  border-radius: 8px; max-height: 160px; overflow-y: auto;
+}
+.sa-modal__desglose li {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 4px 0; font-size: 13px; color: #444;
+}
+.sa-modal__desglose em { color: #999; font-style: normal; }
+.sa-modal__archivo, .sa-modal__nota { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #444; }
+.sa-modal__nota textarea {
+  border: 1px solid #ccc; border-radius: 6px; padding: 8px 10px;
+  font: inherit; font-size: 14px; resize: vertical;
+}
+.sa-modal__nota textarea:focus { outline: none; border-color: #123d59; }
+.sa-modal__error { color: #c0392b; font-size: 13px; margin: 0; }
+.sa-modal__acciones { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+
+@media (max-width: 760px) {
+  .sa__pie { left: 16px; right: 16px; flex-direction: column; align-items: stretch; }
+}

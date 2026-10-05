@@ -33,6 +33,10 @@
 .ven__estado--por_cobrar { background: #fff4e0; color: #9a5b00; }
 .ven__estado--cobrado { background: #e6f4ea; color: #1e7b3a; }
 .ven__cobro { margin-left: 6px; font-size: 12px; color: #888; }
+.ven__comprobante {
+  margin-left: 8px; background: none; border: none; padding: 0;
+  font-size: 12px; color: #123d59; font-weight: 600; text-decoration: underline; cursor: pointer;
+}
 
 .ven__detalle td { background: #fafbfc; padding: 4px 10px 12px; }
 .ven__detalle ul { list-style: none; margin: 0; padding: 0; max-width: 520px; }

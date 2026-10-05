@@ -24,4 +24,10 @@ export const authApi = {
       method: "POST",
       body: { email, password },
     }),
+
+  loginAdmin: (email, password) =>
+    apiFetch("/auth/admin/login", {
+      method: "POST",
+      body: { email, password },
+    }),
 };

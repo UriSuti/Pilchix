@@ -1,6 +1,8 @@
 import { Fragment, useState } from "react";
 import { useVentas } from "../hooks/useVentas";
 import { usePaginaCargando } from "../../context/NavLoadingContext";
+import { useToast } from "../../context/ToastContext";
+import { getUrlComprobante } from "../services/ventas";
 import "./Ventas.css";
 
 const formatARS = (v) =>
@@ -21,6 +23,7 @@ const FILTROS = [
 
 function Ventas() {
   const { ventas, resumen, error, cargando } = useVentas();
+  const { mostrarToast } = useToast();
   const [filtro, setFiltro] = useState("todas");
   const [abierta, setAbierta] = useState(null);
 
@@ -28,6 +31,19 @@ function Ventas() {
   if (cargando) return null;
 
   const visibles = filtro === "todas" ? ventas : ventas.filter((v) => v.estado === filtro);
+
+  const verComprobante = async (idLiquidacion) => {
+    // la pestaña se abre antes del await para que el navegador no la bloquee como popup
+    const pestaña = window.open("", "_blank");
+    const { url, error } = await getUrlComprobante(idLiquidacion);
+    if (error || !url) {
+      pestaña?.close();
+      mostrarToast(error || "No se pudo abrir el comprobante", "error");
+      return;
+    }
+    if (pestaña) pestaña.location.replace(url);
+    else window.location.assign(url);
+  };
 
   return (
     <div className="ven">
@@ -92,6 +108,14 @@ function Ventas() {
                           </span>
                           {v.estado === "cobrado" && v.fecha_cobro && (
                             <span className="ven__cobro">el {formatFecha(v.fecha_cobro)}</span>
+                          )}
+                          {v.estado === "cobrado" && v.id_liquidacion && (
+                            <button
+                              className="ven__comprobante"
+                              onClick={(e) => { e.stopPropagation(); verComprobante(v.id_liquidacion); }}
+                            >
+                              Ver comprobante
+                            </button>
                           )}
                         </td>
                       </tr>
