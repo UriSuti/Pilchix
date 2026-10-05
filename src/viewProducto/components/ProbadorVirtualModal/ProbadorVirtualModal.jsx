@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { generarPruebaVirtual, getFotoProbador } from '../../services/probador'
+import { compartirImagen, descargarImagen, puedeCompartir } from '../../../utils/exportarImagen'
+import { slugify } from '../../../utils/slugify'
 import './ProbadorVirtualModal.css'
 
 function ProbadorVirtualModal({ producto, onClose }) {
@@ -74,6 +76,31 @@ function ProbadorVirtualModal({ producto, onClose }) {
     setPreviewUrl(null)
   }
 
+  const [exportando, setExportando] = useState(false)
+  const nombreArchivo = `pilchix-${slugify(producto?.nombre ?? 'look')}.png`
+
+  const handleDescargar = async () => {
+    setExportando(true)
+    try {
+      await descargarImagen(resultado, nombreArchivo)
+    } finally {
+      setExportando(false)
+    }
+  }
+
+  const handleCompartir = async () => {
+    setExportando(true)
+    try {
+      const ok = await compartirImagen(resultado, nombreArchivo)
+      if (!ok) await descargarImagen(resultado, nombreArchivo) // sin soporte → descarga
+    } catch (err) {
+      // AbortError = el usuario cerró el menú de compartir, no es un error
+      if (err.name !== 'AbortError') await descargarImagen(resultado, nombreArchivo)
+    } finally {
+      setExportando(false)
+    }
+  }
+
   return (
     <div className="probador-backdrop" onClick={onClose}>
       <div className="probador-modal" onClick={(e) => e.stopPropagation()}>
@@ -108,9 +135,19 @@ function ProbadorVirtualModal({ producto, onClose }) {
           {!error && !cargando && !cargandoFoto && resultado && (
             <div className="probador-resultado">
               <img src={resultado} alt={`${producto?.nombre} puesto`} />
-              <button className="probador-btn-secondary" onClick={handleProbarOtraFoto}>
-                Probar con otra foto
-              </button>
+              <div className="probador-resultado__acciones">
+                <button className="probador-btn-primary" onClick={handleDescargar} disabled={exportando}>
+                  {exportando ? 'Preparando...' : 'Descargar'}
+                </button>
+                {puedeCompartir() && (
+                  <button className="probador-btn-secondary" onClick={handleCompartir} disabled={exportando}>
+                    Compartir
+                  </button>
+                )}
+                <button className="probador-btn-secondary" onClick={handleProbarOtraFoto}>
+                  Probar con otra foto
+                </button>
+              </div>
             </div>
           )}
 
