@@ -4,6 +4,7 @@ import { getPruebasVirtuales, borrarPruebaVirtual } from "../../services/perfil"
 import { getFotoProbador, subirFotoProbador, borrarFotoProbador } from "../../../viewProducto/services/probador";
 import { useToast } from "../../../context/ToastContext.jsx";
 import { slugify } from "../../../utils/slugify.js";
+import { descargarImagen, compartirImagen, puedeCompartir } from "../../../utils/exportarImagen.js";
 import "./MisPruebas.css";
 
 const formatFecha = (f) => {
@@ -15,6 +16,9 @@ const formatPrecio = (v) =>
 
 const portadaDe = (producto) =>
   (producto?.Imagen ?? []).find((img) => img.es_portada)?.imagen ?? producto?.Imagen?.[0]?.imagen ?? null;
+
+const nombreArchivo = (prueba) => 
+  `pilchix-${slugify(prueba.Producto?.nombre ?? "look")}-${String(prueba.fecha ?? "").slice(0, 10)}.png`;
 
 // foto que el probador usa por defecto (así no hay que subirla cada vez)
 function FotoProbador() {
@@ -104,12 +108,43 @@ function VisorPrueba({ prueba, onClose, onBorrar }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  const [exportando, setExportando] = useState(false);
+
+  const handleDescargar = async () => {
+    setExportando(true);
+    try { await descargarImagen(prueba.imagen, nombreArchivo(prueba)); }
+    finally { setExportando(false); }
+  };
+
+  const handleCompartir = async () => {
+    setExportando(true);
+    try {
+      const ok = await compartirImagen(prueba.imagen, nombreArchivo(prueba));
+      if (!ok) await descargarImagen(prueba.imagen, nombreArchivo(prueba));
+    } catch (err) {
+      if (err.name !== "AbortError") await descargarImagen(prueba.imagen, nombreArchivo(prueba));
+    } finally {
+      setExportando(false);
+    }
+  };
+
   return (
     <div className="mp-visor" onClick={onClose}>
       <div className="mp-visor__panel" onClick={(e) => e.stopPropagation()}>
         <button className="mp-visor__cerrar" onClick={onClose} aria-label="Cerrar">✕</button>
         <img src={prueba.imagen} alt={producto?.nombre ?? "Prueba virtual"} className="mp-visor__img" />
         <span className="mp-visor__fecha">Probado el {formatFecha(prueba.fecha)}</span>
+
+        <div className="mp-visor__exportar">
+          <button className="perfil-agregar" onClick={handleDescargar} disabled={exportando}>
+            {exportando ? "Preparando..." : "Descargar"}
+          </button>
+          {puedeCompartir() && (
+            <button className="mp-visor__compartir" onClick={handleCompartir} disabled={exportando}>
+              Compartir
+            </button>
+          )}
+        </div>
 
         {producto && (
           <div className="mp-visor__prenda">
@@ -200,6 +235,14 @@ function MisPruebas() {
                 onClick={(e) => { e.stopPropagation(); handleBorrar(p); }}
               >
                 ✕
+              </button>
+              <button
+                className="mp-card__descargar"
+                aria-label="Descargar prueba"
+                title="Descargar"
+                onClick={(e) => { e.stopPropagation(); descargarImagen(p.imagen, nombreArchivo(p)); }}
+              >
+                ⬇
               </button>
               <span className="card-perfil__nombre">{p.Producto?.nombre ?? "Producto"}</span>
               <span className="card-perfil__fecha">{formatFecha(p.fecha)}</span>

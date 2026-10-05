@@ -243,3 +243,14 @@
 .probador-upload__acciones { flex-wrap: wrap; }
 .probador-upload__acciones .probador-btn-secondary,
 .probador-upload__acciones .probador-btn-primary { padding-left: 14px; padding-right: 14px; }
+.probador-resultado__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.probador-resultado__acciones button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
