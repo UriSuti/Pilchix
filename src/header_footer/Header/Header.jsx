@@ -48,6 +48,13 @@ const IconUser = () => (
   </svg>
 );
 
+const IconSparkle = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+    <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" />
+  </svg>
+);
+
 const IconClose = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18" />
@@ -209,6 +216,10 @@ function Header({ idUsuario = null, teal = false }) {
         </div>
 
         <div className="site-header__actions" aria-label="Acciones">
+          <button className="site-header__action site-header__action--stylist" type="button" aria-label="AI Stylist" title="AI Stylist" onClick={() => navigate('/stylist')}>
+            <IconSparkle />
+            <span className="site-header__stylist-label">AI Stylist</span>
+          </button>
           <button className="site-header__action site-header__action--carrito" type="button" aria-label="Carrito" title="Carrito" onClick={() => navigate('/carrito')}>
             <IconCart />
             {cantidadCarrito > 0 && (

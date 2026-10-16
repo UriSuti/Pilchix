@@ -125,6 +125,22 @@
   font-weight: 700;
 }
 
+.site-header__action--stylist {
+  width: auto;
+  padding: 0 12px;
+  border-radius: 99px;
+  border: 1px solid currentColor;
+}
+.site-header__action .site-header__stylist-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .site-header__action--stylist { width: 36px; padding: 0; border: 0; }
+  .site-header__action .site-header__stylist-label { display: none; }
+}
+
 .site-header__action--profile {
   overflow: hidden;
 }
