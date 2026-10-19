@@ -1,70 +1,56 @@
 import "./ViewLocales.css";
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Header from "../header_footer/Header/Header";
 import Footer from "../header_footer/Footer/Footer";
 import { getLocales } from "../viewLanding/services/landing";
-import { slugify } from "../utils/slugify";
+import ReelLocales from "./components/ReelLocales/ReelLocales";
+import CintaMarcas from "./components/ReelLocales/CintaMarcas";
+import MiniPaginaLocal from "./components/MiniPaginaLocal/MiniPaginaLocal";
+import { coincide, estadisticas, normalizarLocal, ordenarDestacados } from "./helpers/locales";
+import { useReducirMovimiento } from "./hooks/useReducirMovimiento";
 
-const IconSearch = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-function inicial(nombre = "") {
-  return nombre.trim().slice(0, 1).toUpperCase();
-}
-
-function LocalCard({ marca }) {
-  const [imgError, setImgError] = useState(false);
-  const fachada = marca.imagen_fachada && !imgError ? marca.imagen_fachada : null;
-  const cant = marca.cantidadProductos;
-
+function MiniPaginaSkeleton() {
   return (
-    <Link className="loc-card" to={`/${slugify(marca.nombre)}`}>
-      <div className="loc-card__media">
-        {fachada ? (
-          <img src={fachada} alt={marca.nombre} loading="lazy" onError={() => setImgError(true)} />
-        ) : (
-          <span className="loc-card__mono">{inicial(marca.nombre)}</span>
-        )}
-        <span className="loc-card__logo">{inicial(marca.nombre)}</span>
+    <div className="loc-skmp" aria-hidden="true">
+      <div className="loc-sk loc-skmp__banner" />
+      <div className="loc-skmp__fila">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="loc-sk loc-skmp__prenda" />
+        ))}
       </div>
-      <div className="loc-card__body">
-        <h3 className="loc-card__name">{marca.nombre}</h3>
-        <p className="loc-card__meta">
-          {marca.ubicacion || "Local"}
-          {cant > 0 && <span className="loc-card__dot">·</span>}
-          {cant > 0 && `${cant} ${cant === 1 ? "producto" : "productos"}`}
-        </p>
-        <span className="loc-card__cta">Visitar local →</span>
-      </div>
-    </Link>
+    </div>
   );
 }
 
+// alto del header sticky, para que los saltos de scroll no queden tapados
+function useAltoHeader(ref) {
+  useEffect(() => {
+    const header = document.querySelector(".site-header");
+    if (!header || !ref.current) return;
+    const nodo = ref.current;
+    const medir = () => nodo.style.setProperty("--loc-header-h", `${header.offsetHeight}px`);
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(header);
+    return () => ro.disconnect();
+  }, [ref]);
+}
+
 function ViewLocales() {
+  const paginaRef = useRef(null);
+  const resultadosRef = useRef(null);
+  const reducir = useReducirMovimiento();
   const [locales, setLocales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const pendienteRef = useRef(null);
+  useAltoHeader(paginaRef);
 
   useEffect(() => {
     let activo = true;
     getLocales().then(({ data, error }) => {
       if (!activo) return;
-      const lista = (!error && data ? data : []).map((m) => {
-        const productos = (m.Producto || []).filter((p) => p.estado === 1);
-        const vistas = productos.reduce(
-          (s, p) => s + (p.Metrica_Producto?.[0]?.visualizaciones ?? 0),
-          0
-        );
-        return { ...m, cantidadProductos: productos.length, vistas };
-      });
-      // más populares primero
-      lista.sort((a, b) => b.vistas - a.vistas || b.cantidadProductos - a.cantidadProductos);
-      setLocales(lista);
+      setLocales(ordenarDestacados((!error && data ? data : []).map(normalizarLocal)));
       setLoading(false);
     });
     return () => {
@@ -72,65 +58,69 @@ function ViewLocales() {
     };
   }, []);
 
-  const filtradas = useMemo(() => {
-    const t = q.trim().toLowerCase();
-    if (!t) return locales;
-    return locales.filter(
-      (m) =>
-        m.nombre?.toLowerCase().includes(t) ||
-        m.ubicacion?.toLowerCase().includes(t)
-    );
-  }, [locales, q]);
+  const stats = useMemo(() => estadisticas(locales), [locales]);
+  const visibles = useMemo(() => locales.filter((l) => coincide(l, q)), [locales, q]);
+  const conducta = reducir ? "auto" : "smooth";
+
+  // "Ver presentación" en la portada: baja hasta la mini página de ese local
+  // (si la búsqueda la escondía, primero se limpia y se salta tras el render)
+  const irALocal = (id) =>
+    document.getElementById(`local-${id}`)?.scrollIntoView({ behavior: conducta, block: "start" });
+  const presentar = (local) => {
+    if (coincide(local, q)) return irALocal(local.id);
+    pendienteRef.current = local.id;
+    setQ("");
+  };
+  useEffect(() => {
+    if (pendienteRef.current === null) return;
+    irALocal(pendienteRef.current);
+    pendienteRef.current = null;
+  });
 
   return (
-    <div className="view-locales">
+    <div className="view-locales" ref={paginaRef}>
       <Header />
 
-      <header className="loc-hero">
-        <div className="loc-wrap">
-          <p className="loc-hero__eyebrow">Directorio</p>
-          <h1 className="loc-hero__title">Todos los locales</h1>
-          <p className="loc-hero__sub">
-            Explorá cada marca de Pilchix y entrá a su vidriera.
-          </p>
-          <div className="loc-search">
-            <IconSearch />
-            <input
-              type="text"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar local o ciudad…"
-              aria-label="Buscar local"
-            />
-          </div>
-        </div>
-      </header>
+      <ReelLocales
+        locales={locales}
+        stats={stats}
+        cargando={loading}
+        q={q}
+        onBuscar={setQ}
+        onEnviarBusqueda={() => resultadosRef.current?.scrollIntoView({ behavior: conducta, block: "start" })}
+        onPresentar={presentar}
+      />
+      <CintaMarcas locales={locales} />
 
-      <main className="loc-wrap loc-main">
+      <main className="loc-wrap loc-main" ref={resultadosRef}>
         {loading ? (
-          <div className="loc-grid">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="loc-card loc-card--sk">
-                <div className="loc-card__media loc-sk" />
-                <div className="loc-card__body">
-                  <div className="loc-sk loc-sk--line" />
-                  <div className="loc-sk loc-sk--line loc-sk--short" />
-                </div>
-              </div>
-            ))}
+          <div className="loc-lista">
+            <MiniPaginaSkeleton />
+            <MiniPaginaSkeleton />
           </div>
-        ) : filtradas.length === 0 ? (
-          <p className="loc-empty">
-            {q ? `No encontramos locales para “${q}”.` : "Todavía no hay locales."}
-          </p>
+        ) : visibles.length === 0 ? (
+          <div className="loc-empty">
+            <p>
+              {locales.length === 0
+                ? "Todavía no hay locales."
+                : `No hay locales que coincidan con “${q.trim()}”. Probá con otro barrio o estilo.`}
+            </p>
+            {locales.length > 0 && (
+              <button type="button" className="loc-empty__btn" onClick={() => setQ("")}>
+                Ver todos los locales
+              </button>
+            )}
+          </div>
         ) : (
           <>
-            <p className="loc-count">
-              {filtradas.length} {filtradas.length === 1 ? "local" : "locales"}
+            <p className="loc-count" aria-live="polite">
+              {q.trim()
+                ? `${visibles.length} ${visibles.length === 1 ? "local" : "locales"} para “${q.trim()}”`
+                : `${visibles.length} ${visibles.length === 1 ? "local" : "locales"}`}
             </p>
-            <div className="loc-grid">
-              {filtradas.map((m) => (
-                <LocalCard key={m.id_marca} marca={m} />
+            <div className="loc-lista">
+              {visibles.map((l) => (
+                <MiniPaginaLocal key={l.id} local={l} />
               ))}
             </div>
           </>
