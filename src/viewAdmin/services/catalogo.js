@@ -206,3 +206,46 @@ export async function getModuloCategorias() {
     return { data: null, error: err.message };
   }
 }
+
+// ---- carga masiva desde la tienda online (Tiendanube, Shopify, WooCommerce, etc.) ----
+
+export async function iniciarImportacion(link) {
+  try {
+    const data = await apiFetch("/catalogo/importaciones", { method: "POST", body: { link }, token: token() });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || "No se pudo leer la tienda" };
+  }
+}
+
+export async function getImportacion(id) {
+  try {
+    const data = await apiFetch(`/catalogo/importaciones/${id}`, { token: token() });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message, status: err.status };
+  }
+}
+
+// productos: [{ indice, nombre, descripcion, precio, stock, talles, colores, categorias, imagenes }]
+export async function confirmarImportacion(id, productos) {
+  try {
+    const data = await apiFetch(`/catalogo/importaciones/${id}/confirmar`, {
+      method: "POST",
+      body: { productos },
+      token: token(),
+    });
+    return { data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || "No se pudo importar" };
+  }
+}
+
+export async function cancelarImportacion(id) {
+  try {
+    await apiFetch(`/catalogo/importaciones/${id}`, { method: "DELETE", token: token() });
+    return { error: null };
+  } catch (err) {
+    return { error: err.message };
+  }
+}

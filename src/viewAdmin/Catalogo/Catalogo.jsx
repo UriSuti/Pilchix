@@ -31,15 +31,23 @@ function Catalogo() {
           <h1>Catálogo de productos</h1>
           <p>{productos.length} productos</p>
         </div>
-        <button className="catalogo__nuevo" onClick={() => navigate("/admin/catalogo/nuevo")}>
-          + Agregar producto
-        </button>
+        <div className="catalogo__acciones">
+          <button className="catalogo__importar" onClick={() => navigate("/admin/catalogo/importar")}>
+            Importar desde mi tienda
+          </button>
+          <button className="catalogo__nuevo" onClick={() => navigate("/admin/catalogo/nuevo")}>
+            + Agregar producto
+          </button>
+        </div>
       </header>
 
       {!cargando && productos.length === 0 ? (
         <div className="catalogo__vacio">
           <p>Todavía no cargaste productos.</p>
           <button onClick={() => navigate("/admin/catalogo/nuevo")}>Agregar el primero</button>
+          <button className="catalogo__importar" onClick={() => navigate("/admin/catalogo/importar")}>
+            Importar desde Tiendanube u otra tienda
+          </button>
         </div>
       ) : (
         <div className="catalogo__grid">

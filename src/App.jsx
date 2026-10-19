@@ -17,6 +17,7 @@ import LoginMarca from './viewAdmin/Login/LoginMarca.jsx'
 import Dashboard from './viewAdmin/Dashboard/Dashboard.jsx'
 import Catalogo from './viewAdmin/Catalogo/Catalogo.jsx'
 import AgregarProducto from './viewAdmin/AgregarProducto/AgregarProducto.jsx'
+import ImportarProductos from './viewAdmin/ImportarProductos/ImportarProductos.jsx'
 import Metricas from './viewAdmin/Metricas/Metricas.jsx'
 import Configuracion from './viewAdmin/Configuracion/Configuracion.jsx'
 import RegistroMarca from './viewAdmin/Login/RegistroMarca.jsx'
@@ -52,6 +53,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="catalogo" element={<Catalogo />} />
         <Route path="catalogo/nuevo" element={<AgregarProducto />} />
+        <Route path="catalogo/importar" element={<ImportarProductos />} />
         <Route path="catalogo/editar/:idProducto" element={<EditarProducto />} />
         <Route path="looks" element={<Looks />} />
         <Route path="ventas" element={<Ventas />} />
