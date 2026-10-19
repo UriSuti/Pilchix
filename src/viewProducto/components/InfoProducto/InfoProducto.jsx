@@ -164,7 +164,7 @@ function InfoProducto({ producto, loading, marca, selectedColor, selectedTalle, 
       </button>
 
       {mostrarProbador && (
-        <ProbadorVirtualModal producto={producto} onClose={() => setMostrarProbador(false)} />
+        <ProbadorVirtualModal producto={producto} color={selectedColor} onClose={() => setMostrarProbador(false)} />
       )}
 
       <div className="ipinfo__trust">

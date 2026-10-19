@@ -4,7 +4,8 @@ import { compartirImagen, descargarImagen, puedeCompartir } from '../../../utils
 import { slugify } from '../../../utils/slugify'
 import './ProbadorVirtualModal.css'
 
-function ProbadorVirtualModal({ producto, onClose }) {
+// color: hex del color elegido en la ficha (opcional); sin él se prueba la portada
+function ProbadorVirtualModal({ producto, color, onClose }) {
   const [fotoGuardada, setFotoGuardada] = useState(null) // URL de la foto del perfil
   const [cargandoFoto, setCargandoFoto] = useState(true)
   const [foto, setFoto] = useState(null)                 // archivo subido ahora
@@ -49,7 +50,7 @@ function ProbadorVirtualModal({ producto, onClose }) {
     setCargando(true)
     setError(null)
     try {
-      const { imagen, fotoProbador } = await generarPruebaVirtual(producto.id_producto, foto, { guardarFoto })
+      const { imagen, fotoProbador } = await generarPruebaVirtual(producto.id_producto, foto, { guardarFoto, color })
       setResultado(imagen)
       if (fotoProbador) {
         // la foto subida quedó guardada: de acá en más se usa esa

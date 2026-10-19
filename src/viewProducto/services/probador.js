@@ -4,12 +4,14 @@ import { apiFetch, apiFetchForm, tokenStore } from "../../services/api";
 // (incluido el caso "llegaste al límite de hoy", con status 429).
 // archivoFoto null = usa la foto guardada en el perfil.
 // guardarFoto = la foto subida queda guardada en el perfil para la próxima.
-export function generarPruebaVirtual(idProducto, archivoFoto, { guardarFoto = false } = {}) {
+// color = hex del color elegido; el back prueba la foto de ese color (si no, la portada).
+export function generarPruebaVirtual(idProducto, archivoFoto, { guardarFoto = false, color } = {}) {
   const formData = new FormData();
   if (archivoFoto) {
     formData.append("foto", archivoFoto);
     formData.append("guardarFoto", String(guardarFoto));
   }
+  if (color) formData.append("color", color);
   return apiFetchForm(`/probador/${idProducto}`, {
     method: "POST",
     formData,
