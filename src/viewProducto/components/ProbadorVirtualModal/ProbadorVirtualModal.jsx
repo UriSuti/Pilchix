@@ -13,6 +13,7 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
   const [guardarFoto, setGuardarFoto] = useState(true)
   const [cargando, setCargando] = useState(false)
   const [resultado, setResultado] = useState(null)
+  const [mailEnviado, setMailEnviado] = useState(false)
   const [error, setError] = useState(null)
 
   // si el usuario ya tiene una foto guardada en el perfil, se usa directo
@@ -50,8 +51,9 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
     setCargando(true)
     setError(null)
     try {
-      const { imagen, fotoProbador } = await generarPruebaVirtual(producto.id_producto, foto, { guardarFoto, color })
+      const { imagen, fotoProbador, mailEnviado } = await generarPruebaVirtual(producto.id_producto, foto, { guardarFoto, color })
       setResultado(imagen)
+      setMailEnviado(Boolean(mailEnviado))
       if (fotoProbador) {
         // la foto subida quedó guardada: de acá en más se usa esa
         setFotoGuardada(fotoProbador)
@@ -136,6 +138,9 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
           {!error && !cargando && !cargandoFoto && resultado && (
             <div className="probador-resultado">
               <img src={resultado} alt={`${producto?.nombre} puesto`} />
+              {mailEnviado && (
+                <p className="probador-resultado__mail">📩 También te la mandamos a tu mail.</p>
+              )}
               <div className="probador-resultado__acciones">
                 <button className="probador-btn-primary" onClick={handleDescargar} disabled={exportando}>
                   {exportando ? 'Preparando...' : 'Descargar'}
