@@ -31,6 +31,7 @@ import LoginSuperadmin from './viewSuperadmin/LoginSuperadmin.jsx'
 import LayoutSuperadmin from './viewSuperadmin/LayoutSuperadmin.jsx'
 import Pendientes from './viewSuperadmin/Pendientes/Pendientes.jsx'
 import Historial from './viewSuperadmin/Historial/Historial.jsx'
+import ImportarTiendanube from './viewAdmin/Importar/ImportarTiendanube.jsx'
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
         <Route path="metricas" element={<Metricas />} />
         <Route path="configuracion" element={<Configuracion />} />
         <Route path="categorias" element={<Categorias />} />
+        <Route path="importar" element={<ImportarTiendanube />} />
       </Route>
       <Route path="/superadmin/login" element={<LoginSuperadmin />} />
       <Route path="/superadmin" element={<LayoutSuperadmin />}>

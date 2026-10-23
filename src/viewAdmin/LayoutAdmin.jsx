@@ -11,6 +11,7 @@ const NAV = [
   { to: "/admin/metricas", label: "Métricas" },
   { to: "/admin/configuracion", label: "Configuración" },
   { to: "/admin/categorias", label: "Categorias" },
+  { to: "/admin/importar", label: "Importar" },
 ];
 
 function LayoutAdmin() {

@@ -1,0 +1,104 @@
+.imp { max-width: 860px; }
+
+.imp__head { margin-bottom: 20px; }
+.imp__head h1 { font-size: 22px; margin: 0; color: #1a1a1a; }
+.imp__head p { margin: 4px 0 0; color: #888; font-size: 13px; }
+
+.imp__card {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.imp__card h2 { font-size: 15px; margin: 0 0 6px; color: #1a1a1a; }
+
+.imp__field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.imp__field span { font-size: 13px; color: #555; }
+.imp__field input {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.imp__field input:focus { outline: none; border-color: #123d59; }
+
+.imp__check {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: #444; margin-bottom: 16px; cursor: pointer;
+}
+.imp__check input { accent-color: #123d59; width: 16px; height: 16px; }
+
+.imp__btn, .imp__btn-sec {
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.imp__btn { background: #123d59; color: #fff; border: 1px solid #123d59; }
+.imp__btn-sec { background: #fff; color: #123d59; border: 1px solid #d5d9dd; }
+.imp__btn:disabled, .imp__btn-sec:disabled { opacity: 0.5; cursor: default; }
+.imp__btn--chico { padding: 7px 12px; }
+
+.imp__acciones { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.imp__resumen { margin: 0 0 6px; font-size: 14px; color: #333; }
+.imp__nota { margin: 0 0 4px; font-size: 12px; color: #888; }
+
+/* progreso */
+.imp__barra-head {
+  display: flex; justify-content: space-between; gap: 12px;
+  font-size: 13px; color: #444; margin-bottom: 8px;
+}
+.imp__barra-head span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.imp__barra { height: 8px; background: #f1f3f5; border-radius: 999px; overflow: hidden; }
+.imp__barra div { height: 100%; background: #123d59; border-radius: 999px; transition: width 0.3s; }
+
+.imp__contadores { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.imp__chip {
+  font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+  background: #f1f3f4; color: #5f6368;
+}
+.imp__chip--ok { background: #e7f5ee; color: #1e8e5a; }
+.imp__chip--duda { background: #fdf3e1; color: #b7791f; }
+.imp__chip--error { background: #fbeceb; color: #c0392b; }
+
+/* para revisar */
+.imp__revisar { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.imp-rev {
+  display: grid;
+  grid-template-columns: 48px 1fr 170px auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #f0f1f3;
+  border-radius: 10px;
+}
+.imp-rev__img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
+.imp-rev__img--ph {
+  display: flex; align-items: center; justify-content: center;
+  background: #f0f0f0; color: #123d59; font-weight: 700;
+}
+.imp-rev__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.imp-rev__info strong { font-size: 13px; color: #1a1a1a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.imp-rev__info span { font-size: 12px; color: #888; }
+.imp-rev select {
+  border: 1px solid #e0e0e0; border-radius: 8px; padding: 7px 8px; font-size: 13px; background: #fff;
+}
+.imp-rev__omitir {
+  background: none; border: none; color: #888; font-size: 12px; cursor: pointer; padding: 4px;
+}
+
+/* listas de errores y avisos */
+.imp__seccion-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.imp__lista { list-style: none; margin: 10px 0 0; padding: 0; max-height: 280px; overflow-y: auto; }
+.imp__lista li {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 0; border-bottom: 1px solid #f4f5f6; font-size: 13px;
+}
+.imp__lista li b { color: #333; font-weight: 600; text-transform: capitalize; }
+.imp__lista li small { color: #888; }
+
+@media (max-width: 720px) {
+  .imp-rev { grid-template-columns: 48px 1fr; }
+  .imp-rev select, .imp-rev .imp__btn, .imp-rev__omitir { grid-column: 1 / -1; }
+}
