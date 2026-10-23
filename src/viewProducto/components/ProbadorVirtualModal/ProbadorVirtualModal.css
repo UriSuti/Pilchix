@@ -250,6 +250,11 @@
   gap: 8px;
   margin-top: 14px;
 }
+.probador-resultado__mail {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
 .probador-resultado__acciones button:disabled {
   opacity: 0.6;
   cursor: default;
