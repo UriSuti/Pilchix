@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  z-index: 1000;
+  z-index: 1002; /* por encima del header del sitio (1001) */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,20 +83,36 @@
 }
 
 /* subir foto */
+.probador-upload__opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+
 .probador-upload__zona {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  width: 100%;
   padding: 40px 20px;
+  background: transparent;
   border: 2px dashed #d1d5db;
   border-radius: 12px;
   color: #6b7280;
+  font: inherit;
   font-size: 0.9rem;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
+}
+
+.probador-upload__ayuda {
+  margin: 12px 0 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+  text-align: center;
 }
 
 .probador-upload__zona:hover {
@@ -258,4 +274,108 @@
 .probador-resultado__acciones button:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+/* prendas que entran en el look completo */
+.probador-modal__prendas {
+  margin: -8px 0 20px;
+  padding-left: 20px;
+  color: #4b5563;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* sacar la foto con la cámara */
+.probador-camara__video {
+  display: block;
+  width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #111827;
+}
+.probador-camara__video--espejo {
+  transform: scaleX(-1);
+}
+.probador-camara__ayuda {
+  margin: 10px 0 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.probador-camara .probador-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* mandar la prueba al mail de ORT */
+.probador-mail {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: left;
+}
+.probador-mail__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+}
+.probador-mail__fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.probador-mail__fila .probador-btn-primary {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+}
+.probador-mail__fila .probador-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.probador-mail__campo {
+  flex: 1 1 240px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+.probador-mail__campo:focus-within {
+  border-color: #2563eb;
+}
+.probador-mail__campo input {
+  flex: 1;
+  min-width: 80px;
+  padding: 10px 4px 10px 12px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #111827;
+  font: inherit;
+  font-size: 0.95rem;
+}
+.probador-mail__campo span {
+  padding-right: 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.probador-mail__ayuda,
+.probador-mail__error {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+}
+.probador-mail__ayuda { color: #6b7280; }
+.probador-mail__error { color: #b42318; }
+.probador-mail__ok {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: #374151;
+  overflow-wrap: anywhere;
 }

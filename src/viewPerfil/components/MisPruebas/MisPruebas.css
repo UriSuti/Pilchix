@@ -69,11 +69,18 @@
   .mp-card__borrar { opacity: 1; }
 }
 
+/* los overlays van al body: acá recuperan la tipografía de .perfil-page */
+.mp-portal {
+  color: var(--pf-ink);
+  font-family: "Poppins", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
 /* visor: foto grande + prenda abajo */
 .mp-visor {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 1002; /* por encima del header del sitio (1001) */
   background: rgba(7, 11, 22, 0.6);
   display: grid;
   place-items: center;
@@ -161,7 +168,9 @@
   margin: 12px 0 4px;
 }
 .mp-visor__exportar button:disabled { opacity: 0.6; cursor: default; }
-.mp-visor__compartir {
+.mp-foto__camara:disabled { opacity: 0.6; cursor: default; }
+.mp-visor__compartir,
+.mp-foto__camara {
   background: #fff;
   border: 1px solid #d5d9dd;
   color: #123d59;

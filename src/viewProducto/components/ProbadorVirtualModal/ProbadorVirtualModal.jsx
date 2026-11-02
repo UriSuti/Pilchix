@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react'
-import { generarPruebaVirtual, getFotoProbador } from '../../services/probador'
+import { generarPruebaLook, generarPruebaVirtual, getFotoProbador } from '../../services/probador'
 import { compartirImagen, descargarImagen, puedeCompartir } from '../../../utils/exportarImagen'
 import { slugify } from '../../../utils/slugify'
+import CamaraCaptura from './CamaraCaptura'
+import EnviarPruebaMail from './EnviarPruebaMail'
 import './ProbadorVirtualModal.css'
 
 // color: hex del color elegido en la ficha (opcional); sin él se prueba la portada
-function ProbadorVirtualModal({ producto, color, onClose }) {
+// prendas: en vez de producto, para probar un look completo sobre la misma foto
+function ProbadorVirtualModal({ producto, prendas, color, onClose }) {
+  const nombre = prendas ? 'el look completo' : producto?.nombre
   const [fotoGuardada, setFotoGuardada] = useState(null) // URL de la foto del perfil
   const [cargandoFoto, setCargandoFoto] = useState(true)
-  const [foto, setFoto] = useState(null)                 // archivo subido ahora
+  const [foto, setFoto] = useState(null)                 // archivo subido o sacado ahora
   const [previewUrl, setPreviewUrl] = useState(null)
+  const [camaraAbierta, setCamaraAbierta] = useState(false)
   const [guardarFoto, setGuardarFoto] = useState(true)
   const [cargando, setCargando] = useState(false)
   const [resultado, setResultado] = useState(null)
+  const [idPrueba, setIdPrueba] = useState(null)
   const [mailEnviado, setMailEnviado] = useState(false)
   const [error, setError] = useState(null)
 
@@ -33,17 +39,25 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
     }
   }, [previewUrl])
 
-  const handleElegirFoto = (e) => {
-    const archivo = e.target.files?.[0]
-    e.target.value = ''
-    if (!archivo) return
+  const usarFoto = (archivo) => {
     setFoto(archivo)
     setResultado(null)
     setError(null)
     setPreviewUrl(URL.createObjectURL(archivo))
   }
 
-  // foto que se va a usar: la recién subida o, si no hay, la guardada
+  const handleElegirFoto = (e) => {
+    const archivo = e.target.files?.[0]
+    e.target.value = ''
+    if (archivo) usarFoto(archivo)
+  }
+
+  const handleFotoSacada = (archivo) => {
+    setCamaraAbierta(false)
+    usarFoto(archivo)
+  }
+
+  // foto que se va a usar: la recién subida o sacada o, si no hay, la guardada
   const fotoAMostrar = previewUrl ?? fotoGuardada
 
   const handleGenerar = async () => {
@@ -51,8 +65,11 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
     setCargando(true)
     setError(null)
     try {
-      const { imagen, fotoProbador, mailEnviado } = await generarPruebaVirtual(producto.id_producto, foto, { guardarFoto, color })
+      const { imagen, idPrueba, fotoProbador, mailEnviado } = prendas
+        ? await generarPruebaLook(prendas.map((p) => p.id_producto), foto, { guardarFoto })
+        : await generarPruebaVirtual(producto.id_producto, foto, { guardarFoto, color })
       setResultado(imagen)
+      setIdPrueba(idPrueba ?? null)
       setMailEnviado(Boolean(mailEnviado))
       if (fotoProbador) {
         // la foto subida quedó guardada: de acá en más se usa esa
@@ -80,7 +97,7 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
   }
 
   const [exportando, setExportando] = useState(false)
-  const nombreArchivo = `pilchix-${slugify(producto?.nombre ?? 'look')}.png`
+  const nombreArchivo = `pilchix-${slugify(prendas ? 'look' : producto?.nombre ?? 'look')}.png`
 
   const handleDescargar = async () => {
     setExportando(true)
@@ -115,9 +132,15 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
         <div className="probador-modal__body">
           <p className="probador-modal__subtitulo">
             {fotoGuardada && !foto
-              ? <>Usamos la foto guardada en tu perfil para mostrarte cómo te queda <b>{producto?.nombre}</b>.</>
-              : <>Subí una foto tuya y vas a ver cómo te queda <b>{producto?.nombre}</b>.</>}
+              ? <>Usamos la foto guardada en tu perfil para mostrarte cómo te queda <b>{nombre}</b>.</>
+              : <>Sacate o subí una foto y vas a ver cómo te queda <b>{nombre}</b>.</>}
           </p>
+
+          {prendas && !resultado && (
+            <ul className="probador-modal__prendas">
+              {prendas.map((p) => <li key={p.id_producto}>{p.nombre}</li>)}
+            </ul>
+          )}
 
           {error && (
             <div className="probador-error">
@@ -131,16 +154,23 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
           {!error && (cargando || cargandoFoto) && (
             <div className="probador-loading">
               <div className="probador-spinner" />
-              <p>{cargando ? 'Generando tu imagen, puede tardar unos segundos...' : 'Cargando...'}</p>
+              <p>
+                {!cargando
+                  ? 'Cargando...'
+                  : prendas
+                    ? `Probando ${prendas.length} prendas una por una, puede tardar hasta un par de minutos...`
+                    : 'Generando tu imagen, puede tardar unos segundos...'}
+              </p>
             </div>
           )}
 
           {!error && !cargando && !cargandoFoto && resultado && (
             <div className="probador-resultado">
-              <img src={resultado} alt={`${producto?.nombre} puesto`} />
+              <img src={resultado} alt={`${nombre} puesto`} />
               {mailEnviado && (
                 <p className="probador-resultado__mail">📩 También te la mandamos a tu mail.</p>
               )}
+              {idPrueba && <EnviarPruebaMail idPrueba={idPrueba} />}
               <div className="probador-resultado__acciones">
                 <button className="probador-btn-primary" onClick={handleDescargar} disabled={exportando}>
                   {exportando ? 'Preparando...' : 'Descargar'}
@@ -157,7 +187,11 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
             </div>
           )}
 
-          {!error && !cargando && !cargandoFoto && !resultado && (
+          {!error && !cargando && !cargandoFoto && !resultado && camaraAbierta && (
+            <CamaraCaptura onCapturar={handleFotoSacada} onCancelar={() => setCamaraAbierta(false)} />
+          )}
+
+          {!error && !cargando && !cargandoFoto && !resultado && !camaraAbierta && (
             <div className="probador-upload">
               {fotoAMostrar ? (
                 <>
@@ -174,8 +208,11 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
                   )}
                   <div className="probador-upload__acciones">
                     <label className="probador-btn-secondary" htmlFor="probador-input-foto">
-                      {foto ? 'Cambiar foto' : 'Usar otra foto'}
+                      Subir otra
                     </label>
+                    <button className="probador-btn-secondary" onClick={() => setCamaraAbierta(true)}>
+                      Sacar otra
+                    </button>
                     {foto && fotoGuardada && (
                       <button className="probador-btn-secondary" onClick={handleVolverAFotoGuardada}>
                         Usar la guardada
@@ -187,16 +224,24 @@ function ProbadorVirtualModal({ producto, color, onClose }) {
                   </div>
                 </>
               ) : (
-                <label className="probador-upload__zona" htmlFor="probador-input-foto">
-                  <span className="probador-upload__icono">📷</span>
-                  <span>Subí una foto tuya de cuerpo entero</span>
-                </label>
+                <>
+                  <div className="probador-upload__opciones">
+                    <button type="button" className="probador-upload__zona" onClick={() => setCamaraAbierta(true)}>
+                      <span className="probador-upload__icono">📷</span>
+                      <span>Sacar una foto ahora</span>
+                    </button>
+                    <label className="probador-upload__zona" htmlFor="probador-input-foto">
+                      <span className="probador-upload__icono">🖼️</span>
+                      <span>Subir desde mis archivos</span>
+                    </label>
+                  </div>
+                  <p className="probador-upload__ayuda">Usá una foto tuya de cuerpo entero.</p>
+                </>
               )}
               <input
                 id="probador-input-foto"
                 type="file"
                 accept="image/*"
-                capture="user"
                 onChange={handleElegirFoto}
                 hidden
               />

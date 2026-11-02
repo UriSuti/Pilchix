@@ -617,6 +617,14 @@
 .sty-cambio__titulo { font-size: 0.76rem; }
 .sty-cambio__acciones { display: flex; justify-content: flex-end; gap: 8px; }
 
+.sty-look__probar {
+  align-self: stretch;
+  height: 38px;
+  border-color: var(--sty-azul);
+  color: var(--sty-azul);
+}
+.sty-look--destacado .sty-look__probar { align-self: flex-start; margin-top: 16px; }
+
 .sty-look__aviso {
   font-size: 0.76rem;
   padding: 8px 12px;

@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { getPruebasVirtuales, borrarPruebaVirtual } from "../../services/perfil";
 import { getFotoProbador, subirFotoProbador, borrarFotoProbador } from "../../../viewProducto/services/probador";
 import { useToast } from "../../../context/ToastContext.jsx";
 import { slugify } from "../../../utils/slugify.js";
 import { descargarImagen, compartirImagen, puedeCompartir } from "../../../utils/exportarImagen.js";
+import CamaraCaptura from "../../../viewProducto/components/ProbadorVirtualModal/CamaraCaptura.jsx";
+import EnviarPruebaMail from "../../../viewProducto/components/ProbadorVirtualModal/EnviarPruebaMail.jsx";
 import "./MisPruebas.css";
 
 const formatFecha = (f) => {
@@ -17,8 +20,19 @@ const formatPrecio = (v) =>
 const portadaDe = (producto) =>
   (producto?.Imagen ?? []).find((img) => img.es_portada)?.imagen ?? producto?.Imagen?.[0]?.imagen ?? null;
 
-const nombreArchivo = (prueba) => 
-  `pilchix-${slugify(prueba.Producto?.nombre ?? "look")}-${String(prueba.fecha ?? "").slice(0, 10)}.png`;
+const nombreArchivo = (prueba) =>
+  `pilchix-${slugify(prueba.look ? "look" : prueba.Producto?.nombre ?? "look")}-${String(prueba.fecha ?? "").slice(0, 10)}.png`;
+
+// una prueba de look completo trae sus prendas en `look`; las demás, una sola en `Producto`
+const nombreDePrueba = (prueba) => (prueba.look ? "Look completo" : prueba.Producto?.nombre ?? "Prueba virtual");
+const prendasDePrueba = (prueba) => {
+  if (prueba.look) return prueba.look.prendas ?? [];
+  return prueba.Producto ? [{ ...prueba.Producto, imagen: portadaDe(prueba.Producto) }] : [];
+};
+
+// los overlays se montan en el body: el layout del perfil crea su propio contexto
+// de apilamiento y dentro de él quedarían siempre debajo del header del sitio
+const enBody = (contenido) => createPortal(<div className="mp-portal">{contenido}</div>, document.body);
 
 // foto que el probador usa por defecto (así no hay que subirla cada vez)
 function FotoProbador() {
@@ -26,6 +40,7 @@ function FotoProbador() {
   const [foto, setFoto] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
+  const [camaraAbierta, setCamaraAbierta] = useState(false);
 
   useEffect(() => {
     let activo = true;
@@ -36,10 +51,18 @@ function FotoProbador() {
     return () => { activo = false; };
   }, []);
 
-  const handleSubir = async (e) => {
+  const handleSubir = (e) => {
     const archivo = e.target.files?.[0];
     e.target.value = "";
-    if (!archivo) return;
+    if (archivo) guardar(archivo);
+  };
+
+  const handleFotoSacada = (archivo) => {
+    setCamaraAbierta(false);
+    guardar(archivo);
+  };
+
+  const guardar = async (archivo) => {
     setGuardando(true);
     try {
       setFoto(await subirFotoProbador(archivo));
@@ -78,13 +101,16 @@ function FotoProbador() {
         <p>
           {foto
             ? "Se usa automáticamente cada vez que abrís el probador virtual."
-            : "Subí una foto tuya de cuerpo entero y el probador la va a usar directamente."}
+            : "Sacate o subí una foto de cuerpo entero y el probador la va a usar directamente."}
         </p>
         <div className="mp-foto__acciones">
           <label className={`perfil-agregar mp-foto__btn ${guardando ? "is-disabled" : ""}`}>
             {guardando ? "Guardando..." : foto ? "Cambiar foto" : "Subir foto"}
             <input type="file" accept="image/*" hidden disabled={guardando} onChange={handleSubir} />
           </label>
+          <button className="mp-foto__camara" disabled={guardando} onClick={() => setCamaraAbierta(true)}>
+            Sacar foto
+          </button>
           {foto && (
             <button className="mp-foto__borrar" disabled={guardando} onClick={handleBorrar}>
               Borrar foto
@@ -92,6 +118,16 @@ function FotoProbador() {
           )}
         </div>
       </div>
+
+      {camaraAbierta && enBody(
+        <div className="probador-backdrop" onClick={() => setCamaraAbierta(false)}>
+          <div className="probador-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="probador-modal__body">
+              <CamaraCaptura onCapturar={handleFotoSacada} onCancelar={() => setCamaraAbierta(false)} />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -99,8 +135,7 @@ function FotoProbador() {
 // visor: la prueba grande y, abajo, la prenda que se probó
 function VisorPrueba({ prueba, onClose, onBorrar }) {
   const navigate = useNavigate();
-  const producto = prueba.Producto;
-  const portada = portadaDe(producto);
+  const prendas = prendasDePrueba(prueba);
 
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
@@ -128,11 +163,11 @@ function VisorPrueba({ prueba, onClose, onBorrar }) {
     }
   };
 
-  return (
+  return enBody(
     <div className="mp-visor" onClick={onClose}>
       <div className="mp-visor__panel" onClick={(e) => e.stopPropagation()}>
         <button className="mp-visor__cerrar" onClick={onClose} aria-label="Cerrar">✕</button>
-        <img src={prueba.imagen} alt={producto?.nombre ?? "Prueba virtual"} className="mp-visor__img" />
+        <img src={prueba.imagen} alt={nombreDePrueba(prueba)} className="mp-visor__img" />
         <span className="mp-visor__fecha">Probado el {formatFecha(prueba.fecha)}</span>
 
         <div className="mp-visor__exportar">
@@ -146,26 +181,28 @@ function VisorPrueba({ prueba, onClose, onBorrar }) {
           )}
         </div>
 
-        {producto && (
-          <div className="mp-visor__prenda">
-            {portada ? (
-              <img src={portada} alt={producto.nombre} />
+        <EnviarPruebaMail idPrueba={prueba.id_prueba} />
+
+        {prendas.map((prenda) => (
+          <div key={prenda.id_producto} className="mp-visor__prenda">
+            {prenda.imagen ? (
+              <img src={prenda.imagen} alt={prenda.nombre} />
             ) : (
-              <div className="mp-visor__prenda-ph">{producto.nombre?.charAt(0)}</div>
+              <div className="mp-visor__prenda-ph">{prenda.nombre?.charAt(0)}</div>
             )}
             <div className="mp-visor__prenda-info">
               <span>La prenda</span>
-              <strong>{producto.nombre}</strong>
-              {producto.precio != null && <em>{formatPrecio(producto.precio)}</em>}
+              <strong>{prenda.nombre}</strong>
+              {prenda.precio != null && <em>{formatPrecio(prenda.precio)}</em>}
             </div>
             <button
               className="perfil-agregar mp-visor__ver"
-              onClick={() => navigate(`/producto/${slugify(producto.nombre)}`)}
+              onClick={() => navigate(`/producto/${slugify(prenda.nombre)}`)}
             >
               Ver producto
             </button>
           </div>
-        )}
+        ))}
 
         <button className="mp-visor__borrar" onClick={() => onBorrar(prueba)}>
           Borrar esta prueba
@@ -227,7 +264,7 @@ function MisPruebas() {
         <div className="perfil-grid">
           {pruebas.map((p) => (
             <div key={p.id_prueba} className="card-perfil" onClick={() => setAbierta(p)}>
-              <img src={p.imagen} alt={p.Producto?.nombre ?? "Prueba virtual"} className="card-perfil__img" />
+              <img src={p.imagen} alt={nombreDePrueba(p)} className="card-perfil__img" />
               <button
                 className="mp-card__borrar"
                 aria-label="Borrar prueba"
@@ -244,7 +281,7 @@ function MisPruebas() {
               >
                 ⬇
               </button>
-              <span className="card-perfil__nombre">{p.Producto?.nombre ?? "Producto"}</span>
+              <span className="card-perfil__nombre">{p.look ? "Look completo" : p.Producto?.nombre ?? "Producto"}</span>
               <span className="card-perfil__fecha">{formatFecha(p.fecha)}</span>
             </div>
           ))}

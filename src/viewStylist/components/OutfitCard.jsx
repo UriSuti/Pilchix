@@ -56,11 +56,12 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
   const [cambiandoId, setCambiandoId] = useState(null);
   const [cargandoCambio, setCargandoCambio] = useState(false);
   const [aviso, setAviso] = useState(null);
-  const [probando, setProbando] = useState(null);
+  const [probando, setProbando] = useState(null); // props del probador: { producto } o { prendas }
   const [guardando, setGuardando] = useState(false);
 
   const tipo = TIPOS_OUTFIT[outfit.tipo] ?? { label: outfit.tipo };
   const presupuesto = Number(preferencias?.presupuesto) || null;
+  const probables = outfit.prendas.filter((p) => p.imagen);
 
   const pedirCambio = async (pedido) => {
     setCargandoCambio(true);
@@ -147,7 +148,7 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
                   Cambiar
                 </button>
                 {p.imagen && (
-                  <button type="button" className="sty-link" onClick={() => setProbando(p)}>
+                  <button type="button" className="sty-link" onClick={() => setProbando({ producto: p })}>
                     Probármelo
                   </button>
                 )}
@@ -164,6 +165,17 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
           </li>
         ))}
       </ul>
+
+      {probables.length > 1 && (
+        <button
+          type="button"
+          className="sty-btn-sec sty-look__probar"
+          onClick={() => setProbando({ prendas: probables })}
+          disabled={cargandoCambio}
+        >
+          Probarme el look completo
+        </button>
+      )}
 
       {aviso && <p className="sty-look__aviso">{aviso}</p>}
 
@@ -186,7 +198,7 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
         )}
       </footer>
 
-      {probando && <ProbadorVirtualModal producto={probando} onClose={() => setProbando(null)} />}
+      {probando && <ProbadorVirtualModal {...probando} onClose={() => setProbando(null)} />}
     </article>
   );
 }
