@@ -7,6 +7,12 @@ export const OCASIONES = [
 ];
 export const ESTILOS = ["Urbano", "Minimalista", "Deportivo", "Formal", "Casual", "Vintage"];
 export const CALCES = ["Holgada", "Regular", "Ajustada"];
+// valor null = todas las prendas (el backend clasifica cada una por su foto)
+export const GENEROS = [
+  { valor: null, label: "Todas" },
+  { valor: "Femenino", label: "Femenina" },
+  { valor: "Masculino", label: "Masculina" },
+];
 
 // paleta base de "Colores preferidos"; con el "+" se pueden sumar otros
 export const PALETA = [
@@ -26,6 +32,7 @@ export const PREFERENCIAS_INICIALES = {
   presupuesto: 100000,
   colores: ["#0b4cbf"],
   calce: "Holgada",
+  genero: null,
 };
 
 export const PASOS = ["Preferencias", "Resultados", "Tu look"];

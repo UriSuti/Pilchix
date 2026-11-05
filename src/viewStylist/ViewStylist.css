@@ -299,6 +299,37 @@
 }
 .sty-ocasion.is-activa svg { color: var(--sty-azul-sel); }
 
+/* filtro de ropa femenina / masculina: control segmentado */
+.sty-generos {
+  display: flex;
+  padding: 3px;
+  gap: 3px;
+  border: 1px solid var(--sty-borde);
+  border-radius: 9px;
+  background: #f3f5f8;
+}
+.sty-genero {
+  flex: 1 1 0;
+  height: 28px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #4a5565;
+  font: inherit;
+  font-size: 0.68rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.sty-genero:hover:not(.is-activa) { color: var(--sty-tinta); }
+.sty-genero.is-activa {
+  background: #fff;
+  border-color: var(--sty-azul-borde);
+  color: var(--sty-azul-sel);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(29, 95, 214, 0.08);
+}
+.sty-ayuda { margin: 6px 0 0; font-size: 0.6rem; color: var(--sty-gris); }
+
 .sty-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
 .sty-chip {
   display: inline-flex;

@@ -6,7 +6,7 @@ import Footer from "../header_footer/Footer/Footer";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
 import { getPreferencias, guardarPreferencias, generarOutfits } from "./services/stylist";
-import { PREFERENCIAS_INICIALES, OCASIONES, ESTILOS, CALCES, PASOS, PALETA, formatPrecio } from "./constants";
+import { PREFERENCIAS_INICIALES, OCASIONES, ESTILOS, CALCES, GENEROS, PASOS, PALETA, formatPrecio } from "./constants";
 import PreferenciasStylist from "./components/PreferenciasStylist.jsx";
 import OutfitCard from "./components/OutfitCard.jsx";
 import { IconChispa, IconPercha, IconEscudo, IconHoja, IconFlecha } from "./components/Iconos.jsx";
@@ -22,6 +22,7 @@ function normalizar(p) {
     presupuesto: p.presupuesto ?? null,
     colores: Array.isArray(p.colores) ? p.colores : PREFERENCIAS_INICIALES.colores,
     calce: CALCES.includes(p.calce) ? p.calce : PREFERENCIAS_INICIALES.calce,
+    genero: GENEROS.some((g) => g.valor && g.valor === p.genero) ? p.genero : PREFERENCIAS_INICIALES.genero,
   };
 }
 
@@ -46,7 +47,9 @@ function Stepper({ paso, maxPaso, onIr }) {
 
 function ResumenPreferencias({ pref }) {
   const colores = pref.colores.map((hex) => PALETA.find((p) => p.hex === hex)?.nombre ?? hex);
+  const genero = GENEROS.find((g) => g.valor && g.valor === pref.genero);
   const partes = [
+    genero ? `Ropa ${genero.label.toLowerCase()}` : null,
     pref.ocasion,
     ...pref.estilos,
     pref.presupuesto ? `Hasta ${formatPrecio(pref.presupuesto)}` : null,

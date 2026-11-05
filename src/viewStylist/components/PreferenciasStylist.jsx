@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { OCASIONES, ESTILOS, CALCES, PALETA } from "../constants";
+import { OCASIONES, ESTILOS, CALCES, GENEROS, PALETA } from "../constants";
 import { IconSol, IconValija, IconLuna, IconEstrella, IconPesos, IconMas, IconFlecha, IconCandado } from "./Iconos.jsx";
 
 const ICONOS_OCASION = { sol: IconSol, valija: IconValija, luna: IconLuna, estrella: IconEstrella };
@@ -35,6 +35,28 @@ function PreferenciasStylist({ pref, onChange, pedido, onPedidoChange, onSubmit,
 
   return (
     <form className="sty-form" onSubmit={handleSubmit}>
+      <fieldset className="sty-campo">
+        <legend className="sty-pregunta">¿Qué ropa querés ver?</legend>
+        <div className="sty-generos" role="radiogroup">
+          {GENEROS.map(({ valor, label }) => {
+            const activa = (pref.genero ?? null) === valor;
+            return (
+              <button
+                key={label}
+                type="button"
+                role="radio"
+                aria-checked={activa}
+                className={`sty-genero ${activa ? "is-activa" : ""}`}
+                onClick={() => set("genero", valor)}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="sty-ayuda">Reconocemos cada prenda por su foto.</p>
+      </fieldset>
+
       <fieldset className="sty-campo">
         <legend className="sty-pregunta">¿Qué ocasión estás buscando?</legend>
         <div className="sty-ocasiones">

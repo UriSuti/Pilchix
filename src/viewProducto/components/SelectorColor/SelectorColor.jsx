@@ -1,7 +1,7 @@
 import './SelectorColor.css'
 import nike from '../../../assets/nike.webp'
 
-function normalizeColores(colores) {
+export function normalizeColores(colores) {
   if (!colores) return []
 
   let parsed = colores
@@ -20,7 +20,7 @@ function normalizeColores(colores) {
   // If it's an array of strings: ["#fff","#000"]
   if (Array.isArray(parsed)) {
     if (parsed.length === 0) return []
-    if (typeof parsed[0] === 'string') return parsed.map((c) => String(c).trim())
+    if (typeof parsed[0] === 'string') return parsed.map((c) => String(c).trim()).filter(Boolean)
 
     // Array of objects: [{"hex":"#fff","nombre":"Blanco"}, {"color":"#000"}] or [{"colors":[...] }]
     // Flatten values when they are arrays inside the objects
@@ -32,7 +32,7 @@ function normalizeColores(colores) {
       return candidate ? [candidate] : []
     })
 
-    return vals.filter(Boolean).map((c) => String(c).trim())
+    return vals.filter(Boolean).map((c) => String(c).trim()).filter(Boolean)
   }
 
   // If it's an object, maybe shape like { colors: ["#fff"] } or { "Blanco": "#fff" }
@@ -51,7 +51,7 @@ function normalizeColores(colores) {
 function SelectorColor({ colores, value: selectedColor, onChange }) {
   const opciones = normalizeColores(colores)
 
-  const mostrarFallback = opciones.length === 0
+  const sinColor = opciones.length === 0
 
   const handleClick = (color) => {
     if (onChange) onChange(color)
@@ -59,18 +59,15 @@ function SelectorColor({ colores, value: selectedColor, onChange }) {
 
   return (
     <div className="selector-color">
-      {mostrarFallback ? (
-        <>
-          <button type="button" className={`selector-color__swatch ${selectedColor === '#4a72b0' ? 'is-active' : ''}`} aria-label="Color 1" onClick={() => handleClick('#4a72b0')}>
-            <span className="card-producto__swatch" style={{ backgroundColor: '#4a72b0' }} />
-          </button>
-          <button type="button" className={`selector-color__swatch ${selectedColor === '#ffffff' ? 'is-active' : ''}`} aria-label="Color 2" onClick={() => handleClick('#ffffff')}>
-            <span className="card-producto__swatch" style={{ backgroundColor: '#ffffff' }} />
-          </button>
-          <button type="button" className={`selector-color__swatch ${selectedColor === '#11233f' ? 'is-active' : ''}`} aria-label="Color 3" onClick={() => handleClick('#11233f')}>
-            <span className="card-producto__swatch" style={{ backgroundColor: '#11233f' }} />
-          </button>
-        </>
+      {sinColor ? (
+        <span
+          className="selector-color__swatch selector-color__swatch--sin-color"
+          role="img"
+          aria-label="Sin color definido"
+          title="Sin color definido"
+        >
+          <span className="card-producto__swatch" />
+        </span>
       ) : (
         opciones.map((color, i) => (
           <button

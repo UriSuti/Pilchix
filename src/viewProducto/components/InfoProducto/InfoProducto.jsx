@@ -5,7 +5,7 @@ import { incrementarClic } from '../../services/producto'
 import { useAuth } from '../../../context/AuthContext'
 import { useToast } from '../../../context/ToastContext'
 import { agregarAlCarrito } from '../../../viewCarrito/services/cart'
-import SelectorColor from '../SelectorColor/SelectorColor.jsx'
+import SelectorColor, { normalizeColores } from '../SelectorColor/SelectorColor.jsx'
 import SelectorTalle from '../SelectorTalle/SelectorTalle.jsx'
 import BotonFavorito from '../../../viewLocal/components/BotonFavorito/BotonFavorito.jsx'
 import ProbadorVirtualModal from '../ProbadorVirtualModal/ProbadorVirtualModal.jsx'
@@ -77,9 +77,13 @@ function InfoProducto({ producto, loading, marca, selectedColor, selectedTalle, 
     return <section className="ipinfo ipinfo--estado">Producto no encontrado</section>
   }
 
+  // sin colores cargados no hay nada para elegir: se agrega sin color
+  const tieneColores = normalizeColores(producto.colores).length > 0
+  const colorElegido = tieneColores ? selectedColor : null
+
   const handleAgregarCarrito = async () => {
-    if (!selectedColor || !selectedTalle) {
-      mostrarToast('Seleccioná talle y color antes de agregar', 'info')
+    if ((tieneColores && !selectedColor) || !selectedTalle) {
+      mostrarToast(tieneColores ? 'Seleccioná talle y color antes de agregar' : 'Seleccioná un talle antes de agregar', 'info')
       return
     }
 
@@ -97,7 +101,7 @@ function InfoProducto({ producto, loading, marca, selectedColor, selectedTalle, 
         cantidad: 1,
         precioUnitario: producto.precio,
         talle: selectedTalle,
-        color: selectedColor,
+        color: colorElegido,
       })
       mostrarToast('Producto agregado al carrito', 'exito')
 

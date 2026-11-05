@@ -37,3 +37,27 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+/* producto sin color cargado: círculo vacío, tachado y no clickeable */
+.selector-color__swatch--sin-color,
+.selector-color__swatch--sin-color:hover {
+  cursor: default;
+  border-color: transparent;
+}
+.selector-color__swatch--sin-color .card-producto__swatch {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  border-color: #cdd6da;
+}
+.selector-color__swatch--sin-color .card-producto__swatch::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+  margin-top: -1px;
+  background: #e03131;
+  transform: rotate(-45deg);
+}
