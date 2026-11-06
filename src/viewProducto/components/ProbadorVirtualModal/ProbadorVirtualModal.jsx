@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { generarPruebaLook, generarPruebaVirtual, getFotoProbador } from '../../services/probador'
+import { enviarPruebaPorMail, generarPruebaLook, generarPruebaVirtual, getFotoProbador } from '../../services/probador'
+import { validarDni } from '../../../utils/dni'
 import { compartirImagen, descargarImagen, puedeCompartir } from '../../../utils/exportarImagen'
 import { slugify } from '../../../utils/slugify'
 import CamaraCaptura from './CamaraCaptura'
-import EnviarPruebaMail from './EnviarPruebaMail'
+import EnviarPruebaMail, { AyudaDni, CampoDni } from './EnviarPruebaMail'
 import './ProbadorVirtualModal.css'
 
 // color: hex del color elegido en la ficha (opcional); sin él se prueba la portada
@@ -21,6 +22,10 @@ function ProbadorVirtualModal({ producto, prendas, color, onClose }) {
   const [idPrueba, setIdPrueba] = useState(null)
   const [mailEnviado, setMailEnviado] = useState(false)
   const [error, setError] = useState(null)
+  // el DNI se pide antes de generar; la prueba se manda sola a <dni>@est.ort.edu.ar
+  const [dni, setDni] = useState('')
+  const [dniError, setDniError] = useState(null)
+  const [envio, setEnvio] = useState(null) // { estado: 'enviando' | 'ok' | 'error', email?, error? }
 
   // si el usuario ya tiene una foto guardada en el perfil, se usa directo
   useEffect(() => {
@@ -60,8 +65,21 @@ function ProbadorVirtualModal({ producto, prendas, color, onClose }) {
   // foto que se va a usar: la recién subida o sacada o, si no hay, la guardada
   const fotoAMostrar = previewUrl ?? fotoGuardada
 
+  const enviarAlDni = (id, dniLimpio) => {
+    setEnvio({ estado: 'enviando' })
+    enviarPruebaPorMail(id, dniLimpio)
+      .then(({ email }) => setEnvio({ estado: 'ok', email }))
+      .catch((err) => setEnvio({ estado: 'error', error: err.message || 'No se pudo enviar el mail' }))
+  }
+
   const handleGenerar = async () => {
     if (!fotoAMostrar) return
+    const dniLimpio = dni.trim()
+    const invalido = validarDni(dniLimpio)
+    if (invalido) {
+      setDniError(invalido)
+      return
+    }
     setCargando(true)
     setError(null)
     try {
@@ -71,6 +89,8 @@ function ProbadorVirtualModal({ producto, prendas, color, onClose }) {
       setResultado(imagen)
       setIdPrueba(idPrueba ?? null)
       setMailEnviado(Boolean(mailEnviado))
+      // recién con la foto generada se manda al mail del DNI (no frena mostrar el resultado)
+      if (idPrueba) enviarAlDni(idPrueba, dniLimpio)
       if (fotoProbador) {
         // la foto subida quedó guardada: de acá en más se usa esa
         setFotoGuardada(fotoProbador)
@@ -85,6 +105,7 @@ function ProbadorVirtualModal({ producto, prendas, color, onClose }) {
   }
 
   const handleProbarOtraFoto = () => {
+    setEnvio(null)
     setFoto(null)
     setPreviewUrl(null)
     setResultado(null)
@@ -170,7 +191,18 @@ function ProbadorVirtualModal({ producto, prendas, color, onClose }) {
               {mailEnviado && (
                 <p className="probador-resultado__mail">📩 También te la mandamos a tu mail.</p>
               )}
-              {idPrueba && <EnviarPruebaMail idPrueba={idPrueba} />}
+              {envio?.estado === 'enviando' && (
+                <p className="probador-resultado__mail">Enviándola a tu mail de ORT...</p>
+              )}
+              {envio?.estado === 'ok' && (
+                <p className="probador-resultado__mail">📩 La mandamos a <b>{envio.email}</b>.</p>
+              )}
+              {envio?.estado === 'error' && idPrueba && (
+                <>
+                  <p className="probador-mail__error" role="alert">{envio.error}. Probá de nuevo:</p>
+                  <EnviarPruebaMail idPrueba={idPrueba} dniInicial={dni.trim()} />
+                </>
+              )}
               <div className="probador-resultado__acciones">
                 <button className="probador-btn-primary" onClick={handleDescargar} disabled={exportando}>
                   {exportando ? 'Preparando...' : 'Descargar'}
@@ -206,6 +238,18 @@ function ProbadorVirtualModal({ producto, prendas, color, onClose }) {
                       {fotoGuardada ? 'Reemplazar la foto guardada en mi perfil' : 'Guardar esta foto en mi perfil'}
                     </label>
                   )}
+                  <div className="probador-mail">
+                    <label className="probador-mail__label" htmlFor="probador-dni">
+                      Tu DNI, para mandarte la foto al mail de ORT
+                    </label>
+                    <CampoDni
+                      id="probador-dni"
+                      value={dni}
+                      onChange={(v) => { setDni(v); setDniError(null) }}
+                      error={dniError}
+                    />
+                    <AyudaDni id="probador-dni" error={dniError} />
+                  </div>
                   <div className="probador-upload__acciones">
                     <label className="probador-btn-secondary" htmlFor="probador-input-foto">
                       Subir otra

@@ -3,9 +3,39 @@ import { enviarPruebaPorMail } from '../../services/probador'
 import { SUFIJO_MAIL_ORT, validarDni } from '../../../utils/dni'
 import './ProbadorVirtualModal.css'
 
-// manda una prueba ya generada al mail de ORT que corresponde al DNI ingresado
-function EnviarPruebaMail({ idPrueba }) {
-  const [dni, setDni] = useState('')
+// input de DNI con el sufijo del mail de ORT; lo usan este form y el modal (antes de generar)
+export function CampoDni({ id, value, onChange, disabled, error }) {
+  return (
+    <div className="probador-mail__campo">
+      <input
+        id={id}
+        type="text"
+        inputMode="numeric"
+        autoComplete="off"
+        placeholder="DNI"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        aria-invalid={Boolean(error)}
+        aria-describedby={`${id}-ayuda`}
+      />
+      <span>{SUFIJO_MAIL_ORT}</span>
+    </div>
+  )
+}
+
+export function AyudaDni({ id, error }) {
+  return error ? (
+    <p id={`${id}-ayuda`} className="probador-mail__error" role="alert">{error}</p>
+  ) : (
+    <p id={`${id}-ayuda`} className="probador-mail__ayuda">8 dígitos, sin puntos ni espacios.</p>
+  )
+}
+
+// manda una prueba ya generada al mail de ORT que corresponde al DNI ingresado.
+// dniInicial: para reintentar cuando falló el envío automático
+function EnviarPruebaMail({ idPrueba, dniInicial = '' }) {
+  const [dni, setDni] = useState(dniInicial)
   const [error, setError] = useState(null)
   const [enviando, setEnviando] = useState(false)
   const [enviadoA, setEnviadoA] = useState(null)
@@ -52,30 +82,18 @@ function EnviarPruebaMail({ idPrueba }) {
         Mandala a tu mail de ORT
       </label>
       <div className="probador-mail__fila">
-        <div className="probador-mail__campo">
-          <input
-            id="probador-mail-dni"
-            type="text"
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder="DNI"
-            value={dni}
-            onChange={(e) => { setDni(e.target.value); setError(null) }}
-            disabled={enviando}
-            aria-invalid={Boolean(error)}
-            aria-describedby="probador-mail-ayuda"
-          />
-          <span>{SUFIJO_MAIL_ORT}</span>
-        </div>
+        <CampoDni
+          id="probador-mail-dni"
+          value={dni}
+          onChange={(v) => { setDni(v); setError(null) }}
+          disabled={enviando}
+          error={error}
+        />
         <button type="submit" className="probador-btn-primary" disabled={enviando}>
           {enviando ? 'Enviando...' : 'Enviar'}
         </button>
       </div>
-      {error ? (
-        <p id="probador-mail-ayuda" className="probador-mail__error" role="alert">{error}</p>
-      ) : (
-        <p id="probador-mail-ayuda" className="probador-mail__ayuda">8 dígitos, sin puntos ni espacios.</p>
-      )}
+      <AyudaDni id="probador-mail-dni" error={error} />
     </form>
   )
 }

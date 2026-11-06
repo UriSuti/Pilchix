@@ -133,6 +133,8 @@
   background: #f3f4f6;
 }
 
+/* DNI antes de generar */
+.probador-upload .probador-mail { margin-top: 14px; }
 .probador-upload__acciones {
   display: flex;
   gap: 10px;
