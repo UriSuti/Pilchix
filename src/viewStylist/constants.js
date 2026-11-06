@@ -1,17 +1,16 @@
 // tienen que coincidir con los valores que acepta el backend (stylist.service.js)
 export const OCASIONES = [
-  { valor: "Uso diario", icono: "sol" },
-  { valor: "Trabajo", icono: "valija" },
-  { valor: "Salida / Noche", icono: "luna" },
-  { valor: "Evento especial", icono: "estrella" },
+  { valor: "Uso diario" },
+  { valor: "Trabajo" },
+  { valor: "Salida / Noche" },
+  { valor: "Evento especial" },
 ];
 export const ESTILOS = ["Urbano", "Minimalista", "Deportivo", "Formal", "Casual", "Vintage"];
 export const CALCES = ["Holgada", "Regular", "Ajustada"];
-// valor null = todas las prendas (el backend clasifica cada una por su foto)
+// sin género elegido (null) = todas las prendas; el backend clasifica cada una por su foto
 export const GENEROS = [
-  { valor: null, label: "Todas" },
-  { valor: "Femenino", label: "Femenina" },
-  { valor: "Masculino", label: "Masculina" },
+  { valor: "Femenino", label: "Femenina", icono: "mujer" },
+  { valor: "Masculino", label: "Masculina", icono: "hombre" },
 ];
 
 // paleta base de "Colores preferidos"; con el "+" se pueden sumar otros
@@ -30,7 +29,7 @@ export const PREFERENCIAS_INICIALES = {
   ocasion: "Uso diario",
   estilos: ["Urbano", "Minimalista"],
   presupuesto: 100000,
-  colores: ["#0b4cbf"],
+  colores: [], // siempre arrancan sin elegir
   calce: "Holgada",
   genero: null,
 };

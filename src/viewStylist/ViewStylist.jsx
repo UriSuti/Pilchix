@@ -9,8 +9,7 @@ import { getPreferencias, guardarPreferencias, generarOutfits } from "./services
 import { PREFERENCIAS_INICIALES, OCASIONES, ESTILOS, CALCES, GENEROS, PASOS, PALETA, formatPrecio } from "./constants";
 import PreferenciasStylist from "./components/PreferenciasStylist.jsx";
 import OutfitCard from "./components/OutfitCard.jsx";
-import { IconChispa, IconPercha, IconEscudo, IconHoja, IconFlecha } from "./components/Iconos.jsx";
-import fotoHero from "../assets/stylist-hero.jpg";
+import { IconFlecha } from "./components/Iconos.jsx";
 
 // las preferencias guardadas pueden venir de una versión anterior del formulario:
 // lo que no sea válido hoy vuelve al valor inicial
@@ -20,7 +19,8 @@ function normalizar(p) {
     ocasion: OCASIONES.some((o) => o.valor === p.ocasion) ? p.ocasion : PREFERENCIAS_INICIALES.ocasion,
     estilos: Array.isArray(p.estilos) ? p.estilos.filter((e) => ESTILOS.includes(e)) : PREFERENCIAS_INICIALES.estilos,
     presupuesto: p.presupuesto ?? null,
-    colores: Array.isArray(p.colores) ? p.colores : PREFERENCIAS_INICIALES.colores,
+    // los colores no se recuerdan entre visitas: siempre arrancan sin elegir
+    colores: [],
     calce: CALCES.includes(p.calce) ? p.calce : PREFERENCIAS_INICIALES.calce,
     genero: GENEROS.some((g) => g.valor && g.valor === p.genero) ? p.genero : PREFERENCIAS_INICIALES.genero,
   };
@@ -142,133 +142,102 @@ function ViewStylist() {
     <div className="view-stylist">
       <Header />
 
-      {/* ============ HERO ============ */}
-      <section className="sty-hero">
-        <div className="sty-hero__foto" aria-hidden="true">
-          <img src={fotoHero} alt="" />
+      <header className="sty-hero">
+        <div className="sty-wrap">
+          <p className="sty-hero__eyebrow">Estilista Pilchix</p>
+          <h1 className="sty-hero__title">Armá tu look</h1>
+          <p className="sty-hero__sub">
+            Contanos qué buscás y te proponemos tres outfits completos con prendas de las marcas de Pilchix.
+          </p>
         </div>
-        <div className="sty-wrap sty-hero__wrap">
-          <div className="sty-hero__texto">
-            <span className="sty-badge"><IconChispa size={13} strokeWidth={2} /> Nuevo en Pilchix</span>
-            <h1 className="sty-hero__titulo">AI Stylist</h1>
-            <p className="sty-hero__sub">
-              Contale qué necesitás y te armamos looks personalizados con las mejores marcas, en base
-              a tu estilo, ocasión y presupuesto. Simple, rápido y 100% a tu medida.
-            </p>
-            <ul className="sty-hero__features">
-              <li><IconChispa size={26} strokeWidth={1.5} /><span>Looks<br />personalizados</span></li>
-              <li><IconPercha /><span>Las mejores<br />marcas</span></li>
-              <li><IconEscudo /><span>Ahorra tiempo<br />y elegí mejor</span></li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      </header>
 
-      {/* ============ INTRO + CARD ============ */}
-      <section className="sty-intro">
-        <div className="sty-wrap sty-intro__grid">
-          <div className="sty-intro__texto">
-            <p className="sty-eyebrow">Tu estilo, nuestra tecnología</p>
-            <h2 className="sty-intro__titulo">Descubrí looks que van con vos</h2>
-            <p className="sty-intro__sub">
-              Nuestro AI Stylist analiza tus preferencias y te recomienda outfits completos, con las mejores
-              marcas y opciones que se ajustan a tu estilo, ocasión y presupuesto.
-            </p>
-            <ul className="sty-intro__features">
-              <li><span className="sty-naranja"><IconChispa size={26} strokeWidth={1.5} /></span>Looks únicos<br />y personalizados</li>
-              <li><IconPercha />Marcas de<br />primer nivel</li>
-              <li><IconEscudo />Compras seguras<br />y confiables</li>
-              <li><IconHoja />Moda más<br />consciente</li>
-            </ul>
-          </div>
+      <main className="sty-wrap sty-main">
+        <div className="sty-card">
+          <Stepper paso={paso} maxPaso={maxPaso} onIr={(n) => { setPaso(n); if (n > 1) irAResultados(); }} />
 
-          <div className="sty-card">
-            <Stepper paso={paso} maxPaso={maxPaso} onIr={(n) => { setPaso(n); if (n > 1) irAResultados(); }} />
+          {paso === 1 && (
+            <PreferenciasStylist
+              pref={pref}
+              onChange={setPref}
+              pedido={pedido}
+              onPedidoChange={setPedido}
+              onSubmit={generar}
+              generando={generando}
+            />
+          )}
 
-            {paso === 1 && (
-              <PreferenciasStylist
-                pref={pref}
-                onChange={setPref}
-                pedido={pedido}
-                onPedidoChange={setPedido}
-                onSubmit={generar}
-                generando={generando}
-              />
-            )}
+          {paso === 2 && (
+            <form className="sty-form" onSubmit={(e) => { e.preventDefault(); generar(); }}>
+              <p className="sty-label">Tu pedido</p>
+              <ResumenPreferencias pref={pref} />
+              <button type="button" className="sty-link" onClick={() => setPaso(1)}>Editar preferencias</button>
 
-            {paso === 2 && (
-              <form className="sty-form" onSubmit={(e) => { e.preventDefault(); generar(); }}>
-                <p className="sty-pregunta">Tu pedido</p>
-                <ResumenPreferencias pref={pref} />
-                <button type="button" className="sty-link" onClick={() => setPaso(1)}>Editar preferencias</button>
+              <label className="sty-campo">
+                <span className="sty-label">¿Querés ajustar algo? Contale al estilista</span>
+                <textarea
+                  className="sty-input sty-input--area"
+                  rows={3}
+                  maxLength={600}
+                  value={pedido}
+                  onChange={(e) => setPedido(e.target.value)}
+                  placeholder="Ej.: que combine con zapatillas blancas y sea para el sábado a la noche"
+                  disabled={generando}
+                />
+              </label>
 
-                <label className="sty-campo">
-                  <span className="sty-label">¿Querés ajustar algo? Contale al estilista</span>
-                  <textarea
-                    className="sty-input sty-input--area"
-                    rows={3}
-                    maxLength={600}
-                    value={pedido}
-                    onChange={(e) => setPedido(e.target.value)}
-                    placeholder="Ej.: que combine con zapatillas blancas y sea para el sábado a la noche"
-                    disabled={generando}
-                  />
-                </label>
+              <label className="sty-check">
+                <input type="checkbox" checked={usarPropias} onChange={(e) => setUsarPropias(e.target.checked)} />
+                Quiero combinarlo con ropa que ya tengo
+              </label>
+              {usarPropias && (
+                <input
+                  className="sty-input"
+                  maxLength={400}
+                  value={prendasPropias}
+                  onChange={(e) => setPrendasPropias(e.target.value)}
+                  placeholder="Ej.: jean negro recto, campera de cuero"
+                  disabled={generando}
+                />
+              )}
 
-                <label className="sty-check">
-                  <input type="checkbox" checked={usarPropias} onChange={(e) => setUsarPropias(e.target.checked)} />
-                  Quiero combinarlo con ropa que ya tengo
-                </label>
-                {usarPropias && (
-                  <input
-                    className="sty-input"
-                    maxLength={400}
-                    value={prendasPropias}
-                    onChange={(e) => setPrendasPropias(e.target.value)}
-                    placeholder="Ej.: jean negro recto, campera de cuero"
-                    disabled={generando}
-                  />
-                )}
-
-                <div className="sty-form__final sty-form__final--fin">
-                  <button type="submit" className="sty-btn-generar" disabled={generando}>
-                    {generando ? "Generando tus looks…" : "Generar nuevos looks"}
-                    {!generando && <IconFlecha />}
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {paso === 3 && look && (
-              <div className="sty-form">
-                <p className="sty-pregunta">Elegiste</p>
-                <p className="sty-elegido__titulo">{look.titulo}</p>
-                <p className="sty-elegido__total">{formatPrecio(look.total)} · {look.prendas.length} prendas</p>
-                <p className="sty-intro__sub">
-                  Abajo podés cambiar cualquier prenda, probártela en el probador virtual o guardar el look en tus favoritos.
-                </p>
-                <div className="sty-form__final sty-form__final--fin">
-                  <button type="button" className="sty-btn-sec" onClick={() => { setPaso(1); }}>
-                    Cambiar preferencias
-                  </button>
-                  <button type="button" className="sty-btn-generar" onClick={() => { setPaso(2); irAResultados(); }}>
-                    Ver los otros looks <IconFlecha />
-                  </button>
-                </div>
+              <div className="sty-form__final">
+                <button type="submit" className="sty-btn" disabled={generando}>
+                  {generando ? "Generando tus looks…" : "Generar nuevos looks"}
+                  {!generando && <IconFlecha />}
+                </button>
               </div>
-            )}
-          </div>
+            </form>
+          )}
+
+          {paso === 3 && look && (
+            <div className="sty-form">
+              <p className="sty-label">Elegiste</p>
+              <p className="sty-elegido__titulo">{look.titulo}</p>
+              <p className="sty-elegido__total">{formatPrecio(look.total)} · {look.prendas.length} prendas</p>
+              <p className="sty-sub">
+                Abajo podés cambiar cualquier prenda, probarte el look completo en el probador virtual o guardar el look en tus favoritos.
+              </p>
+              <div className="sty-form__final">
+                <button type="button" className="sty-btn-sec" onClick={() => { setPaso(1); }}>
+                  Cambiar preferencias
+                </button>
+                <button type="button" className="sty-btn" onClick={() => { setPaso(2); irAResultados(); }}>
+                  Ver los otros looks <IconFlecha />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      </section>
+      </main>
 
       {/* ============ RESULTADOS / TU LOOK ============ */}
       <div ref={resultadosRef} className="sty-ancla" />
       {generando && (
         <section className="sty-resultados" aria-live="polite">
           <div className="sty-wrap">
-            <p className="sty-eyebrow">Resultados</p>
-            <h2 className="sty-intro__titulo">Armando tus looks…</h2>
-            <p className="sty-intro__sub">El estilista está revisando el catálogo y combinando prendas.</p>
+            <h2 className="sty-titulo">Armando tus looks…</h2>
+            <p className="sty-sub">El estilista está revisando el catálogo y combinando prendas.</p>
             <div className="sty-looks">
               {[0, 1, 2].map((i) => <div key={i} className="sty-look sty-look--sk"><div className="sty-sk" /></div>)}
             </div>
@@ -279,9 +248,8 @@ function ViewStylist() {
       {!generando && resultado && paso === 2 && (
         <section className="sty-resultados">
           <div className="sty-wrap">
-            <p className="sty-eyebrow">Resultados</p>
-            <h2 className="sty-intro__titulo">Tus 3 looks</h2>
-            {resultado.mensaje && <p className="sty-intro__sub">{resultado.mensaje}</p>}
+            <h2 className="sty-titulo">Tus 3 looks</h2>
+            {resultado.mensaje && <p className="sty-sub">{resultado.mensaje}</p>}
             {resultado.avisos.length > 0 && (
               <ul className="sty-avisos">
                 {resultado.avisos.map((a) => <li key={a}>{a}</li>)}
@@ -305,8 +273,7 @@ function ViewStylist() {
       {!generando && look && paso === 3 && (
         <section className="sty-resultados">
           <div className="sty-wrap">
-            <p className="sty-eyebrow">Tu look</p>
-            <h2 className="sty-intro__titulo">{look.titulo}</h2>
+            <h2 className="sty-titulo">{look.titulo}</h2>
             <OutfitCard
               outfit={look}
               onChange={(nuevo) => actualizarOutfit(elegido, nuevo)}

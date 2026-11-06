@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { slugify } from "../../utils/slugify";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -39,7 +39,7 @@ function PanelCambio({ prenda, cargando, onPedir, onCerrar }) {
         <button type="button" className="sty-btn-sec" onClick={onCerrar} disabled={cargando}>
           Cancelar
         </button>
-        <button type="submit" className="sty-btn-sec sty-btn-sec--azul" disabled={cargando}>
+        <button type="submit" className="sty-btn sty-btn--sm" disabled={cargando}>
           {cargando ? "Buscando…" : "Cambiar prenda"}
         </button>
       </div>
@@ -56,7 +56,7 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
   const [cambiandoId, setCambiandoId] = useState(null);
   const [cargandoCambio, setCargandoCambio] = useState(false);
   const [aviso, setAviso] = useState(null);
-  const [probando, setProbando] = useState(null); // props del probador: { producto } o { prendas }
+  const [probando, setProbando] = useState(null); // props del probador: { prendas } (el look completo)
   const [guardando, setGuardando] = useState(false);
 
   const tipo = TIPOS_OUTFIT[outfit.tipo] ?? { label: outfit.tipo };
@@ -119,21 +119,14 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
 
       <ul className="sty-prendas">
         {outfit.prendas.map((p) => (
-          <li key={p.id_producto} className="sty-prenda">
-            <Link to={`/producto/${slugify(p.nombre)}`} className="sty-prenda__media">
-              {p.imagen ? <img src={p.imagen} alt={p.nombre} loading="lazy" /> : <span>{p.nombre.charAt(0)}</span>}
-            </Link>
-            <div className="sty-prenda__info">
-              <p className="sty-prenda__rol">{p.rol}</p>
-              <Link to={`/producto/${slugify(p.nombre)}`} className="sty-prenda__nombre">{p.nombre}</Link>
-              <p className="sty-prenda__marca">
-                {p.marca}
-                {p.colores?.length > 0 && (
-                  <span className="sty-prenda__colores" aria-hidden="true">
-                    {p.colores.map((hex) => <span key={hex} className="sty-swatch sty-swatch--mini" style={{ "--sw": hex }} />)}
-                  </span>
-                )}
-              </p>
+          <Fragment key={p.id_producto}>
+            <li className={`sty-prenda ${cambiandoId === p.id_producto ? "is-cambiando" : ""}`}>
+              <Link to={`/producto/${slugify(p.nombre)}`} className="sty-prenda__media" title={p.nombre}>
+                {p.imagen ? <img src={p.imagen} alt={p.nombre} loading="lazy" /> : <span>{p.nombre.charAt(0)}</span>}
+              </Link>
+              <Link to={`/producto/${slugify(p.nombre)}`} className="sty-prenda__nombre" title={`${p.nombre} · ${p.marca}`}>
+                {p.nombre}
+              </Link>
               <p className="sty-prenda__precio">
                 {formatPrecio(p.precio)}
                 {p.precio_original && <s>{formatPrecio(p.precio_original)}</s>}
@@ -147,22 +140,20 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
                 >
                   Cambiar
                 </button>
-                {p.imagen && (
-                  <button type="button" className="sty-link" onClick={() => setProbando({ producto: p })}>
-                    Probármelo
-                  </button>
-                )}
               </div>
-            </div>
+            </li>
+            {/* el panel ocupa todo el ancho de la grilla, debajo de la prenda */}
             {cambiandoId === p.id_producto && (
-              <PanelCambio
-                prenda={p}
-                cargando={cargandoCambio}
-                onPedir={pedirCambio}
-                onCerrar={() => setCambiandoId(null)}
-              />
+              <li className="sty-prendas__panel">
+                <PanelCambio
+                  prenda={p}
+                  cargando={cargandoCambio}
+                  onPedir={pedirCambio}
+                  onCerrar={() => setCambiandoId(null)}
+                />
+              </li>
             )}
-          </li>
+          </Fragment>
         ))}
       </ul>
 
@@ -188,7 +179,7 @@ function OutfitCard({ outfit, onChange, preferencias, onElegir, destacado = fals
           )}
         </div>
         {onElegir ? (
-          <button type="button" className="sty-btn-generar sty-btn-generar--sm" onClick={onElegir}>
+          <button type="button" className="sty-btn sty-btn--sm" onClick={onElegir}>
             Elegir este look <IconFlecha />
           </button>
         ) : (

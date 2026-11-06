@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { OCASIONES, ESTILOS, CALCES, GENEROS, PALETA } from "../constants";
-import { IconSol, IconValija, IconLuna, IconEstrella, IconPesos, IconMas, IconFlecha, IconCandado } from "./Iconos.jsx";
+import { IconMas, IconFlecha, IconMujer, IconHombre } from "./Iconos.jsx";
 
-const ICONOS_OCASION = { sol: IconSol, valija: IconValija, luna: IconLuna, estrella: IconEstrella };
+const ICONOS_GENERO = { mujer: IconMujer, hombre: IconHombre };
 
 // Paso 1: conocer el estilo del usuario. Es controlado: el estado vive en ViewStylist.
 function PreferenciasStylist({ pref, onChange, pedido, onPedidoChange, onSubmit, generando }) {
@@ -35,54 +35,138 @@ function PreferenciasStylist({ pref, onChange, pedido, onPedidoChange, onSubmit,
 
   return (
     <form className="sty-form" onSubmit={handleSubmit}>
-      <fieldset className="sty-campo">
-        <legend className="sty-pregunta">¿Qué ropa querés ver?</legend>
-        <div className="sty-generos" role="radiogroup">
-          {GENEROS.map(({ valor, label }) => {
-            const activa = (pref.genero ?? null) === valor;
-            return (
-              <button
-                key={label}
-                type="button"
-                role="radio"
-                aria-checked={activa}
-                className={`sty-genero ${activa ? "is-activa" : ""}`}
-                onClick={() => set("genero", valor)}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-        <p className="sty-ayuda">Reconocemos cada prenda por su foto.</p>
-      </fieldset>
+      <div className="sty-form__cols">
+        <div className="sty-form__col">
+          <fieldset className="sty-campo">
+            <legend className="sty-label">¿Qué ropa querés ver?</legend>
+            <div className="sty-generos" role="radiogroup">
+              {GENEROS.map(({ valor, label, icono }) => {
+                const Icono = ICONOS_GENERO[icono];
+                const activa = pref.genero === valor;
+                return (
+                  <button
+                    key={valor}
+                    type="button"
+                    role="radio"
+                    aria-checked={activa}
+                    aria-label={`Ropa ${label.toLowerCase()}`}
+                    title={`Ropa ${label.toLowerCase()}`}
+                    className={`sty-genero ${activa ? "is-activa" : ""}`}
+                    // tocar el ya elegido lo desmarca: sin género = todas las prendas
+                    onClick={() => set("genero", activa ? null : valor)}
+                  >
+                    <Icono size={22} />
+                  </button>
+                );
+              })}
+            </div>
+            <p className="sty-ayuda">Si no elegís ninguno, te mostramos todo.</p>
+          </fieldset>
 
-      <fieldset className="sty-campo">
-        <legend className="sty-pregunta">¿Qué ocasión estás buscando?</legend>
-        <div className="sty-ocasiones">
-          {OCASIONES.map(({ valor, icono }) => {
-            const Icono = ICONOS_OCASION[icono];
-            const activa = pref.ocasion === valor;
-            return (
-              <button
-                key={valor}
-                type="button"
-                className={`sty-ocasion ${activa ? "is-activa" : ""}`}
-                aria-pressed={activa}
-                onClick={() => set("ocasion", valor)}
-              >
-                <Icono />
-                {valor}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
+          <fieldset className="sty-campo">
+            <legend className="sty-label">Ocasión</legend>
+            <div className="sty-chips">
+              {OCASIONES.map(({ valor }) => {
+                const activa = pref.ocasion === valor;
+                return (
+                  <button
+                    key={valor}
+                    type="button"
+                    className={`sty-chip ${activa ? "is-activa" : ""}`}
+                    aria-pressed={activa}
+                    onClick={() => set("ocasion", valor)}
+                  >
+                    {valor}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
 
+          <fieldset className="sty-campo">
+            <legend className="sty-label">Estilo <span>· podés elegir varios</span></legend>
+            <div className="sty-chips">
+              {ESTILOS.map((e) => (
+                <button
+                  key={e}
+                  type="button"
+                  className={`sty-chip ${pref.estilos.includes(e) ? "is-activa" : ""}`}
+                  aria-pressed={pref.estilos.includes(e)}
+                  onClick={() => toggle("estilos", e)}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+
+        <div className="sty-form__col">
+          <fieldset className="sty-campo">
+            <legend className="sty-label">Colores que te gustan</legend>
+            <div className="sty-colores">
+              {swatches.map(({ hex, nombre }) => {
+                const activa = pref.colores.includes(hex);
+                return (
+                  <button
+                    key={hex}
+                    type="button"
+                    className={`sty-swatch ${activa ? "is-activa" : ""}`}
+                    style={{ "--sw": hex }}
+                    aria-pressed={activa}
+                    aria-label={nombre}
+                    title={nombre}
+                    onClick={() => toggle("colores", hex)}
+                  />
+                );
+              })}
+              <label className="sty-swatch sty-swatch--mas" title="Agregar otro color">
+                <IconMas />
+                <input ref={colorRef} type="color" aria-label="Agregar otro color" />
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset className="sty-campo">
+            <legend className="sty-label">¿Cómo te gusta que te quede?</legend>
+            <div className="sty-chips">
+              {CALCES.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`sty-chip ${pref.calce === c ? "is-activa" : ""}`}
+                  aria-pressed={pref.calce === c}
+                  onClick={() => set("calce", c)}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <label className="sty-campo">
+            <span className="sty-label">Presupuesto máximo</span>
+            <span className="sty-presupuesto">
+              <span aria-hidden="true">$</span>
+              <input
+                type="number"
+                min="0"
+                step="1000"
+                inputMode="numeric"
+                value={pref.presupuesto ?? ""}
+                onChange={(e) => set("presupuesto", e.target.value)}
+                placeholder="Sin límite"
+              />
+            </span>
+          </label>
+        </div>
+      </div>
+
+      {/* el texto libre va al final, junto al botón */}
       <label className="sty-campo">
-        <span className="sty-label">Contanos qué outfit querés <span>(opcional)</span></span>
+        <span className="sty-label">Contanos qué outfit querés <span>· opcional</span></span>
         <textarea
-          className="sty-input sty-input--area sty-input--pedido"
+          className="sty-input sty-input--area"
           rows={2}
           maxLength={600}
           value={pedido}
@@ -91,91 +175,12 @@ function PreferenciasStylist({ pref, onChange, pedido, onPedidoChange, onSubmit,
         />
       </label>
 
-      <fieldset className="sty-campo">
-        <legend className="sty-label">Estilo <span>(podés elegir varios)</span></legend>
-        <div className="sty-chips">
-          {ESTILOS.map((e) => (
-            <button
-              key={e}
-              type="button"
-              className={`sty-chip ${pref.estilos.includes(e) ? "is-activa" : ""}`}
-              aria-pressed={pref.estilos.includes(e)}
-              onClick={() => toggle("estilos", e)}
-            >
-              {e}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <label className="sty-campo">
-        <span className="sty-label">Presupuesto máximo (ARS)</span>
-        <span className="sty-presupuesto">
-          <IconPesos />
-          <input
-            type="number"
-            min="0"
-            step="1000"
-            inputMode="numeric"
-            value={pref.presupuesto ?? ""}
-            onChange={(e) => set("presupuesto", e.target.value)}
-            placeholder="Sin límite"
-          />
-        </span>
-      </label>
-
-      <fieldset className="sty-campo">
-        <legend className="sty-label">Colores preferidos</legend>
-        <div className="sty-colores">
-          {swatches.map(({ hex, nombre }) => {
-            const activa = pref.colores.includes(hex);
-            return (
-              <button
-                key={hex}
-                type="button"
-                className={`sty-swatch ${activa ? "is-activa" : ""}`}
-                style={{ "--sw": hex }}
-                aria-pressed={activa}
-                aria-label={nombre}
-                title={nombre}
-                onClick={() => toggle("colores", hex)}
-              />
-            );
-          })}
-          <label className="sty-swatch sty-swatch--mas" title="Agregar otro color">
-            <IconMas />
-            <input ref={colorRef} type="color" aria-label="Agregar otro color" />
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset className="sty-campo">
-        <legend className="sty-label">¿Cómo te gusta que te quede la ropa?</legend>
-        <div className="sty-form__final">
-          <div className="sty-chips">
-            {CALCES.map((c) => (
-              <button
-                key={c}
-                type="button"
-                className={`sty-chip ${pref.calce === c ? "is-activa" : ""}`}
-                aria-pressed={pref.calce === c}
-                onClick={() => set("calce", c)}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-          <button type="submit" className="sty-btn-generar" disabled={generando}>
-            {generando ? "Generando tus looks…" : "Generar mis looks"}
-            {!generando && <IconFlecha />}
-          </button>
-        </div>
-      </fieldset>
-
-      <p className="sty-seguro">
-        <IconCandado />
-        Tus datos están seguros. No compartimos tu información.
-      </p>
+      <div className="sty-form__final">
+        <button type="submit" className="sty-btn" disabled={generando}>
+          {generando ? "Generando tus looks…" : "Generar mis looks"}
+          {!generando && <IconFlecha />}
+        </button>
+      </div>
     </form>
   );
 }
