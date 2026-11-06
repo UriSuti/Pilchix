@@ -158,21 +158,26 @@
 .sty-chip--tag { cursor: default; background: var(--sty-cream); border-color: transparent; }
 
 /* género: dos botones cuadrados con la personita */
-.sty-generos { display: flex; gap: 10px; }
+/* género: símbolos ♀ / ♂ en rosa y azul; elegido = fondo del mismo tono */
+.sty-generos { display: flex; gap: 12px; }
 .sty-genero {
-  width: 52px;
-  height: 46px;
+  --g: var(--sty-azul);
+  --g-suave: var(--sty-cream);
+  width: 72px;
+  height: 64px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--sty-line);
-  border-radius: 12px;
+  border: 1.5px solid var(--sty-line);
+  border-radius: 14px;
   background: #fff;
-  color: var(--sty-azul);
+  color: var(--g);
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
-.sty-genero:hover:not(.is-activa) { border-color: #cfd8dd; background: var(--sty-cream); }
-.sty-genero.is-activa { background: var(--sty-navy); border-color: var(--sty-navy); color: #fff; }
+.sty-genero--mujer { --g: #e0457b; --g-suave: #fdeef4; }
+.sty-genero--hombre { --g: #2f6fd6; --g-suave: #eaf1fd; }
+.sty-genero:hover:not(.is-activa) { border-color: var(--g); transform: translateY(-1px); }
+.sty-genero.is-activa { background: var(--g-suave); border-color: var(--g); box-shadow: 0 0 0 1px var(--g); }
 
 /* colores */
 .sty-colores { display: flex; flex-wrap: wrap; gap: 12px; padding: 3px; }

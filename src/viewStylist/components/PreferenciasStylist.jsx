@@ -51,11 +51,11 @@ function PreferenciasStylist({ pref, onChange, pedido, onPedidoChange, onSubmit,
                     aria-checked={activa}
                     aria-label={`Ropa ${label.toLowerCase()}`}
                     title={`Ropa ${label.toLowerCase()}`}
-                    className={`sty-genero ${activa ? "is-activa" : ""}`}
+                    className={`sty-genero sty-genero--${icono} ${activa ? "is-activa" : ""}`}
                     // tocar el ya elegido lo desmarca: sin género = todas las prendas
                     onClick={() => set("genero", activa ? null : valor)}
                   >
-                    <Icono size={22} />
+                    <Icono size={34} />
                   </button>
                 );
               })}
