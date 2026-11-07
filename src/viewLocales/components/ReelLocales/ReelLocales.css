@@ -1,0 +1,481 @@
+/* Portada del directorio: mismo lenguaje que HeroLocal (foto a lo ancho +
+   degradé navy) y que el hero de Ofertas (eyebrow, título y buscador). */
+.reel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  min-height: min(72vh, 620px);
+  background: #0f172a;
+  color: #fff;
+}
+
+/* ---------- fondo ---------- */
+.reel__fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.reel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  background: linear-gradient(135deg, #16465f, #0c2c42);
+}
+.reel__slide.is-on {
+  opacity: 1;
+}
+.reel__slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.reel__mono {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: "Fraunces", serif;
+  font-size: clamp(8rem, 24vw, 18rem);
+  color: rgba(255, 255, 255, 0.08);
+}
+
+/* Ken Burns: kb-0 / kb-1 son iguales; alternarlas reinicia el zoom */
+.reel__slide.kb-0 {
+  animation: reel-kb-0 calc(var(--reel-ms) + 1.4s) ease-out forwards;
+}
+.reel__slide.kb-1 {
+  animation: reel-kb-1 calc(var(--reel-ms) + 1.4s) ease-out forwards;
+}
+.reel__slide--0 { transform-origin: 30% 40%; }
+.reel__slide--1 { transform-origin: 70% 30%; }
+.reel__slide--2 { transform-origin: 50% 70%; }
+@keyframes reel-kb-0 {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+@keyframes reel-kb-1 {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+.reel--quieto .reel__slide {
+  animation-play-state: paused;
+}
+
+/* degradé navy (el de HeroLocal) desde la izquierda y desde abajo */
+.reel__velo {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(6, 32, 47, 0.92) 0%, rgba(6, 32, 47, 0.6) 40%, rgba(6, 32, 47, 0.05) 75%),
+    linear-gradient(0deg, rgba(6, 32, 47, 0.9) 0%, rgba(6, 32, 47, 0.25) 42%, rgba(6, 32, 47, 0) 70%);
+}
+
+/* ---------- contenido ---------- */
+.reel__inner {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 54px 24px clamp(26px, 4vw, 46px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "intro prendas"
+    "stats now";
+  gap: 28px 40px;
+}
+
+.reel__intro {
+  grid-area: intro;
+  max-width: 540px;
+}
+.reel__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #7dd3fc;
+}
+.reel__title {
+  margin: 10px 0 0;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+.reel__sub {
+  margin: 12px 0 0;
+  max-width: 46ch;
+  color: #b8c2cc;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+/* buscador: el de Ofertas/Locales, con desenfoque por estar sobre foto */
+.reel__search {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  padding: 12px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #b8c2cc;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.reel__search:focus-within {
+  border-color: #7dd3fc;
+  background: rgba(255, 255, 255, 0.14);
+}
+.reel__search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.96rem;
+  outline: none;
+}
+.reel__search input::placeholder {
+  color: #8794a3;
+}
+.reel__search input::-webkit-search-cancel-button {
+  filter: invert(1);
+}
+
+/* números (como .hero-local__meta) */
+.reel__stats {
+  grid-area: stats;
+  align-self: end;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 30px;
+  font-size: 0.82rem;
+}
+.reel__stats div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+.reel__stats dd {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+.reel__stats dt {
+  opacity: 0.7;
+}
+
+/* prendas del local en pantalla */
+.reel__prendas {
+  grid-area: prendas;
+  align-self: end;
+  justify-self: end;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.reel__prenda {
+  position: relative;
+  width: 100px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #e3e9ed;
+  box-shadow: 0 26px 60px rgba(12, 44, 66, 0.18);
+  opacity: 0;
+  transform: translateY(40px);
+  animation: reel-prenda 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(0.35s + var(--i) * 0.12s);
+}
+.reel__prenda:nth-child(even) {
+  margin-bottom: 22px;
+}
+.reel__prenda img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.reel__prenda span {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: #fff;
+  color: #123d59;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+@keyframes reel-prenda {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* bloque "En pantalla" */
+.reel__now {
+  grid-area: now;
+  align-self: end;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  background: rgba(6, 32, 47, 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.reel__now-top {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b8c2cc;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.reel__rec {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: reel-rec 1.4s ease-in-out infinite;
+}
+@keyframes reel-rec {
+  50% { opacity: 0.3; }
+}
+.reel__now-name {
+  margin: 8px 0 0;
+  overflow: hidden;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.reel__now-sub {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: #b8c2cc;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* barras tipo historias */
+.reel__bars {
+  display: flex;
+  gap: 4px;
+  margin-top: 14px;
+}
+.reel__bar {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.22);
+}
+.reel__bar i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.reel__bar.is-done i {
+  transform: scaleX(1);
+}
+.reel__bar.is-on i {
+  animation: reel-fill var(--reel-ms) linear forwards;
+}
+.reel--quieto .reel__bar.is-on i {
+  animation-play-state: paused;
+}
+@keyframes reel-fill {
+  to { transform: scaleX(1); }
+}
+
+/* botones fantasma sobre foto (como .hero-local__cta) */
+.reel__now-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.reel__cta,
+.reel__icon-btn {
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-family: "Poppins", system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.reel__cta:hover,
+.reel__icon-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+.reel__cta:focus-visible,
+.reel__icon-btn:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 2px;
+}
+.reel__cta {
+  flex: 1;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.reel__icon-btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+/* =========================
+   CINTA DE MARCAS
+========================= */
+.cinta {
+  overflow: hidden;
+  background: #123d59;
+  color: #fff;
+}
+.cinta__track {
+  display: flex;
+  width: max-content;
+  animation: cinta-loop var(--cinta-s, 40s) linear infinite;
+}
+.cinta:hover .cinta__track {
+  animation-play-state: paused;
+}
+.cinta__grupo {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cinta__grupo li {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding: 13px 0 13px 26px;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+.cinta__grupo li::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+}
+@keyframes cinta-loop {
+  to { transform: translateX(-50%); }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 960px) {
+  .reel__inner {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+      "intro"
+      "prendas"
+      "now"
+      "stats";
+  }
+  .reel__prendas {
+    justify-self: start;
+  }
+  .reel__prenda {
+    width: 80px;
+  }
+  .reel__now {
+    max-width: 420px;
+  }
+}
+@media (max-width: 560px) {
+  .reel {
+    min-height: 0;
+  }
+  .reel__inner {
+    padding: 40px 16px 24px;
+    gap: 22px;
+  }
+  .reel__prendas {
+    display: none;
+  }
+  .reel__now {
+    max-width: none;
+  }
+  .reel__velo {
+    background: linear-gradient(180deg, rgba(6, 32, 47, 0.55) 0%, rgba(6, 32, 47, 0.7) 45%, rgba(6, 32, 47, 0.92) 100%);
+  }
+}
+
+/* "reducir movimiento": todo quieto */
+@media (prefers-reduced-motion: reduce) {
+  .reel__slide,
+  .reel__slide.kb-0,
+  .reel__slide.kb-1,
+  .reel__prenda,
+  .reel__rec,
+  .reel__bar.is-on i,
+  .cinta__track {
+    animation: none;
+    transition: none;
+  }
+  .reel__prenda {
+    opacity: 1;
+    transform: none;
+  }
+  .reel__bar.is-on i {
+    transform: scaleX(1);
+  }
+  /* la cinta muestra cada nombre una vez, centrados */
+  .cinta__track {
+    width: auto;
+    justify-content: center;
+  }
+  .cinta__grupo {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-right: 26px;
+  }
+  .cinta__grupo[aria-hidden="true"],
+  .cinta__grupo li[aria-hidden="true"] {
+    display: none;
+  }
+}

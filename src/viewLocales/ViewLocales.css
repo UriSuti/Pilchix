@@ -16,72 +16,13 @@
 }
 
 /* =========================
-   HERO
-========================= */
-.loc-hero {
-  background: #0f172a;
-  color: #fff;
-  padding: 54px 0 40px;
-}
-.loc-hero__eyebrow {
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #7dd3fc;
-}
-.loc-hero__title {
-  margin: 10px 0 0;
-  font-family: "Fraunces", serif;
-  font-weight: 600;
-  font-size: clamp(2rem, 4vw, 2.9rem);
-  line-height: 1.05;
-}
-.loc-hero__sub {
-  margin: 12px 0 0;
-  color: #b8c2cc;
-  font-size: 1.02rem;
-  max-width: 46ch;
-}
-
-/* buscador */
-.loc-search {
-  margin-top: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: 420px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 99px;
-  padding: 12px 18px;
-  color: #b8c2cc;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-.loc-search:focus-within {
-  border-color: #7dd3fc;
-  background: rgba(255, 255, 255, 0.14);
-}
-.loc-search input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.96rem;
-  outline: none;
-}
-.loc-search input::placeholder {
-  color: #8794a3;
-}
-
-/* =========================
-   GRID
+   LISTA DE MINI PÁGINAS
 ========================= */
 .loc-main {
-  padding-top: 34px;
+  padding-top: 30px;
   padding-bottom: 60px;
+  /* al bajar desde el buscador, que el header sticky no tape el listado */
+  scroll-margin-top: var(--loc-header-h, 0px);
 }
 .loc-count {
   margin: 0 0 18px;
@@ -89,110 +30,10 @@
   font-weight: 600;
   font-size: 0.92rem;
 }
-.loc-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px 24px;
-}
-
-/* card */
-.loc-card {
+.loc-lista {
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #e7ebee;
-  border-radius: 20px;
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 4px 18px rgba(12, 44, 66, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-.loc-card:hover {
-  transform: translateY(-4px);
-  border-color: #cfd8dd;
-  box-shadow: 0 16px 34px rgba(12, 44, 66, 0.14);
-}
-
-.loc-card__media {
-  position: relative;
-  height: 0;
-  padding-bottom: 58%;
-  background: linear-gradient(135deg, #16465f, #0c2c42);
-  overflow: hidden;
-}
-.loc-card__media img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.loc-card:hover .loc-card__media img {
-  transform: scale(1.06);
-}
-/* inicial gigante cuando no hay fachada */
-.loc-card__mono {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-family: "Fraunces", serif;
-  font-size: 4rem;
-  color: rgba(255, 255, 255, 0.85);
-}
-/* chip con inicial arriba a la izq */
-.loc-card__logo {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #123d59;
-  font-family: "Fraunces", serif;
-  font-weight: 600;
-  font-size: 1.15rem;
-  box-shadow: 0 4px 12px rgba(12, 44, 66, 0.18);
-}
-
-.loc-card__body {
-  padding: 16px 18px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.loc-card__name {
-  margin: 0;
-  font-family: "Fraunces", serif;
-  font-weight: 600;
-  font-size: 1.22rem;
-  color: #0f172a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.loc-card__meta {
-  margin: 0;
-  color: #5d6b73;
-  font-size: 0.88rem;
-}
-.loc-card__dot {
-  margin: 0 6px;
-}
-.loc-card__cta {
-  margin-top: 10px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #123d59;
-  transition: gap 0.2s ease;
-}
-.loc-card:hover .loc-card__cta {
-  color: #0e4a59;
+  gap: 32px;
 }
 
 .loc-empty {
@@ -201,12 +42,54 @@
   padding: 60px 0;
   font-size: 1.02rem;
 }
+.loc-empty p {
+  margin: 0;
+}
+.loc-empty__btn {
+  margin-top: 18px;
+  padding: 11px 24px;
+  border: 1px solid #123d59;
+  border-radius: 999px;
+  background: #123d59;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.loc-empty__btn:hover {
+  background: #0d2d45;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(18, 61, 89, 0.25);
+}
 
 /* =========================
    SKELETON
 ========================= */
-.loc-card--sk {
-  pointer-events: none;
+.loc-skmp {
+  overflow: hidden;
+  border: 1px solid #e7ebee;
+  border-radius: 22px;
+  background: #fff;
+}
+.loc-skmp__banner {
+  height: 280px;
+}
+.loc-skmp__fila {
+  display: flex;
+  gap: 18px;
+  padding: 26px 28px;
+  overflow: hidden;
+}
+.loc-skmp__prenda {
+  flex: 0 0 200px;
+  aspect-ratio: 3 / 4;
+  border-radius: 18px;
+}
+.loc-sk {
+  aspect-ratio: 1;
+  border-radius: 12px;
 }
 .loc-sk {
   position: relative;
@@ -238,16 +121,16 @@
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width: 900px) {
-  .loc-grid {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 600px) {
+  .loc-wrap {
+    padding: 0 16px;
+  }
+  .loc-lista {
+    gap: 22px;
   }
 }
-@media (max-width: 560px) {
-  .loc-grid {
-    grid-template-columns: 1fr;
-  }
-  .loc-hero {
-    padding: 40px 0 32px;
+@media (prefers-reduced-motion: reduce) {
+  .loc-sk::after {
+    animation: none;
   }
 }

@@ -1,0 +1,402 @@
+/* "Mini página" de cada local: banner como HeroLocal (foto + degradé navy +
+   logo en cuadrado blanco) y debajo la fila de productos de la vidriera. */
+.mp {
+  overflow: hidden;
+  border: 1px solid #e7ebee;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(12, 44, 66, 0.06);
+  /* al saltar desde "Ver presentación", que el header sticky no la tape */
+  scroll-margin-top: calc(var(--loc-header-h, 0px) + 16px);
+}
+
+/* =========================
+   BANNER
+========================= */
+.mp__banner {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  min-height: 280px;
+  color: #fff;
+}
+.mp__foto {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(135deg, #16465f, #0c2c42);
+}
+.mp__foto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mp__banner:hover .mp__foto img {
+  transform: scale(1.04);
+}
+.mp__foto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 32, 47, 0.05) 0%, rgba(6, 32, 47, 0.3) 40%, rgba(6, 32, 47, 0.9) 100%),
+    linear-gradient(90deg, rgba(6, 32, 47, 0.45) 0%, rgba(6, 32, 47, 0) 60%);
+}
+.mp__mono {
+  position: absolute;
+  right: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: "Fraunces", serif;
+  font-size: 12rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.08);
+}
+
+.mp__banner-inner {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  width: 100%;
+  padding: 26px 28px;
+  box-sizing: border-box;
+}
+
+.mp__logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 26px 60px rgba(12, 44, 66, 0.18);
+  color: #123d59;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 2rem;
+}
+.mp__logo img {
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+}
+
+.mp__datos {
+  flex: 1;
+  min-width: 0;
+}
+.mp__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+.mp__chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+.mp__chips .mp__estado {
+  border-color: #fff;
+  background: #fff;
+  color: #123d59;
+}
+.mp__chips .mp__estado--cerrado {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(6, 32, 47, 0.6);
+  color: #fff;
+}
+.mp__estado i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+}
+
+.mp__nombre {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.mp__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 0;
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  opacity: 0.92;
+}
+.mp__meta > span + span::before {
+  content: "·";
+  margin: 0 8px;
+  opacity: 0.6;
+}
+.mp__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+.mp__rating svg {
+  color: #f6a35a;
+}
+.mp__rating small {
+  margin-left: 2px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.75;
+}
+.mp__frase {
+  display: -webkit-box;
+  max-width: 60ch;
+  margin: 10px 0 0;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.mp__frase--cita {
+  padding-left: 12px;
+  border-left: 3px solid #7dd3fc;
+  color: #fff;
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-size: 1.02rem;
+}
+
+/* botón fantasma sobre la foto (como .hero-local__cta) */
+.mp__ver {
+  flex: none;
+  padding: 12px 24px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+.mp__ver:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+.mp__ver span {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.mp__ver:hover span {
+  transform: translateX(3px);
+}
+.mp__ver:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
+/* =========================
+   CARRUSEL DE PRODUCTOS
+========================= */
+.mp__carrusel {
+  padding: 22px 0 26px;
+}
+.mp__carrusel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 28px;
+  margin-bottom: 14px;
+}
+.mp__carrusel-titulo {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #0f172a;
+}
+.mp__flechas {
+  display: flex;
+  gap: 8px;
+}
+.mp__flechas button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #e7ebee;
+  border-radius: 50%;
+  background: #fff;
+  color: #123d59;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.mp__flechas button:hover:not(:disabled) {
+  border-color: #123d59;
+  background: #123d59;
+  color: #fff;
+}
+.mp__flechas button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.mp__flechas button:focus-visible {
+  outline: 2px solid #123d59;
+  outline-offset: 2px;
+}
+
+.mp__track {
+  display: flex;
+  gap: 18px;
+  margin: 0;
+  padding: 4px 28px 8px;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 28px;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.mp__track::-webkit-scrollbar {
+  display: none;
+}
+.mp__item {
+  flex: 0 0 200px;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+/* última tarjeta: "Ver todo el local" (mismo alto que la foto 3:4) */
+.mp__mas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  aspect-ratio: 3 / 4;
+  border: 1.5px dashed #cfd8dd;
+  border-radius: 18px;
+  background: #f3f5f6;
+  color: #123d59;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.mp__mas:hover {
+  border-color: #123d59;
+  background: #eef3f6;
+}
+.mp__mas b {
+  font-size: 0.95rem;
+}
+.mp__mas span:last-child {
+  color: #5d6b73;
+  font-size: 0.82rem;
+}
+.mp__mas-flecha {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: #123d59;
+  color: #fff;
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+.mp__mas:hover .mp__mas-flecha {
+  transform: translateX(3px);
+}
+
+.mp__vacio {
+  margin: 0;
+  padding: 22px 28px 26px;
+  color: #5d6b73;
+  font-size: 0.92rem;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 720px) {
+  .mp {
+    border-radius: 18px;
+  }
+  .mp__banner {
+    min-height: 300px;
+  }
+  .mp__banner-inner {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 20px 18px;
+  }
+  .mp__logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    font-size: 1.5rem;
+  }
+  .mp__datos {
+    flex-basis: calc(100% - 74px);
+  }
+  .mp__ver {
+    width: 100%;
+    text-align: center;
+  }
+  .mp__carrusel-top,
+  .mp__vacio {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  /* en celular se desliza con el dedo */
+  .mp__flechas {
+    display: none;
+  }
+  .mp__track {
+    gap: 12px;
+    padding: 4px 18px 8px;
+    scroll-padding: 0 18px;
+  }
+  .mp__item {
+    flex-basis: 150px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp__foto img,
+  .mp__ver span,
+  .mp__mas-flecha {
+    transition: none;
+  }
+  .mp__banner:hover .mp__foto img,
+  .mp__ver:hover span,
+  .mp__mas:hover .mp__mas-flecha {
+    transform: none;
+  }
+}
